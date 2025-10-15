@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PharmacyApp.Domain.Common
+namespace PharmacyApp.Common.Exceptions
 {
     public class DomainException : Exception   //anthor: Exception  don't edit public sealed  class DomainException
     {

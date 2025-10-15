@@ -1,5 +1,6 @@
 using System;
-namespace PharmacyApp.Domain.Common
+
+namespace PharmacyApp.Common.Domain
 {
     public abstract class DomainEvent
     {

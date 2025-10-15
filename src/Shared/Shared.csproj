@@ -1,11 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\PharmacyApp.Common\PharmacyApp.Common.csproj" />
-    <ProjectReference Include="..\Shared\Shared.csproj" />
-   
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -13,4 +7,3 @@
   </PropertyGroup>
 
 </Project>
-      

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-namespace PharmacyApp.Domain.Common
+
+
+namespace PharmacyApp.Common.Domain
 {
     public abstract class baseEntity<TId>
     {
@@ -67,5 +69,5 @@ namespace PharmacyApp.Domain.Common
     }
 
 
-    
+
 }
