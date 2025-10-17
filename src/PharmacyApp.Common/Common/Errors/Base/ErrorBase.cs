@@ -8,15 +8,19 @@ using System.Threading.Tasks;
 
 
 
-using PharmacyApp.Common.Domain.Errors.Base.Interfaces;
+using PharmacyApp.Common.Common.Errors.Base.Interfaces;
 
-namespace PharmacyApp.Common.Domain.Errors.Base
+namespace PharmacyApp.Common.Common.Errors.Base
 {
+
     public abstract class ErrorBase : IError
     {
-        public string Code { get; protected set; }
-        public string Message { get; protected set; }
+        public string Code { get; protected set; } = string.Empty;
+        public string Message { get; protected set; } = string.Empty;
+         public ErrorType Type { get; protected set; } = ErrorType.Unexpected;
+        
 
+   
         protected ErrorBase(string code, string message)
         {
             Code = code;

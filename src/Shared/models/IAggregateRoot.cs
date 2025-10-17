@@ -1,13 +1,13 @@
 
 
 
-namespace PharmacyApp.Common.Domain
+namespace PharmacyApp.Shared.models
 {
 
     public interface IAggregateRoot // Marker interface
     {
     }
-    public abstract class AggregateRoot<TId> : baseEntity<TId>
+    public abstract class AggregateRoot<TId> : BaseEntity<TId>
         where TId : notnull
     {
         private readonly List<DomainEvent> _domainEvents = new();

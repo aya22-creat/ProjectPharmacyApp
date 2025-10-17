@@ -2,10 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using PharmacyApp.Common.Domain;
-using PharmacyApp.Common.Exceptions;
-
-
+using PharmacyApp.Shared.models;
 
 namespace PharmacyApp.Domain.CoreDomain.ValueObjects
 {

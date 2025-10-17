@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using PharmacyApp.Common.Exceptions;
-using PharmacyApp.Common.Domain;
+using PharmacyApp.Common.Common.Exceptions;
+using PharmacyApp.Common.Common;
 using System.Linq;
 using System.Threading.Tasks;
-
+using PharmacyApp.Shared.models;
 
 namespace PharmacyApp.Domain.CoreDomain.ValueObjects
 {

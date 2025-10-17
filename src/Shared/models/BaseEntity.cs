@@ -4,19 +4,19 @@ using System.Linq;
 using System.Text;
 
 
-namespace PharmacyApp.Common.Domain
+namespace PharmacyApp.Shared.models
 {
-    public abstract class baseEntity<TId>
+    public abstract class BaseEntity<TId>
     {
         public TId? Id { get; protected set; }
 
         private readonly List<DomainEvent> _domainEvents = new();
         public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
-        protected baseEntity() { }
+        protected BaseEntity() { }
         //Allows the subclass or the ORM to create the object without an Id
 
-        protected baseEntity(TId id)
+        protected BaseEntity(TId id)
         {
             Id = id;
         }
@@ -35,7 +35,7 @@ namespace PharmacyApp.Common.Domain
         }
         public override bool Equals(object? obj)
         {
-            if (obj is not baseEntity<TId> other)
+            if (obj is not BaseEntity<TId> other)
                 return false;
 
             if (ReferenceEquals(this, other))
@@ -46,7 +46,7 @@ namespace PharmacyApp.Common.Domain
 
             return Id.Equals(other.Id);
         }
-        public static bool operator ==(baseEntity<TId>? left, baseEntity<TId>? right)
+        public static bool operator ==(BaseEntity<TId>? left, BaseEntity<TId>? right)
         {
             if (left is null && right is null)
                 return true;
@@ -57,7 +57,7 @@ namespace PharmacyApp.Common.Domain
             return left.Equals(right);
         }
 
-        public static bool operator !=(baseEntity<TId>? left, baseEntity<TId>? right)
+        public static bool operator !=(BaseEntity<TId>? left, BaseEntity<TId>? right)
         {
             return !(left == right);
         }

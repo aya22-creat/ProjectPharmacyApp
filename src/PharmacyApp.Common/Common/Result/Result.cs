@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PharmacyApp.Common.Domain.Errors;
-using PharmacyApp.Common.Domain.Errors.Base;
-using PharmacyApp.Common.Domain.Errors.Base.Interfaces;
+using PharmacyApp.Common.Common.Errors.Base.Interfaces;
 
-namespace PharmacyApp.Common.Domain
+
+
+namespace PharmacyApp.Common.Common.Result
 {
     public class Result
     {
