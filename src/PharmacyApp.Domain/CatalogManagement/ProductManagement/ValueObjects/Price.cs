@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using PharmacyApp.Common.Common.Exceptions;
 using PharmacyApp.Common.Common;
+using PharmacyApp.Common.Common.Exception;
 using System.Linq;
 using System.Threading.Tasks;
-using PharmacyApp.Shared.models;
 
-namespace PharmacyApp.Domain.CoreDomain.ValueObjects
+namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects
 {
     public class Price : ValueObject
     {
@@ -52,3 +51,30 @@ namespace PharmacyApp.Domain.CoreDomain.ValueObjects
         public override string ToString() => $"{Value} {Currency}";
     }
 }
+
+namespace PharmacyApp.Common.Common
+{
+    public abstract class ValueObject
+    {
+        protected abstract IEnumerable<object> GetEqualityComponents();
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || obj.GetType() != GetType())
+                return false;
+
+            var other = (ValueObject)obj;
+            return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return GetEqualityComponents()
+                    .Aggregate(17, (current, obj) => current * 23 + (obj?.GetHashCode() ?? 0));
+            }
+        }
+    }
+}
+    

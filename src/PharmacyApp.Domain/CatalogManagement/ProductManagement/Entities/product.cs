@@ -1,28 +1,29 @@
 using System;
 using System.Collections.Generic;
-using PharmacyApp.Common.Exceptions;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PharmacyApp.Domain.CoreDomain.ValueObjects;
+using PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects;
+using PharmacyApp.Domain.CatalogManagement.CategoryManagement.ValueObjects;
+using PharmacyApp.Common.Common;
 
-namespace PharmacyApp.Domain.CoreDomain.entities
+namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.Entities
 {
-    public class Product
+    public class Product : BaseEntity<Guid>
     {
-        public Guid Id { get; private set; }
+       
         public string Name { get; private set; }
-        public string Description { get; private set; }
-        public decimal Price { get; private set; }
+        public ProductDescription Description { get; private set; }
+        public Price Price { get; private set; }
         public int Stock { get; private set; }
         public CategoryId CategoryId { get; private set; }
 
-        public Product(Guid id, string name, string description, decimal price, int stock, CategoryId categoryId)
+        public Product(Guid id, string name, ProductDescription description, Price price, int stock, CategoryId categoryId)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Product name cannot be empty.");
 
-            if (price < 0)
+            if (price.Value < 0)
                 throw new ArgumentException("Product price cannot be negative.");
 
             if (stock < 0)
@@ -30,8 +31,8 @@ namespace PharmacyApp.Domain.CoreDomain.entities
 
             Id = id;
             Name = name;
-            Description = description;
-            Price = price;
+            Description = description ?? throw new ArgumentException("Description cannot be null.");
+            Price = price ?? throw new ArgumentException("Price cannot be null.");
             Stock = stock;
             CategoryId = categoryId ?? throw new ArgumentException("Category cannot be null.");
         }
@@ -44,12 +45,12 @@ namespace PharmacyApp.Domain.CoreDomain.entities
             Stock += quantity;
         }
 
-        public void UpdatePrice(decimal newPrice)
+        public void UpdatePrice(Price newPrice)
         {
-            if (newPrice < 0)
+            if (newPrice.Value < 0)
                 throw new ArgumentException("New price cannot be negative.");
 
-            Price = newPrice;
+            Price = newPrice ?? throw new ArgumentException("Price cannot be null.");
         }
 
         public void UpdateCategory(CategoryId newCategoryId)

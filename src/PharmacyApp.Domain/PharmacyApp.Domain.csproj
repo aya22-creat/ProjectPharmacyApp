@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PharmacyApp.Common\PharmacyApp.Common.csproj" />
-    <ProjectReference Include="..\Shared\Shared.csproj" />
    
   </ItemGroup>
 

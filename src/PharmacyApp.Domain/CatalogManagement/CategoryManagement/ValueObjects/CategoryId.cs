@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using PharmacyApp.Shared.models;
+using PharmacyApp.Common.Common;
 
-namespace PharmacyApp.Domain.CoreDomain.ValueObjects
+namespace PharmacyApp.Domain.CatalogManagement.CategoryManagement.ValueObjects
 {
     public class CategoryId : ValueObject
     {

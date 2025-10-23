@@ -1,6 +1,6 @@
 using System;
 
-namespace PharmacyApp.Shared.models
+namespace PharmacyApp.Common.Common
 {
     public abstract class ValueObject
     {

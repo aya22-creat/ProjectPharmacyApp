@@ -1,6 +1,6 @@
 using System;
 
-namespace PharmacyApp.Shared.models
+namespace PharmacyApp.Common.Common.DomainEvent
 {
     public abstract class DomainEvent
     {
@@ -12,6 +12,5 @@ namespace PharmacyApp.Shared.models
             EventId = Guid.NewGuid();
             OccurredOn = DateTime.UtcNow;
         }
-
     }
 }

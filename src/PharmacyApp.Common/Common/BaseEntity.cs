@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 
 
-namespace PharmacyApp.Shared.models
+
+namespace PharmacyApp.Common.Common
 {
     public abstract class BaseEntity<TId>
     {
         public TId? Id { get; protected set; }
 
-        private readonly List<DomainEvent> _domainEvents = new();
-        public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+        private readonly List<DomainEvent.DomainEvent> _domainEvents = new();
+        public IReadOnlyCollection<DomainEvent.DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
         protected BaseEntity() { }
         //Allows the subclass or the ORM to create the object without an Id
@@ -20,12 +21,12 @@ namespace PharmacyApp.Shared.models
         {
             Id = id;
         }
-        protected void AddDomainEvent(DomainEvent domainEvent)
+        protected void AddDomainEvent(DomainEvent.DomainEvent domainEvent)
         {
             _domainEvents.Add(domainEvent);
         }
 
-        public void RemoveDomainEvent(DomainEvent domainEvent)
+        public void RemoveDomainEvent(DomainEvent.DomainEvent domainEvent)
         {
             _domainEvents?.Remove(domainEvent);
         }

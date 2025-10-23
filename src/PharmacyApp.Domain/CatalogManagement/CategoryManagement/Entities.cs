@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PharmacyApp.Common.Common;
 
-using PharmacyApp.Shared.models;
+using PharmacyApp.Domain.CatalogManagement.CategoryManagement;
 
 namespace PharmacyApp.Domain.CoreDomain.Entities
 {

@@ -1,4 +1,4 @@
-namespace Shared.Models
+namespace PharmacyApp.Common.Common
 {
     public abstract class DomainRule
     {
