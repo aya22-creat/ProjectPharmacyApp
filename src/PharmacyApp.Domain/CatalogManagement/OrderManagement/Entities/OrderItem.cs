@@ -1,0 +1,89 @@
+using System;
+using PharmacyApp.Common.Common;
+using PharmacyApp.Common.Common.Exception;
+using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
+
+namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
+{
+    public class OrderItem : AggregateRoot<Guid>
+    {
+
+
+        public Guid OrderId { get; private set; }
+        public Guid ProductId { get; private set; }
+        public string ProductName { get; private set; } = string.Empty;
+        public Money UnitPrice { get; private set; } = null!;
+        public int Quantity { get; private set; }
+        public Money? Discount { get; private set; }
+
+
+
+        private OrderItem() { }
+
+
+        public OrderItem(Guid productId, string productName, Money unitPrice, int quantity)
+        {
+            if (productId == Guid.Empty)
+                throw new DomainException("Product ID cannot be empty.");
+
+            if (string.IsNullOrWhiteSpace(productName))
+                throw new DomainException("Product name cannot be empty.");
+
+            if (unitPrice == null)
+                throw new ArgumentNullException(nameof(unitPrice));
+
+            if (quantity <= 0)
+                throw new DomainException("Quantity must be greater than zero.");
+
+            Id = Guid.NewGuid();
+            ProductId = productId;
+            ProductName = productName;
+            UnitPrice = unitPrice;
+            Quantity = quantity;
+        }
+
+
+
+        public void UpdateQuantity(int newQuantity)
+        {
+            if (newQuantity <= 0)
+                throw new DomainException("Quantity must be greater than zero.");
+
+            Quantity = newQuantity;
+        }
+        public void ApplyDiscount(Money discount)
+        {
+            if (discount == null)
+                throw new ArgumentNullException(nameof(discount));
+
+            if (discount.IsNegative())
+                throw new DomainException("Discount cannot be negative.");
+
+            if (discount.IsGreaterThan(GetSubtotal()))
+                throw new DomainException("Discount cannot exceed subtotal.");
+
+            Discount = discount;
+        }
+
+        public Money GetSubtotal()
+        {
+            return UnitPrice * Quantity;
+        }
+
+        public Money GetTotal()
+        {
+            var total = GetSubtotal();
+            if (Discount != null)
+                total = total - Discount;
+
+            return total;
+        }
+
+        public Money GetTotalDiscount()
+        {
+            return Discount ?? Money.Zero();
+        }
+
+
+    }
+}

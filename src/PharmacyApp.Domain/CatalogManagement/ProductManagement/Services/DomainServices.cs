@@ -1,9 +1,11 @@
 using System;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects;
+using System.Threading;
+using System.Threading.Tasks;
+using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
 
 
-namespace PharmacyApp.Domain.CatalogManagement.ProductManagement
+namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.services
 {
 
     public class ProductCatalogService
@@ -17,7 +19,11 @@ namespace PharmacyApp.Domain.CatalogManagement.ProductManagement
 
         public async Task<bool> IsProductNameUniqueAsync(string name, CancellationToken cancellationToken = default)
         {
-            return !await _productRepository.ExistsByNameAsync(name, cancellationToken);
+            if (string.IsNullOrWhiteSpace(name))
+                throw new DomainException("Product name cannot be empty.");
+
+            var exists = await _productRepository.ExistsByNameAsync(name, cancellationToken);
+            return !exists; 
         }
 
     }

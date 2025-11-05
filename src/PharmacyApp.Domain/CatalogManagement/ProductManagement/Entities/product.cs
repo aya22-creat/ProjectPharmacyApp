@@ -31,9 +31,9 @@ namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.Entities
 
             Id = id;
             Name = name;
+            Stock = stock;
             Description = description ?? throw new ArgumentException("Description cannot be null.");
             Price = price ?? throw new ArgumentException("Price cannot be null.");
-            Stock = stock;
             CategoryId = categoryId ?? throw new ArgumentException("Category cannot be null.");
         }
 

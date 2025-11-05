@@ -7,14 +7,16 @@ using PharmacyApp.Common.Common;
 
 using PharmacyApp.Domain.CatalogManagement.CategoryManagement;
 
-namespace PharmacyApp.Domain.CoreDomain.Entities
+namespace PharmacyApp.Domain.CoreDomain.entity
 {
     public class Category : BaseEntity<Guid>
     {
     
         public string? Name { get; private set; }
-        public string? Description { get; private set; }
+
         public int ProductCount { get; private set; }
+        public string? Description { get; private set; }
+       
 
         protected Category() { } // defulate as (safe)constructor for ORM
 

@@ -77,5 +77,18 @@ namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.AggregateRoots
         {
             CategoryId = newCategoryId ?? throw new ArgumentException("Category cannot be null.");
         }
+
+        public void UpdateName(string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName))
+                throw new ArgumentException("Product name cannot be empty.");
+
+            Name = newName;
+        }
+
+        public void UpdateDescription(ProductDescription newDescription)
+        {
+            Description = newDescription ?? throw new ArgumentException("Description cannot be null.");
+        }
     }
 }

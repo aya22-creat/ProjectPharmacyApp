@@ -2,44 +2,106 @@ using System;
 using System.Collections.Generic;
 using PharmacyApp.Common.Common;
 using PharmacyApp.Common.Common.Exception;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects
 {
+   
     public class Price : ValueObject
     {
         public decimal Value { get; private set; }
-        public string Currency { get; init; } = string.Empty;
+        public string Currency { get; private set; } = "EGP";
 
-        private Price() { } // For ORM
+        private Price() { } 
 
-        public Price(decimal value, string currency)
+        private Price(decimal value)
         {
             if (value < 0)
                 throw new DomainException("Price value cannot be negative.");
 
-            if (string.IsNullOrWhiteSpace(currency))
-                throw new DomainException("Currency cannot be empty.");
-
-           Value = value;
-            Currency = currency.ToUpperInvariant();
+            Value = Math.Round(value, 2);
         }
+
+     
+
+        public static Price Create(decimal value)
+        {
+            return new Price(value);
+        }
+
+        public static Price Zero() => new Price(0);
+
+
+
+        public Price Add(Price other)
+        {
+            EnsureNotNull(other);
+            ValidateSameCurrency(other);
+            return new Price(Value + other.Value);
+        }
+
+        public Price Subtract(Price other)
+        {
+            EnsureNotNull(other);
+            ValidateSameCurrency(other);
+
+            if (other.Value > Value)
+                throw new DomainException("Cannot subtract a price greater than the current value.");
+
+            return new Price(Value - other.Value);
+        }
+
+        public Price Multiply(int quantity)
+        {
+            if (quantity < 0)
+                throw new DomainException("Quantity cannot be negative.");
+
+            return new Price(Value * quantity);
+        }
+
+        public Price ApplyDiscount(decimal percentage)
+        {
+            if (percentage < 0 || percentage > 100)
+                throw new DomainException("Discount percentage must be between 0 and 100.");
+
+            var discount = Value * (percentage / 100);
+            return new Price(Value - discount);
+        }
+
 
         public static Price operator +(Price a, Price b)
         {
-            if (a.Currency != b.Currency)
-                throw new DomainException("Cannot add prices with different currencies.");
-
-            return new Price(a.Value + b.Value, a.Currency);
+            EnsureNotNull(a);
+            EnsureNotNull(b);
+            a.ValidateSameCurrency(b);
+            return a.Add(b);
         }
 
         public static Price operator -(Price a, Price b)
         {
-            if (a.Currency != b.Currency)
-                throw new DomainException("Cannot subtract prices with different currencies.");
+            EnsureNotNull(a);
+            EnsureNotNull(b);
+            a.ValidateSameCurrency(b);
+            return a.Subtract(b);
+        }
 
-            return new Price(a.Value - b.Value, a.Currency);
+        public static Price operator *(Price a, int quantity)
+        {
+            EnsureNotNull(a);
+            return a.Multiply(quantity);
+        }
+
+        
+
+        private static void EnsureNotNull(Price? price)
+        {
+            if (price == null)
+                throw new ArgumentNullException(nameof(price), "Price instance cannot be null.");
+        }
+
+        private void ValidateSameCurrency(Price other)
+        {
+            if (Currency != other.Currency)
+                throw new DomainException($"Cannot operate on prices with different currencies: {Currency} vs {other.Currency}");
         }
 
         protected override IEnumerable<object> GetEqualityComponents()
@@ -48,33 +110,9 @@ namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects
             yield return Currency;
         }
 
-        public override string ToString() => $"{Value} {Currency}";
-    }
-}
-
-namespace PharmacyApp.Common.Common
-{
-    public abstract class ValueObject
-    {
-        protected abstract IEnumerable<object> GetEqualityComponents();
-
-        public override bool Equals(object? obj)
-        {
-            if (obj == null || obj.GetType() != GetType())
-                return false;
-
-            var other = (ValueObject)obj;
-            return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return GetEqualityComponents()
-                    .Aggregate(17, (current, obj) => current * 23 + (obj?.GetHashCode() ?? 0));
-            }
-        }
-    }
-}
     
+
+        public override string ToString() => $"{Value:N2} {Currency}";
+
+    }
+}
