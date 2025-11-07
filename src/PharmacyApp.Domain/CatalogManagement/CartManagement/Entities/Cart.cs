@@ -14,7 +14,7 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
     public class Cart : AggregateRoot<Guid>
     {
         public Guid CustomerId { get; private set; }
-        public CartState State { get; private set; }
+        public CartState State { get; private set; } = null!;
 
         private readonly List<CartItem> _items = new();
         public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
@@ -28,7 +28,7 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
                 throw new ArgumentException("CustomerId cannot be empty", nameof(customerId));
 
             CustomerId = customerId;
-            State = CartState.Active;
+            State = CartState.Active!;
         }
 
         // Add item to cart

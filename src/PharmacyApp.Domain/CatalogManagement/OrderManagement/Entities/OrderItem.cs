@@ -5,7 +5,7 @@ using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
 
 namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
 {
-    public class OrderItem : AggregateRoot<Guid>
+    public class OrderItem : BaseEntity<Guid>
     {
 
 
@@ -15,6 +15,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
         public Money UnitPrice { get; private set; } = null!;
         public int Quantity { get; private set; }
         public Money? Discount { get; private set; }
+        public Money TotalPrice => CalculateTotalPrice();
 
 
 
@@ -63,6 +64,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
                 throw new DomainException("Discount cannot exceed subtotal.");
 
             Discount = discount;
+           
         }
 
         public Money GetSubtotal()
@@ -84,6 +86,16 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
             return Discount ?? Money.Zero();
         }
 
+        internal void SetOrderId(Guid orderId)
+        {
+            OrderId = orderId;
+        }
+
+        private Money CalculateTotalPrice()
+        {
+            var subtotal = UnitPrice.Multiply(Quantity);
+            return subtotal.Subtract(Discount ?? Money.Zero(UnitPrice.Currency));
+        }
 
     }
 }

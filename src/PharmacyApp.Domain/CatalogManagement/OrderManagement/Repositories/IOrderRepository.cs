@@ -12,5 +12,6 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories
         Task<Order?> GetByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken = default);
         Task<bool> ExistsByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken = default);
         Task RemoveAsync(Order order, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
     }
 }

@@ -2,326 +2,229 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PharmacyApp.Common.Common;
-using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities;
+using PharmacyApp.Domain.CatalogManagement.OrderManagement.Events;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
 
 namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate
 {
     public class Order : AggregateRoot<Guid>
     {
-        private readonly List<OrderItem> _orderItems = new List<OrderItem>();
-        public string? OrderNumber { get; private set; }
+        private readonly List<OrderItem> _items = new();
+
         public Guid CustomerId { get; private set; }
-        public OrderStatus? Status { get; private set; }
-        public DateTime CreatedDate { get; private set; }
-        public DateTime? CompletedDate { get; private set; }
-        public DateTime? CancelledDate { get; private set; }
+        public string OrderNumber { get; private set; } = string.Empty;
+        public OrderStatus Status { get; private set; }
+
+        public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
+
+        public Money SubTotal => CalculateSubTotal();
+        public Money ShippingCost { get; private set; } = Money.Zero();
+        public Money Tax { get; private set; } = Money.Zero();
+        public Money Discount { get; private set; } = Money.Zero();
+        public Money TotalAmount => CalculateTotalAmount();
+
+        public string ShippingAddress { get; private set; } = string.Empty;
+        public string BillingAddress { get; private set; } = string.Empty;
+        public string PaymentMethod { get; private set; } = string.Empty;
+
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? ConfirmedAt { get; private set; }
+        public DateTime? ShippedAt { get; private set; }
+        public DateTime? DeliveredAt { get; private set; }
+        public DateTime? CompletedAt { get; private set; }
+        public DateTime? CancelledAt { get; private set; }
         public string? CancellationReason { get; private set; }
 
-
-        public IReadOnlyList<OrderItem> OrderItems => _orderItems.AsReadOnly();
-
-
-        public string Currency { get; private set; } = string.Empty;
-        public Money? ShippingFee { get; private set; }
-        public Money? TaxAmount { get; private set; }
-        public Money? DiscountAmount { get; private set; }
-        public decimal? TaxRate { get; private set; }
-
-        // add other properties like ShippingAddress, BillingAddress, etc. as needed
+        
 
 
-
-        private Order() { }
-
-        private void ValidateCanModify()
+        public Order(Guid customerId, string shippingAddress, string billingAddress, string paymentMethod)
         {
-            if (Status == OrderStatus.Completed || Status == OrderStatus.Cancelled)
-                throw new DomainException("Order cannot be modified when it's completed or cancelled.");
-        }
-
-        public bool CanModify()
-        {
-            return Status != OrderStatus.Completed && Status != OrderStatus.Cancelled;
-        }
-
-        public bool CanCancel()
-        {
-            return Status != OrderStatus.Completed;
-        }
-
-        public bool IsFinal()
-        {
-            return Status == OrderStatus.Completed || Status == OrderStatus.Cancelled;
-        }
-
-        public bool IsEmpty()
-        {
-            return !_orderItems.Any();
-        }
-
-        public Order(Guid orderId, string orderNumber, Guid customerId, DateTime createdDate, OrderStatus status)
-        {
-
-            if (string.IsNullOrWhiteSpace(orderNumber))
-                throw new DomainException("Order number cannot be empty.");
-
             if (customerId == Guid.Empty)
-                throw new DomainException("Customer ID cannot be empty.");
+                throw new ArgumentException("Customer ID is required");
 
+            if (string.IsNullOrWhiteSpace(shippingAddress))
+                throw new ArgumentException("Shipping address is required");
 
-
-            Id = Guid.NewGuid();
-            OrderNumber = orderNumber;
             CustomerId = customerId;
-            CreatedDate = createdDate;
-            Status = status;
+            OrderNumber = GenerateOrderNumber();
+            Status = OrderStatus.Pending;
+            ShippingAddress = shippingAddress;
+            BillingAddress = billingAddress ?? shippingAddress;
+            PaymentMethod = paymentMethod;
+            ShippingCost = Money.Zero();
+            Tax = Money.Zero();
+            Discount = Money.Zero();
+            CreatedAt = DateTime.UtcNow;
+
+            RaiseDomainEvent(new OrderCreatedEvent(Id, CustomerId, OrderNumber));
+
         }
 
-        public static Order Create(string orderNumber, Guid customerId, OrderStatus status, string currency = "EGP")
+        public void AddItem(Guid productId, string productName, int quantity, Money unitPrice)
         {
-            var order = new Order(Guid.NewGuid(), orderNumber, customerId, DateTime.UtcNow, status);
-            order.Currency = currency;
-            return order;
-        }
+            if (Status != OrderStatus.Pending)
+                throw new InvalidOperationException($"Cannot add items to order in {Status} status");
 
+            var existingItem = _items.FirstOrDefault(i => i.ProductId == productId);
 
-
-
-        public void AddItem(Guid productId, string productName, Money unitPrice, int quantity)
-        {
-            ValidateCanModify();
-
-            if (productId == Guid.Empty)
-                throw new DomainException("Product ID cannot be empty.");
-
-            if (string.IsNullOrWhiteSpace(productName))
-                throw new DomainException("Product name cannot be empty.");
-
-            if (unitPrice == null)
-                throw new ArgumentNullException(nameof(unitPrice));
-
-            if (unitPrice.Currency != Currency)
-                throw new DomainException(
-                    $"Item currency ({unitPrice.Currency}) does not match order currency ({Currency}).");
-
-            if (quantity <= 0)
-                throw new DomainException("Quantity must be greater than zero.");
-
-            var existingItem = _orderItems.FirstOrDefault(i => i.ProductId == productId);
             if (existingItem != null)
             {
                 existingItem.UpdateQuantity(existingItem.Quantity + quantity);
             }
             else
             {
-
-                var orderItem = new OrderItem(
-                    productId,
-                    productName,
-                    unitPrice,
-                    quantity);
-
-                _orderItems.Add(orderItem);
+                var newItem = new OrderItem(productId, productName, unitPrice, quantity);
+                newItem.SetOrderId(Id);
+                _items.Add(newItem);
             }
+
+            RaiseDomainEvent(new OrderItemAddedEvent(Id, productId, quantity));
         }
 
-        // Overloaded method to add an existing OrderItem 
-        public void AddItem(OrderItem item)
-        {
-            ValidateCanModify();
-
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
-
-            if (item.UnitPrice.Currency != Currency)
-                throw new DomainException(
-                    $"Item currency ({item.UnitPrice.Currency}) does not match order currency ({Currency})");
-
-            var existingItem = _orderItems.FirstOrDefault(i => i.ProductId == item.ProductId);
-            if (existingItem != null)
-            {
-                existingItem.UpdateQuantity(existingItem.Quantity + item.Quantity);
-            }
-            else
-            {
-                _orderItems.Add(item);
-            }
-        }
-        public void RemoveItem(Guid productId)
-        {
-            ValidateCanModify();
-
-            var item = _orderItems.FirstOrDefault(i => i.ProductId == productId);
-            if (item == null)
-                throw new DomainException($"Item with product ID {productId} not found in order.");
-
-            _orderItems.Remove(item);
-        }
-        public void UpdateItemQuantity(Guid productId, int newQuantity)
-        {
-            ValidateCanModify();
-
-            var item = _orderItems.FirstOrDefault(i => i.ProductId == productId);
-            if (item == null)
-                throw new DomainException($"Item with product ID {productId} not found in order.");
-
-            if (newQuantity <= 0)
-            {
-                RemoveItem(productId);
-            }
-            else
-            {
-                item.UpdateQuantity(newQuantity);
-            }
-        }
-        public void ApplyItemDiscount(Guid productId, Money discountAmount)
-        {
-            ValidateCanModify();
-
-            var item = _orderItems.FirstOrDefault(i => i.ProductId == productId);
-            if (item == null)
-                throw new DomainException($"Item with product ID {productId} not found in order.");
-
-            item.ApplyDiscount(discountAmount);
-        }
-        public void ClearItems()
-        {
-            ValidateCanModify();
-            _orderItems.Clear();
-        }
-        public void SetShippingFee(Money shippingFee)
-        {
-            ValidateCanModify();
-
-            if (shippingFee == null)
-                throw new ArgumentNullException(nameof(shippingFee));
-
-            if (shippingFee.Currency != Currency)
-                throw new DomainException(
-                    $"Shipping fee currency ({shippingFee.Currency}) does not match order currency ({Currency})");
-
-            ShippingFee = shippingFee;
-        }
-
-        public void CalculateTax(decimal taxRate)
-        {
-            ValidateCanModify();
-
-            if (taxRate < 0 || taxRate > 1)
-                throw new DomainException("Tax rate must be between 0 and 1 (e.g., 0.14 for 14%)");
-
-            TaxRate = taxRate;
-            var subtotal = GetSubtotal();
-            TaxAmount = subtotal.CalculateTax(taxRate);
-        }
-        public void SetTax(decimal taxRate)
-        {
-            ValidateCanModify();
-
-            if (taxRate < 0 || taxRate > 1)
-                throw new DomainException("Tax rate must be between 0 and 1.");
-
-            TaxRate = taxRate;
-
-        }
-        public void ApplyDiscount(Money discountAmount)
-        {
-            ValidateCanModify();
-
-            if (discountAmount == null)
-                throw new ArgumentNullException(nameof(discountAmount));
-
-            if (discountAmount.Currency != Currency)
-                throw new DomainException(
-                    $"Discount currency ({discountAmount.Currency}) does not match order currency ({Currency})");
-
-            var subtotal = GetSubtotal();
-            if (discountAmount.IsGreaterThan(subtotal))
-                throw new DomainException("Discount amount cannot be greater than subtotal.");
-
-            DiscountAmount = discountAmount;
-        }
-
-        public void ApplyDiscountPercentage(decimal discountPercentage)
-        {
-            ValidateCanModify();
-
-            if (discountPercentage < 0 || discountPercentage > 100)
-                throw new DomainException("Discount percentage must be between 0 and 100.");
-
-            var subtotal = GetSubtotal();
-            DiscountAmount = subtotal.ApplyDiscount(discountPercentage);
-        }
-
-        public void RemoveDiscount()
-        {
-            ValidateCanModify();
-            DiscountAmount = null;
-        }
-
-        public Money GetSubtotal()
-        {
-            if (!_orderItems.Any())
-                return Money.Zero();
-
-            return _orderItems.Aggregate(Money.Zero(), (sum, item) => sum + item.GetSubtotal());
-        }
-
-        public Money GetTotal()
-        {
-            var subtotal = GetSubtotal();
-            var total = subtotal;
-
-            if (DiscountAmount != null)
-                total = total - DiscountAmount;
-
-            if (TaxAmount != null)
-                total = total + TaxAmount;
-
-            if (ShippingFee != null)
-                total = total + ShippingFee;
-
-            return total;
-        }
-
-        public Money GetTotalDiscount()
-        {
-            var itemDiscounts = _orderItems.Sum(item => item.GetTotalDiscount().Amount);
-            var orderDiscount = DiscountAmount?.Amount ?? 0m;
-            return Money.Create(itemDiscounts + orderDiscount);
-        }
-
-        public Money GetTotalTax()
-        {
-            return TaxAmount ?? Money.Zero();
-        }
-
-        public Money GetTotalShipping()
-        {
-            return ShippingFee ?? Money.Zero();
-        }
-
-        public void CompleteOrder()
+        public void RemoveItem(Guid OrderItemId)
         {
             if (Status != OrderStatus.Pending)
-                throw new DomainException("Only pending orders can be completed.");
+                throw new InvalidOperationException($"Cannot remove items from order in {Status} status");
 
-            Status = OrderStatus.Completed;
-            CompletedDate = DateTime.UtcNow;
+            var item = _items.FirstOrDefault(i => i.Id == OrderItemId);
+            if (item == null)
+                throw new InvalidOperationException($"Order item {OrderItemId} not found");
+
+            _items.Remove(item);
+            RaiseDomainEvent(new OrderItemRemovedEvent(Id, OrderItemId));
         }
 
-        public void CancelOrder(string reason)
+        public void UpdateShippingCost(Money shippingCost)
         {
-            if (Status == OrderStatus.Completed)
-                throw new DomainException("Completed orders cannot be cancelled.");
+            if (shippingCost.Amount < 0)
+                throw new ArgumentException("Shipping cost cannot be negative");
+
+            ShippingCost = shippingCost;
+        }
+
+        public void ApplyTax(Money tax)
+        {
+            if (tax.Amount < 0)
+                throw new ArgumentException("Tax cannot be negative");
+
+            Tax = tax;
+        }
+
+        public void ApplyDiscount(Money discount)
+        {
+            if (discount.Amount < 0)
+                throw new ArgumentException("Discount cannot be negative");
+
+            if (discount.Amount > SubTotal.Amount)
+                throw new ArgumentException("Discount cannot exceed subtotal");
+
+            Discount = discount;
+        }
+
+        public void Confirm()
+        {
+            if (!Status.CanTransitionTo(OrderStatus.Confirmed))
+                throw new InvalidOperationException($"Cannot confirm order in {Status} status");
+
+            if (!_items.Any())
+                throw new InvalidOperationException("Cannot confirm order without items");
+
+            Status = OrderStatus.Confirmed;
+            ConfirmedAt = DateTime.UtcNow;
+            RaiseDomainEvent(new OrderConfirmedEvent(Id, CustomerId, TotalAmount));
+        }
+        public void Complete()
+        {
+            if (!Status.CanTransitionTo(OrderStatus.Completed))
+                throw new InvalidOperationException($"Cannot complete order in {Status} status");
+
+            if (Status != OrderStatus.Delivered)
+                throw new InvalidOperationException("Order must be delivered before completion");
+
+            Status = OrderStatus.Completed;
+            CompletedAt = DateTime.UtcNow;
+            RaiseDomainEvent(new OrderCompletedEvent(Id, TotalAmount.Amount, CompletedAt.Value));
+        }
+
+        public void StartProcessing()
+        {
+            if (!Status.CanTransitionTo(OrderStatus.Processing))
+                throw new InvalidOperationException($"Cannot start processing order in {Status} status");
+
+            Status = OrderStatus.Processing;
+            RaiseDomainEvent(new OrderProcessingStartedEvent(Id));
+        }
+
+        public void Ship()
+        {
+            if (!Status.CanTransitionTo(OrderStatus.Shipping))
+                throw new InvalidOperationException($"Cannot ship order in {Status} status");
+
+            Status = OrderStatus.Shipping;
+            ShippedAt = DateTime.UtcNow;
+            RaiseDomainEvent(new OrderShippedEvent(Id, CustomerId, ShippingAddress));
+        }
+
+        public void MarkAsDelivered()
+        {
+            if (!Status.CanTransitionTo(OrderStatus.Delivered))
+                throw new InvalidOperationException($"Cannot mark order as delivered in {Status} status");
+
+            Status = OrderStatus.Delivered;
+            DeliveredAt = DateTime.UtcNow;
+            RaiseDomainEvent(new OrderDeliveredEvent(Id, CustomerId));
+        }
+
+        public void Cancel(string reason)
+        {
+            if (!Status.CanTransitionTo(OrderStatus.Cancelled))
+                throw new InvalidOperationException($"Cannot cancel order in {Status} status");
+
+            if (string.IsNullOrWhiteSpace(reason))
+                throw new ArgumentException("Cancellation reason is required");
 
             Status = OrderStatus.Cancelled;
-            CancelledDate = DateTime.UtcNow;
+            CancelledAt = DateTime.UtcNow;
             CancellationReason = reason;
+            RaiseDomainEvent(new OrderCancelledEvent(Id, CustomerId, reason, CancelledAt.Value));
+        }
+
+        public void Update(string reason)
+        {
+            if (!Status.CanTransitionTo(OrderStatus.Processing))
+                throw new InvalidOperationException($"Cannot update order in {Status} status");
+
+            if (string.IsNullOrWhiteSpace(reason))
+                throw new ArgumentException("Update reason is required");
+
+            // Assuming update means starting processing or something similar
+            Status = OrderStatus.Processing;
+            RaiseDomainEvent(new OrderProcessingStartedEvent(Id));
+        }
+
+        private Money CalculateSubTotal()
+        {
+            if (!_items.Any())
+                return Money.Zero();
+
+            return _items
+                .Select(i => i.GetTotal())
+                .Aggregate((sum, next) => sum.Add(next));
+        }
+
+        private Money CalculateTotalAmount()
+        {
+            var total = SubTotal.Add(ShippingCost).Add(Tax).Subtract(Discount);
+            return total;
+        }
+//Unique Order Number
+        private string GenerateOrderNumber()
+        {
+            var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
+            var random = new Random().Next(1000, 9999);
+            return $"ORD-{timestamp}-{random}";
         }
     }
 }
-
-    

@@ -17,8 +17,8 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
         public DateTime? CompletedAt { get; private set; }
         public DateTime? CancelledAt { get; private set; }
         public string? CancellationReason { get; private set; }
+        public string OrderNumber { get; private set; } = string.Empty;
 
-       
         private Order()
         {
             OrderItems = new List<OrderItem>();
@@ -32,6 +32,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
             OrderItems = orderItems ?? new List<OrderItem>();
             TotalAmount = totalAmount;
             Status = status;
+            OrderNumber = GenerateOrderNumber();
         }
 
         //  Factory method for creating a new order
@@ -44,12 +45,14 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
                 throw new ArgumentException("Order must have at least one item", nameof(orderItems));
 
             var orderDate = DateTime.UtcNow;
-            var totalAmount = orderItems.Sum(item => item.UnitPrice.Amount * item.Quantity);
+            var totalAmount = orderItems.Sum(item => item.GetTotal().Amount);
 
             var order = new Order(customerId, orderDate, orderItems, totalAmount, OrderStatus.Pending);
 
-          
-            order.AddDomainEvent(new OrderCreatedEvent(order.Id, customerId, totalAmount));
+            // Set OrderId on each order item
+            order.OrderItems.ForEach(item => item.SetOrderId(order.Id));
+
+            order.AddDomainEvent(new OrderCreatedEvent(order.Id, customerId, order.OrderNumber));
 
             return order;
         }
@@ -113,9 +116,16 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
 
         private void RecalculateTotal()
         {
-            TotalAmount = OrderItems.Sum(item => item.UnitPrice.Amount * item.Quantity);
+            TotalAmount = OrderItems.Sum(item => item.GetTotal().Amount);
+        }
+
+        private string GenerateOrderNumber()
+        {
+            var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
+            var random = new Random().Next(1000, 9999);
+            return $"ORD-{timestamp}-{random}";
         }
     }
 
-   
+
 }

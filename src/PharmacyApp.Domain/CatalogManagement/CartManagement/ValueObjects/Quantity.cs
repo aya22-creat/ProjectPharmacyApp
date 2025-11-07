@@ -14,8 +14,8 @@ using PharmacyApp.Common.Common;
             if (value <= 0)
                 throw new ArgumentException("Quantity must be greater than zero", nameof(value));
             
-            if (value > 999)
-                throw new ArgumentException("Quantity cannot exceed 999", nameof(value));
+            if (value > 1000)
+                throw new ArgumentException("Quantity cannot exceed 1000", nameof(value));
 
             Value = value;
         }
@@ -32,8 +32,8 @@ using PharmacyApp.Common.Common;
 
             int newValue = Value + amount;
             
-            if (newValue > 999)
-                throw new ArgumentException("Quantity cannot exceed 999");
+            if (newValue > 1000)
+                throw new ArgumentException("Quantity cannot exceed 1000");
 
             return new Quantity(newValue);
         }
