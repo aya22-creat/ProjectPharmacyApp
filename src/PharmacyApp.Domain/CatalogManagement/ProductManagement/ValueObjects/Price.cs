@@ -1,17 +1,15 @@
-using System;
-using System.Collections.Generic;
 using PharmacyApp.Common.Common;
 using PharmacyApp.Common.Common.Exception;
 
 namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects
 {
-   
+
     public class Price : ValueObject
     {
         public decimal Value { get; private set; }
         public string Currency { get; private set; } = "EGP";
 
-        private Price() { } 
+       
 
         private Price(decimal value)
         {
@@ -21,7 +19,7 @@ namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects
             Value = Math.Round(value, 2);
         }
 
-     
+
 
         public static Price Create(decimal value)
         {
@@ -90,7 +88,7 @@ namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects
             return a.Multiply(quantity);
         }
 
-        
+
 
         private static void EnsureNotNull(Price? price)
         {
@@ -110,7 +108,7 @@ namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects
             yield return Currency;
         }
 
-    
+
 
         public override string ToString() => $"{Value:N2} {Currency}";
 

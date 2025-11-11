@@ -5,7 +5,7 @@ using PharmacyApp.Application.Order.DTO;
 using OrderAgg = PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
 
-namespace PharmacyApp.Application.Order.Commands.RemoveOrderItem
+namespace PharmacyApp.Application.Order.Command.RemoveOrderItem
 {
     public class RemoveOrderItemCommandHandler : IRequestHandler<RemoveOrderItemCommand, OrderDto>
     {

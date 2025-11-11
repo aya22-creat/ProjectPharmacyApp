@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Product.DTO;
 using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
@@ -20,7 +18,7 @@ namespace PharmacyApp.Application.Product.Command.CreateProduct
             _unitOfWork = unitOfWork;
         }
 
-     public async Task<ProductDto> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public async Task<ProductDto> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
             var price = Price.Create(request.Price);
             var categoryId = CategoryId.Create(request.CategoryId);

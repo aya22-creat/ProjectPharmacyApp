@@ -1,6 +1,4 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+
 using PharmacyApp.Domain.CatalogManagement.CartManagement.Entities;
 using PharmacyApp.Common.Common.Repositories;
 
@@ -12,6 +10,6 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories
 
         Task<bool> ExistsForCustomerAsync(Guid customerId, CancellationToken cancellationToken = default);
 
-       Task<Cart?> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
+        Task<Cart?> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
     }
 }

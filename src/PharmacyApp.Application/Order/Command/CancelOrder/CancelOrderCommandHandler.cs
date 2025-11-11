@@ -1,13 +1,8 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
-using OrderAgg = PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
 
-namespace PharmacyApp.Application.Order.Commands.CancelOrder
-{
+namespace PharmacyApp.Application.Order.Command.CancelOrder{
     public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, OrderDto>
     {
         private readonly IOrderRepository _orderRepository;
@@ -29,7 +24,7 @@ namespace PharmacyApp.Application.Order.Commands.CancelOrder
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new OrderDto(order); 
+            return new OrderDto(order);
         }
     }
 }

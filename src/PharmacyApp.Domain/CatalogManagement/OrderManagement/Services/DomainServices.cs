@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
 
@@ -22,7 +19,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Services
                 throw new DomainException("Order number cannot be empty.");
 
             var exists = await _orderRepository.ExistsByOrderNumberAsync(orderNumber, cancellationToken);
-            return !exists; 
+            return !exists;
         }
 
     }

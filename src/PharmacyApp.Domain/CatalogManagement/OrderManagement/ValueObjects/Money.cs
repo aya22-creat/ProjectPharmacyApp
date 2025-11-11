@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using PharmacyApp.Common.Common;
 using PharmacyApp.Common.Common.Exception;
 
@@ -31,7 +29,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects
         public static Money Zero(string currency = "EGP")
             => new Money(0, currency);
 
-  
+
         public Money Add(Money other)
         {
             EnsureCompatibleCurrency(other);
@@ -64,7 +62,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects
             return new Money(Amount * quantity, Currency);
         }
 
-      
+
         public Money ApplyDiscount(decimal percentage)
         {
             if (percentage < 0 || percentage > 100)
@@ -141,7 +139,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects
             return money.Multiply(quantity);
         }
 
-     
+
         private static void EnsureNotNull(Money? money)
         {
             if (money == null)
@@ -163,7 +161,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects
                 throw new DomainException("Cannot operate on amounts with different currencies.");
         }
 
-    
+
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return Amount;

@@ -17,4 +17,3 @@ public class OrderShippedEvent : DomainEvent
         ShippingAddress = shippingAddress;
     }
 }
-    

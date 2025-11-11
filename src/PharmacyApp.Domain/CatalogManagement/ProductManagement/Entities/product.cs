@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.CategoryManagement.ValueObjects;
 using PharmacyApp.Common.Common;
@@ -11,7 +6,7 @@ namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.Entities
 {
     public class Product : BaseEntity<Guid>
     {
-       
+
         public string Name { get; private set; }
         public ProductDescription Description { get; private set; }
         public Price Price { get; private set; }
@@ -57,6 +52,6 @@ namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.Entities
         {
             CategoryId = newCategoryId ?? throw new ArgumentException("Category cannot be null.");
         }
-    
+
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using PharmacyApp.Common.Common;
+using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Domain.CatalogManagement.CartManagement.ValueObjects;
 
 namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
@@ -9,6 +10,8 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
         public Guid ProductId { get; private set; }
         public int Quantity { get; private set; }
         public Money? Price { get; private set; }
+        public Money? Discount { get; private set; } = Money.Zero("EGP");
+        public Guid CartId { get; private set; }
 
         // Constructor for EF Core
         private CartItem() : base() { }
@@ -24,6 +27,20 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
             ProductId = productId;
             Quantity = quantity;
             Price = price ?? throw new ArgumentNullException(nameof(price));
+        }
+
+        public void ApplyDiscount(Money discount)
+        {
+            if (discount == null)
+                throw new ArgumentNullException(nameof(discount));
+
+            if (discount.Amount < 0)
+                throw new DomainException("Discount cannot be negative");
+
+            if (discount.Amount > GetSubtotal().Amount)
+                throw new DomainException("Discount cannot exceed subtotal");
+
+            Discount = discount;
         }
 
         public void UpdateQuantity(int newQuantity)
@@ -64,6 +81,20 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
         public Money GetSubtotal()
         {
             return Price!.Multiply(Quantity);
+        }
+
+        public Money GetTotal()
+        {
+            var total = GetSubtotal();
+            if (Discount != null)
+                total = total.Subtract(Discount);
+
+            return total;
+        }
+
+        internal void SetCartId(Guid cartId)
+        {
+            CartId = cartId;
         }
     }
 }

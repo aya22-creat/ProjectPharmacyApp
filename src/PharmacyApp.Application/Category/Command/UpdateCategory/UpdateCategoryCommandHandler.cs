@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+
 using MediatR;
 using PharmacyApp.Application.Category.DTO;
 
 using PharmacyApp.Domain.CatalogManagement.CategoryManagement.Repositories;
-using CategoryAgg = PharmacyApp.Domain.CatalogManagement.CategoryManagement.CategoryAggregate.CategoryAggregate;
 
 namespace PharmacyApp.Application.Category.Command.UpdateCategory
 {
@@ -27,9 +21,9 @@ namespace PharmacyApp.Application.Category.Command.UpdateCategory
         {
             var category = await _categoryRepository.GetByIdAsync(request.Id, cancellationToken);
             if (category == null)
-            
+
                 throw new InvalidOperationException($"Category with ID {request.Id} not found");
-            
+
 
             category.Update(request.Name, request.Description);
 

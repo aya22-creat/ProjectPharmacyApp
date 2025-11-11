@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
 using OrderAgg = PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate;
-
 namespace PharmacyApp.Application.Order.DTO
 {
     public record OrderDto(
@@ -29,7 +24,7 @@ namespace PharmacyApp.Application.Order.DTO
         string? CancellationReason
     )
     {
-       
+        // add a constructor that takes in the domain order entity and maps it to the DTO
         public OrderDto(OrderAgg.Order order) : this(
             Id: order.Id,
             CustomerId: order.CustomerId,

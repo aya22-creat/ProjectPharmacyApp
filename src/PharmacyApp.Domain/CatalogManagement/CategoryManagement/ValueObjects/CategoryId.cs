@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using PharmacyApp.Common.Common;
 
 namespace PharmacyApp.Domain.CatalogManagement.CategoryManagement.ValueObjects
@@ -30,6 +26,6 @@ namespace PharmacyApp.Domain.CatalogManagement.CategoryManagement.ValueObjects
 
         public static implicit operator Guid(CategoryId id) => id.Value;
         public static implicit operator CategoryId(Guid value) => new(value);
-  
+
     }
 }

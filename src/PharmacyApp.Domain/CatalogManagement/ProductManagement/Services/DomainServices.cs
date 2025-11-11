@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
 
@@ -23,7 +20,7 @@ namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.services
                 throw new DomainException("Product name cannot be empty.");
 
             var exists = await _productRepository.ExistsByNameAsync(name, cancellationToken);
-            return !exists; 
+            return !exists;
         }
 
     }

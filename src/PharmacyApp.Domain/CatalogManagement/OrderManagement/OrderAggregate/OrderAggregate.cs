@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using PharmacyApp.Common.Common;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Events;
@@ -36,7 +33,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate
         public DateTime? CancelledAt { get; private set; }
         public string? CancellationReason { get; private set; }
 
-        
+
 
 
         public Order(Guid customerId, string shippingAddress, string billingAddress, string paymentMethod)
@@ -219,7 +216,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate
             var total = SubTotal.Add(ShippingCost).Add(Tax).Subtract(Discount);
             return total;
         }
-//Unique Order Number
+        //Unique Order Number
         private string GenerateOrderNumber()
         {
             var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");

@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using PharmacyApp.Common.Common;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Enums;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Events;
@@ -66,7 +64,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
             Status = OrderStatus.Completed;
             CompletedAt = DateTime.UtcNow;
 
-       
+
             AddDomainEvent(new OrderCompletedEvent(Id, TotalAmount, CompletedAt.Value));
         }
 

@@ -24,44 +24,10 @@ namespace PharmacyApp.Application.Order.Queries.GetCustomerOrders
 
             if (orders == null || !orders.Any())
                 return new List<OrderDto>();
-
-            var result = orders.Select(order => new OrderDto(
-                Id: order.Id,
-                CustomerId: order.CustomerId,
-                OrderNumber: order.OrderNumber,
-                Status: order.Status.ToString(),
-
-                Items: order.Items.Select(i => new OrderItemDto(
-                    Id: i.Id,
-                    Name: i.ProductName,
-                    Quantity: i.Quantity,
-                    Price: i.UnitPrice.Amount,
-                    Discount: i.Discount?.Amount ?? 0,
-                    Tax: 0,
-                    Total: i.TotalPrice.Amount,
-                    Note: string.Empty
-                )).ToList(),
-
-                SubTotal: order.SubTotal.Amount,
-                ShippingCost: order.ShippingCost.Amount,
-                Tax: order.Tax.Amount,
-                Discount: order.Discount.Amount,
-                TotalAmount: order.TotalAmount.Amount,
-
-                Currency: "EGP",
-                ShippingAddress: order.ShippingAddress,
-                BillingAddress: order.BillingAddress,
-                PaymentMethod: order.PaymentMethod,
-
-                CreatedAt: order.CreatedAt,
-                ConfirmedAt: order.ConfirmedAt,
-                ShippedAt: order.ShippedAt,
-                DeliveredAt: order.DeliveredAt,
-                CancelledAt: order.CancelledAt,
-                CancellationReason: order.CancellationReason ?? string.Empty
-            )).ToList();
+            var result = orders.Select(order => new OrderDto(order)).ToList();
 
             return result;
+          
         }
     }
 }

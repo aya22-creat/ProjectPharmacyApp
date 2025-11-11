@@ -7,14 +7,14 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects
 {
     public class OrderStatus : ValueObject
     {
-        public static readonly OrderStatus Pending   = new(0, "Pending");
+        public static readonly OrderStatus Pending = new(0, "Pending");
         public static readonly OrderStatus Confirmed = new(1, "Confirmed");
         public static readonly OrderStatus Processing = new(2, "Processing");
         public static readonly OrderStatus Shipping = new(3, "Shipping");
         public static readonly OrderStatus Delivered = new(4, "Delivered");
         public static readonly OrderStatus Completed = new(5, "Completed");
         public static readonly OrderStatus Cancelled = new(6, "Cancelled");
-        public static readonly OrderStatus Returned  = new(7, "Returned");
+        public static readonly OrderStatus Returned = new(7, "Returned");
 
         private static readonly List<OrderStatus> _allStatuses = new()
         {

@@ -72,5 +72,5 @@ namespace PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Entities
         }
     }
 
-   
+
 }

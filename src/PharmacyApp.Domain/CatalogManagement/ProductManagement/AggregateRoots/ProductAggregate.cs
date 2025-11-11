@@ -1,9 +1,8 @@
-using System;
-using PharmacyApp.Common.Common; 
+using PharmacyApp.Common.Common;
 using PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.CategoryManagement.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.ProductManagement.Events;
-using System.Data.Common;
+
 
 namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.AggregateRoots
 {

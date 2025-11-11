@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Product.DTO;
 using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
@@ -16,9 +13,9 @@ namespace PharmacyApp.Application.Product.Queries.GetProducts
             _productRepository = productRepository;
         }
 
-         public async Task<IEnumerable<ProductDto>> Handle(GetProductQuery request, CancellationToken cancellationToken)
-            {
-                var products = await _productRepository.GetAllAsync(cancellationToken);
+        public async Task<IEnumerable<ProductDto>> Handle(GetProductQuery request, CancellationToken cancellationToken)
+        {
+            var products = await _productRepository.GetAllAsync(cancellationToken);
 
             return products.Select(p => new ProductDto(
                 p.Id,
@@ -27,6 +24,6 @@ namespace PharmacyApp.Application.Product.Queries.GetProducts
                 p.Price.Value,
                 p.Stock
             ));
-            }
+        }
     }
 }

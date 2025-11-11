@@ -8,13 +8,15 @@ using PharmacyApp.Domain.CatalogManagement.CartManagement.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.CartManagement.Enums;
 using PharmacyApp.Domain.CatalogManagement.CartManagement.Events;
 
-
+// code without copon 
 namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
 {
     public class Cart : AggregateRoot<Guid>
     {
         public Guid CustomerId { get; private set; }
         public CartState State { get; private set; } = null!;
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
 
         private readonly List<CartItem> _items = new();
         public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
@@ -29,6 +31,7 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
 
             CustomerId = customerId;
             State = CartState.Active!;
+            CreatedAt = DateTime.UtcNow;
         }
 
         // Add item to cart

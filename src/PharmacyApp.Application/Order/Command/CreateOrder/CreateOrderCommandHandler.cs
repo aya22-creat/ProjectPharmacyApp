@@ -1,16 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
 using OrderAgg = PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
-using PharmacyApp.Common.Common;
 
-namespace PharmacyApp.Application.Order.Commands.CreateOrder
+
+namespace PharmacyApp.Application.Order.Command.CreateOrder
 {
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, OrderDto>
     {
@@ -25,14 +20,14 @@ namespace PharmacyApp.Application.Order.Commands.CreateOrder
 
         public async Task<OrderDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-          
+
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
             if (request.Items == null || !request.Items.Any())
                 throw new ArgumentException("Order must have at least one item.");
 
-          
+
             var order = new OrderAgg.Order(
                 request.CustomerId,
                 request.ShippingAddress ?? string.Empty,
@@ -46,12 +41,12 @@ namespace PharmacyApp.Application.Order.Commands.CreateOrder
                 order.AddItem(item.ProductId, item.ProductName, item.Quantity, unitPrice);
             }
 
-         
+
             await _orderRepository.AddAsync(order, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        
-            return new OrderDto(order); 
+
+            return new OrderDto(order);
         }
     }
 }

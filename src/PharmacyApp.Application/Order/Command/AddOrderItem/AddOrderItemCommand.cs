@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
 
-namespace PharmacyApp.Application.Order.Commands.AddOrderItem
+namespace PharmacyApp.Application.Order.Command.AddOrderItem
 {
     public record AddOrderItemCommand(
         Guid OrderId,

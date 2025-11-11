@@ -1,4 +1,4 @@
-using System;
+
 using PharmacyApp.Common.Common;
 using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
@@ -64,7 +64,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
                 throw new DomainException("Discount cannot exceed subtotal.");
 
             Discount = discount;
-           
+
         }
 
         public Money GetSubtotal()

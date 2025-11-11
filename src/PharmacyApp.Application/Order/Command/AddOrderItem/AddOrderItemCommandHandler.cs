@@ -1,12 +1,9 @@
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
-using OrderAgg = PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
 
-namespace PharmacyApp.Application.Order.Commands.AddOrderItem
+namespace PharmacyApp.Application.Order.Command.AddOrderItem
 {
     public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, OrderDto>
     {
