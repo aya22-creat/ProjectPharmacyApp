@@ -6,9 +6,11 @@ using PharmacyApp.Common.Common;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
 using PharmacyApp.Domain.CatalogManagement.CartManagement.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.CartManagement.Enums;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Events;
+using PharmacyApp.Domain.CatalogManagement.CartManagement.Events.Cart;
+using PharmacyApp.Domain.CatalogManagement.CartManagement.Events.Cartitem;
+using PharmacyApp.Domain.CatalogManagement.CartManagement.Events.Coupon;
+using PharmacyApp.Domain.CatalogManagement.Common;
 
-// code without copon 
 namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
 {
     public class Cart : AggregateRoot<Guid>
@@ -17,6 +19,8 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
         public CartState State { get; private set; } = null!;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
+        public string CouponCode { get; private set; } = string.Empty;
+        public Money Discount { get; private set; } = Money.Zero("EGP");
 
         private readonly List<CartItem> _items = new();
         public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
@@ -24,6 +28,9 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
         // Constructor for EF Core
         private Cart() : base() { }
 
+
+
+        
         public Cart(Guid customerId) : base(Guid.NewGuid())
         {
             if (customerId == Guid.Empty)
@@ -49,6 +56,27 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
             else
             {
                 var newItem = new CartItem(productId, quantity, price);
+                _items.Add(newItem);
+            }
+
+            AddDomainEvent(new CartItemAddedEvent(Id, productId, quantity));
+        }
+
+        // Add item to cart with product name
+        public void AddItem(Guid productId, string productName, int quantity, Money price)
+        {
+            if (State != CartState.Active)
+                throw new InvalidOperationException("Cannot add items to inactive cart");
+
+            var existingItem = _items.FirstOrDefault(i => i.ProductId == productId);
+
+            if (existingItem != null)
+            {
+                existingItem.IncreaseQuantity(quantity);
+            }
+            else
+            {
+                var newItem = new CartItem(productId, productName, quantity, price);
                 _items.Add(newItem);
             }
 
@@ -124,6 +152,48 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
             State = CartState.Expired;
         }
 
+        // Apply coupon to cart
+        public void ApplyCoupon(string couponCode, Money discountAmount)
+        {
+            if (State != CartState.Active)
+                throw new InvalidOperationException("Cannot apply coupon to inactive cart");
+
+            if (string.IsNullOrWhiteSpace(couponCode))
+                throw new DomainException("Coupon code cannot be empty");
+
+            if (discountAmount == null || discountAmount.IsNegative())
+                throw new DomainException("Discount amount must be positive");
+
+            var cartTotal = GetTotal();
+            if (discountAmount.IsGreaterThan(cartTotal))
+                throw new DomainException("Discount cannot exceed cart total");
+
+            Discount = discountAmount;
+            CouponCode = couponCode;
+
+            AddDomainEvent(new CouponAppliedToCartEvent(
+                Id,
+                CustomerId,
+                couponCode,
+                discountAmount.Amount
+            ));
+        }
+
+        // Remove coupon from cart
+        public void RemoveCoupon()
+        {
+            if (State != CartState.Active)
+                throw new InvalidOperationException("Cannot remove coupon from inactive cart");
+
+            if (!string.IsNullOrWhiteSpace(CouponCode))
+            {
+                CouponCode = string.Empty;
+                Discount = Money.Zero("EGP");
+
+                AddDomainEvent(new CouponRemovedFromCartEvent(Id, CustomerId));
+            }
+        }
+
         // Get cart total
         public Money GetTotal()
         {
@@ -136,6 +206,9 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
             {
                 total = total.Add(item.GetSubtotal());
             }
+
+            if (Discount != null && Discount.Amount > 0)
+                total = total.Subtract(Discount);
 
             return total;
         }

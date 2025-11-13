@@ -34,16 +34,13 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.ValueObjects
 
         public Money Add(Money other)
         {
-            if (Currency != other.Currency)
-                throw new InvalidOperationException($"Cannot add money with different currencies: {Currency} and {other.Currency}");
-
+            ValidateCurrency(other);
             return new Money(Amount + other.Amount, Currency!);
         }
 
         public Money Subtract(Money other)
         {
-            if (Currency != other.Currency)
-                throw new InvalidOperationException($"Cannot subtract money with different currencies: {Currency} and {other.Currency}");
+            ValidateCurrency(other);
 
             if (Amount < other.Amount)
                 throw new InvalidOperationException("Result cannot be negative");
@@ -59,7 +56,27 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.ValueObjects
             return new Money(Amount * factor, Currency!);
         }
 
+        public bool IsNegative() => Amount < 0;
+
+        public bool IsGreaterThan(Money other)
+        {
+            ValidateCurrency(other);
+            return Amount > other.Amount;
+        }
+
         public static Money Zero(string currency) => new Money(0, currency);
+
+        public static Money Create(decimal amount, string currency = "EGP") => new Money(amount, currency);
+
+        private void ValidateCurrency(Money other)
+        {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (Currency != other.Currency)
+                throw new InvalidOperationException(
+                    $"Cannot compare or operate on Money values with different currencies: {Currency} and {other.Currency}");
+        }
 
         public override string ToString() => $"{Amount:F2} {Currency}";
     }

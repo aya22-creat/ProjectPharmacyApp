@@ -1,8 +1,9 @@
 
+using CartItemEntity = PharmacyApp.Domain.CatalogManagement.CartManagement.Entities.CartItem;
+using PharmacyApp.Domain.CatalogManagement.CartManagement.Entities;
+
 namespace PharmacyApp.Application.Cart.DTO
 {
-
-
     //output cart item details (View cart || get cart)
     public record CartItemDto(
           Guid Id,
@@ -16,7 +17,24 @@ namespace PharmacyApp.Application.Cart.DTO
           decimal Total,
           bool IsAvailable,
           int StockQuantity
-      );
+      )
+      {
+          public CartItemDto(CartItemEntity item) : this(
+              item.Id,
+              item.ProductId,
+              item.ProductName,
+              null, // ProductImage
+              item.Price?.Amount ?? 0,
+              item.Quantity,
+              item.Discount?.Amount ?? 0,
+              0, // Tax
+              item.GetTotal().Amount,
+              true, // IsAvailable
+              0 // StockQuantity
+          )
+          {
+          }
+      }
 
     //input cart item details(Add to cart)
 

@@ -2,13 +2,12 @@
 using PharmacyApp.Common.Common;
 using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
+using PharmacyApp.Domain.CatalogManagement.Common;
 
 namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
 {
     public class OrderItem : BaseEntity<Guid>
     {
-
-
         public Guid OrderId { get; private set; }
         public Guid ProductId { get; private set; }
         public string ProductName { get; private set; } = string.Empty;
@@ -54,17 +53,8 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
         }
         public void ApplyDiscount(Money discount)
         {
-            if (discount == null)
-                throw new ArgumentNullException(nameof(discount));
-
-            if (discount.IsNegative())
-                throw new DomainException("Discount cannot be negative.");
-
-            if (discount.IsGreaterThan(GetSubtotal()))
-                throw new DomainException("Discount cannot exceed subtotal.");
-
+            DiscountValidator.ValidateOrderDiscount(discount, GetSubtotal());
             Discount = discount;
-
         }
 
         public Money GetSubtotal()

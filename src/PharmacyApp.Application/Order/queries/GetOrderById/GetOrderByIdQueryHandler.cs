@@ -24,39 +24,7 @@ namespace PharmacyApp.Application.Order.queries.GetOrderById
             if (order == null)
                 return null;
 
-            var orderDto = new OrderDto(
-                order.Id,
-                order.CustomerId,
-                order.OrderNumber,
-                order.Status.ToString(),
-                order.Items.Select(i => new OrderItemDto(
-                    i.Id,
-                    i.ProductName,
-                    i.Quantity,
-                    i.UnitPrice.Amount,
-                    i.Discount?.Amount ?? 0,
-                    0,
-                    i.TotalPrice.Amount,
-                    string.Empty
-                )).ToList(),
-                order.SubTotal.Amount,
-                order.ShippingCost.Amount,
-                order.Tax.Amount,
-                order.Discount.Amount,
-                order.TotalAmount.Amount,
-                "EGP",
-                order.ShippingAddress,
-                order.BillingAddress,
-                order.PaymentMethod,
-                order.CreatedAt,
-                order.ConfirmedAt,
-                order.ShippedAt,
-                order.DeliveredAt,
-                order.CancelledAt,
-                order.CancellationReason ?? string.Empty
-            );
-
-            return orderDto;
+            return new OrderDto(order);
         }
     }
 }

@@ -1,31 +1,31 @@
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
+using PharmacyApp.Application.Common;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
 
 namespace PharmacyApp.Application.Order.Command.AddOrderItem
 {
-    public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, OrderDto>
+    public class AddOrderItemCommandHandler : BaseCommandHandler<AddOrderItemCommand, OrderDto>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IUnitOfWork _unitOfWork;
 
         public AddOrderItemCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
             _orderRepository = orderRepository;
-            _unitOfWork = unitOfWork;
         }
 
-        public async Task<OrderDto> Handle(AddOrderItemCommand request, CancellationToken cancellationToken)
+        public override async Task<OrderDto> Handle(AddOrderItemCommand request, CancellationToken cancellationToken)
         {
             var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
             if (order == null)
-                throw new Exception("Order not found.");
+                throw new InvalidOperationException("Order not found.");
 
-            var unitPrice = Money.Create(request.UnitPrice);
+            var unitPrice = Money.Create(request.UnitPrice, Constants.DefaultCurrency);
             order.AddItem(request.ProductId, request.ProductName, request.Quantity, unitPrice);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await SaveChangesAsync(cancellationToken);
 
             return new OrderDto(order);
         }

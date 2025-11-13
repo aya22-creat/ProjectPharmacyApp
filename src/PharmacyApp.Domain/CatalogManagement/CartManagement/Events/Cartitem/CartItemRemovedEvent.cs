@@ -1,6 +1,6 @@
 using PharmacyApp.Common.Common.DomainEvent;
 
-namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Events
+namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Events.Cartitem
 {
     public class CartItemRemovedEvent : DomainEvent
     {

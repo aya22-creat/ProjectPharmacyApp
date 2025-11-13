@@ -1,49 +1,54 @@
 using MediatR;
 using PharmacyApp.Application.Cart.DTO;
+using PharmacyApp.Application.Common;
 using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
+using PharmacyApp.Domain.CatalogManagement.CartManagement.Services;
 
 namespace PharmacyApp.Application.Cart.Queries.GetCartByCustomer
 {
-    public class GetCartByCustomerQueryHandler : IRequestHandler<GetCartByCustomerQuery, CartDto?>
+    public class GetCartByCustomerQueryHandler : BaseQueryHandler<GetCartByCustomerQuery, CartDto?>
     {
         private readonly ICartRepository _cartRepository;
+        private readonly ICartCalculationService _cartCalculationService;
 
-        public GetCartByCustomerQueryHandler(ICartRepository cartRepository)
+        public GetCartByCustomerQueryHandler(
+            ICartRepository cartRepository,
+            ICartCalculationService cartCalculationService)
         {
             _cartRepository = cartRepository;
+            _cartCalculationService = cartCalculationService;
         }
 
-        public async Task<CartDto?> Handle(GetCartByCustomerQuery request, CancellationToken cancellationToken)
+        public override async Task<CartDto?> Handle(GetCartByCustomerQuery request, CancellationToken cancellationToken)
         {
             var cart = await _cartRepository.GetByCustomerIdAsync(request.CustomerId, cancellationToken);
 
             if (cart == null)
                 return null;
 
-
             var items = cart.Items
                .Select(i => new CartItemDto(
                    Id: i.Id,
                    ProductId: i.ProductId,
-                   ProductName: "",
+                   ProductName: i.ProductName,
                    ProductImage: null,
                    UnitPrice: i.Price!.Amount,
                    Quantity: i.Quantity,
                    Discount: 0,
                    Tax: 0,
                    Total: i.GetSubtotal().Amount,
-                   IsAvailable: true,
-                   StockQuantity: 100     //defualt value 
+                   IsAvailable: Constants.DefaultAvailability,
+                   StockQuantity: Constants.DefaultStockQuantity
                ))
                .ToList();
 
             var subTotal = items.Sum(x => x.Total);
             var totalQuantity = items.Sum(x => x.Quantity);
             var discount = 0m;
-            var tax = subTotal * 0.14m;
+            var tax = _cartCalculationService.CalculateTax(subTotal);
             var grandTotal = subTotal - discount + tax;
 
-            //Separation of Concerns 
+            //Separation of Concerns
             var cartDto = new CartDto(
                 Id: cart.Id,
                 CustomerId: cart.CustomerId,
@@ -53,14 +58,12 @@ namespace PharmacyApp.Application.Cart.Queries.GetCartByCustomer
                 Discount: discount,
                 Tax: tax,
                 TotalAmount: grandTotal,
-                Currency: "EGP",
+                Currency: Constants.DefaultCurrency,
                 CreatedAt: cart.CreatedAt,
                 UpdatedAt: cart.UpdatedAt
             );
 
             return cartDto;
-
-
         }
     }
 }

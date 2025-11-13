@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
 using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Entities;
-using PharmacyApp.Domain.CatalogManagement.Shared.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.ValueObjects;
 
 namespace PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Services

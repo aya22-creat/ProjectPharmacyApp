@@ -2,12 +2,16 @@ using System;
 using PharmacyApp.Common.Common;
 using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Domain.CatalogManagement.CartManagement.ValueObjects;
+using PharmacyApp.Domain.CatalogManagement.CartManagement.Enums;
+using PharmacyApp.Domain.CatalogManagement.CartManagement.Events.Coupon;
+using PharmacyApp.Domain.CatalogManagement.Common;
 
 namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
 {
     public class CartItem : BaseEntity<Guid>
     {
         public Guid ProductId { get; private set; }
+        public string ProductName { get; private set; } = string.Empty;
         public int Quantity { get; private set; }
         public Money? Price { get; private set; }
         public Money? Discount { get; private set; } = Money.Zero("EGP");
@@ -29,19 +33,31 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
             Price = price ?? throw new ArgumentNullException(nameof(price));
         }
 
+        public CartItem(Guid productId, string productName, int quantity, Money price) : base(Guid.NewGuid())
+        {
+            if (productId == Guid.Empty)
+                throw new ArgumentException("ProductId cannot be empty", nameof(productId));
+
+            if (string.IsNullOrWhiteSpace(productName))
+                throw new ArgumentException("ProductName cannot be empty", nameof(productName));
+
+            if (quantity <= 0)
+                throw new ArgumentException("Quantity must be greater than zero", nameof(quantity));
+
+            ProductId = productId;
+            ProductName = productName;
+            Quantity = quantity;
+            Price = price ?? throw new ArgumentNullException(nameof(price));
+        }
+
         public void ApplyDiscount(Money discount)
         {
-            if (discount == null)
-                throw new ArgumentNullException(nameof(discount));
-
-            if (discount.Amount < 0)
-                throw new DomainException("Discount cannot be negative");
-
-            if (discount.Amount > GetSubtotal().Amount)
-                throw new DomainException("Discount cannot exceed subtotal");
-
+            DiscountValidator.ValidateCartDiscount(discount, GetSubtotal());
             Discount = discount;
         }
+
+
+
 
         public void UpdateQuantity(int newQuantity)
         {

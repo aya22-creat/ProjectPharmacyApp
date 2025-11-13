@@ -5,32 +5,34 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Cart.DTO;
+using PharmacyApp.Application.Common;
+using PharmacyApp.Domain.CatalogManagement.CartManagement.Services;
 using PharmacyApp.Domain.CatalogManagement.CartManagement.Entities;
 using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
 
 namespace PharmacyApp.Application.Cart.Queries.GetCartTotal
 {
-    public class GetCartTotalQueryHandler : IRequestHandler<GetCartTotalQuery, decimal>
+    public class GetCartTotalQueryHandler : BaseQueryHandler<GetCartTotalQuery, decimal>
     {
         private readonly ICartRepository _cartRepository;
+        private readonly ICartCalculationService _cartCalculationService;
 
-        public GetCartTotalQueryHandler(ICartRepository cartRepository)
+        public GetCartTotalQueryHandler(
+            ICartRepository cartRepository,
+            ICartCalculationService cartCalculationService)
         {
             _cartRepository = cartRepository;
+            _cartCalculationService = cartCalculationService;
         }
 
-        public async Task<decimal> Handle(GetCartTotalQuery request, CancellationToken cancellationToken)
+        public override async Task<decimal> Handle(GetCartTotalQuery request, CancellationToken cancellationToken)
         {
             var cart = await _cartRepository.GetByCustomerIdAsync(request.CustomerId, cancellationToken);
 
             if (cart == null)
                 return 0;
 
-            var subTotal = cart.Items.Sum(i => i.GetSubtotal().Amount);
-            var discount = cart.Items.Sum(i => i.Discount?.Amount ?? 0);
-            var tax = subTotal * 0.14m;
-
-            return subTotal - discount + tax;
+            return _cartCalculationService.CalculateTotal(cart);
         }
     }
 }
