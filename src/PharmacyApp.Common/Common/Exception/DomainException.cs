@@ -12,6 +12,7 @@ namespace PharmacyApp.Common.Common.Exception
         public DomainException(string message) : base(message) { }
 
         public DomainException(string message, System.Exception innerException) : base(message, innerException) { }
+
     }
 }
 

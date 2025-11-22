@@ -2,14 +2,13 @@ using MediatR;
 using PharmacyApp.Application.CheckOut.DTO;
 
 
-namespace PharmacyApp.Application.CheckOut.Command.CreatCheckout
+namespace PharmacyApp.Application.CheckOut.Command.CreateCheckout
 {
     public record CreateCheckoutCommand(
         Guid CartId,
         Guid CustomerId,
-        string ShippingAddress,
-        string BillingAddress,
-        string PaymentMethod,
-        string Currency
+        AddressDto ShippingAddress,
+        AddressDto BillingAddress,
+        PaymentMethodDto PaymentMethod
     ) : IRequest<CheckoutDto>;
 }

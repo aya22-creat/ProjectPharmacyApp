@@ -25,7 +25,7 @@ namespace PharmacyApp.Application.CheckOut.DTO
             BillingAddress: new AddressDto(checkout.BillingAddress),
             PaymentMethod: new PaymentMethodDto(checkout.PaymentMethod),
             TotalPrice: checkout.TotalPrice.Amount,
-            Currency: checkout.TotalPrice.Currency,
+            Currency: checkout.TotalPrice.Currency!,
             Status: checkout.Status.ToString(),
             CreatedAt: checkout.CreatedAt
         ) { }

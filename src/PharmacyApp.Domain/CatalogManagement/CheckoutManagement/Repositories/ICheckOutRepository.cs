@@ -15,5 +15,7 @@ namespace PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Repositories
         Task<bool> HasActiveCheckoutAsync(Guid customerId, CancellationToken cancellationToken = default);
         Task<IEnumerable<CheckoutAggregate>> GetPendingCheckoutAsync(Guid customerId, CancellationToken cancellationToken = default);
         Task<IEnumerable<CheckoutAggregate>> GetCompletedCheckoutsAsync(Guid customerId, CancellationToken cancellationToken = default);
-    }
+    
+    
+        Task<bool> UpdateAsync(CheckoutAggregate checkout, CancellationToken cancellationToken = default);}
 }

@@ -7,6 +7,7 @@ namespace PharmacyApp.Infrastructure.MessageQueue.Producer.CheckOut
         Guid CheckoutId,
         Guid CartId,
         Guid CustomerId,
+        decimal TotalAmount,
         DateTime CreatedAt
     );
    

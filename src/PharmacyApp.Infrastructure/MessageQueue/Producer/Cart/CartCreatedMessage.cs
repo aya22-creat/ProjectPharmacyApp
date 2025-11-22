@@ -1,6 +1,6 @@
 using System;
 
-namespace PharmacyApp.Infrastructure.MessageQueue.Contracts.Cart
+namespace PharmacyApp.Infrastructure.MessageQueue.Producer.Cart
 {
     public record CartCreatedMessage(
         Guid CartId,

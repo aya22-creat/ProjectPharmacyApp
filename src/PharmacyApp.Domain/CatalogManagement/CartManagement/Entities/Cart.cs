@@ -143,7 +143,8 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Entities
             State = CartState.Abandoned;
 
             var total = GetTotal();
-            AddDomainEvent(new CartAbandonedEvent(Id, CustomerId, total.Amount));
+            var itemsCount = GetTotalItemsCount();
+            AddDomainEvent(new CartAbandonedEvent(Id, CustomerId, itemsCount, total.Amount));
         }
 
         // Mark cart as expired

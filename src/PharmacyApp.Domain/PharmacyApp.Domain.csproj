@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\PharmacyApp.Common\PharmacyApp.Common.csproj" />
-   
+    <PackageReference Include="MediatR" Version="12.4.0" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -12,4 +12,3 @@
   </PropertyGroup>
 
 </Project>
-      

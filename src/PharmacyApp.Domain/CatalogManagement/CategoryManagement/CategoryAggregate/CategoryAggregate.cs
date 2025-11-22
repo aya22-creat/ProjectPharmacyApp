@@ -1,5 +1,6 @@
 using System;
 using PharmacyApp.Common.Common;
+using PharmacyApp.Domain.CatalogManagement.CategoryManagement.Events;
 
 namespace PharmacyApp.Domain.CatalogManagement.CategoryManagement.CategoryAggregate
 {
@@ -7,6 +8,9 @@ namespace PharmacyApp.Domain.CatalogManagement.CategoryManagement.CategoryAggreg
     {
         public string Name { get; private set; }
         public string Description { get; private set; }
+        public Guid? ParentCategoryId { get; private set; }
+        public int DisplayOrder { get; private set; }
+        public DateTime CreatedAt { get; private set; }
         public int ProductCount { get; private set; }
 
         private CategoryAggregate()
@@ -17,17 +21,22 @@ namespace PharmacyApp.Domain.CatalogManagement.CategoryManagement.CategoryAggreg
             Description = string.Empty;
         }
 
-        private CategoryAggregate(Guid id, string name, string description)
+        private CategoryAggregate(Guid id, string name, string description, Guid? parentCategoryId, int displayOrder, DateTime createdAt)
             : base(id)
         {
             Name = name;
             Description = description;
+            ParentCategoryId = parentCategoryId;
+            DisplayOrder = displayOrder;
+            CreatedAt = createdAt;
             ProductCount = 0;
         }
 
-        public static CategoryAggregate Create(string name, string description)
+        public static CategoryAggregate Create(string name, string description, Guid? parentCategoryId = null, int displayOrder = 0)
         {
-            return new CategoryAggregate(Guid.NewGuid(), name, description);
+            var category = new CategoryAggregate(Guid.NewGuid(), name, description, parentCategoryId, displayOrder, DateTime.UtcNow);
+            category.RaiseDomainEvent(new CategoryCreatedEvent(category.Id, category.Name, category.ParentCategoryId, category.Description, category.DisplayOrder, category.CreatedAt));
+            return category;
         }
 
         public void Update(string name, string description)

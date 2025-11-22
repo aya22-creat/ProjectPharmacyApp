@@ -1,8 +1,9 @@
 using PharmacyApp.Common.Common.DomainEvent;
+using MediatR;
 
 namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Events.Cartitem
 {
-    public class CartItemRemovedEvent : DomainEvent
+    public class CartItemRemovedEvent : DomainEvent, INotification
     {
         public Guid CartId { get; }
         public Guid CartItemId { get; }

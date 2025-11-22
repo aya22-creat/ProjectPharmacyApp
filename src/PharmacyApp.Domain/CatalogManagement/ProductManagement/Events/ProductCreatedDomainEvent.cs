@@ -1,9 +1,10 @@
 using System;
+using MediatR;
 using PharmacyApp.Common.Common.DomainEvent;
 
 namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.Events
 {
-    public class ProductCreatedDomainEvent : DomainEvent
+    public class ProductCreatedDomainEvent : DomainEvent , INotification
     {
         public Guid ProductId { get; }
         public string Name { get; }

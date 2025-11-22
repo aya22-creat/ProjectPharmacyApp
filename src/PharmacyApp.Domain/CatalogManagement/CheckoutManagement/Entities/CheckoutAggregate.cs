@@ -71,7 +71,7 @@ namespace PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Entities
             Status = CheckoutStatus.Completed;
             CompletedAt = DateTime.UtcNow;
 
-            AddDomainEvent(new CheckoutCompletedEvent(Id, CustomerId, CartId, TotalPrice.Amount));
+            AddDomainEvent(new CheckoutCompletedEvent(Id, CustomerId, CartId, CompletedAt.Value, TotalPrice.Amount));
         }
 
         public void CancelCheckout()

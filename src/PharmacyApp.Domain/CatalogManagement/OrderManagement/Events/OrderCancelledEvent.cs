@@ -1,10 +1,10 @@
 using PharmacyApp.Common.Common.DomainEvent;
-
+using MediatR;
 
 namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Events
 {
 
-    public class OrderCancelledEvent : DomainEvent
+    public class OrderCancelledEvent : DomainEvent , INotification
     {
 
         public Guid OrderId { get; }

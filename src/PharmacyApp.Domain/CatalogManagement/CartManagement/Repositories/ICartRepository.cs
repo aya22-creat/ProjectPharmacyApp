@@ -11,5 +11,6 @@ namespace PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories
         Task<bool> ExistsForCustomerAsync(Guid customerId, CancellationToken cancellationToken = default);
 
         Task<Cart?> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
+
     }
 }

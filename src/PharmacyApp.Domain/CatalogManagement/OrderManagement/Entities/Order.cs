@@ -50,7 +50,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
             // Set OrderId on each order item
             order.OrderItems.ForEach(item => item.SetOrderId(order.Id));
 
-            order.AddDomainEvent(new OrderCreatedEvent(order.Id, customerId, order.OrderNumber));
+            order.AddDomainEvent(new OrderCreatedEvent(order.Id, customerId, order.OrderNumber, order.TotalAmount));
 
             return order;
         }
@@ -65,7 +65,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities
             CompletedAt = DateTime.UtcNow;
 
 
-            AddDomainEvent(new OrderCompletedEvent(Id, TotalAmount, CompletedAt.Value));
+            AddDomainEvent(new OrderCompletedEvent(Id, CustomerId, TotalAmount, CompletedAt.Value));
         }
 
         public void Cancel(string reason)

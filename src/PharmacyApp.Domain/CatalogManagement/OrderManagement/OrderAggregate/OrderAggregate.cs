@@ -55,7 +55,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate
             Discount = Money.Zero();
             CreatedAt = DateTime.UtcNow;
 
-            RaiseDomainEvent(new OrderCreatedEvent(Id, CustomerId, OrderNumber));
+            RaiseDomainEvent(new OrderCreatedEvent(Id, CustomerId, OrderNumber, TotalAmount.Amount));
 
         }
 
@@ -142,7 +142,7 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate
 
             Status = OrderStatus.Completed;
             CompletedAt = DateTime.UtcNow;
-            RaiseDomainEvent(new OrderCompletedEvent(Id, TotalAmount.Amount, CompletedAt.Value));
+            RaiseDomainEvent(new OrderCompletedEvent(Id, CustomerId, TotalAmount.Amount, CompletedAt.Value));
         }
 
         public void StartProcessing()

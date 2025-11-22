@@ -1,11 +1,14 @@
 using System;
 
-namespace PharmacyApp.Infrastructure.MessageQueue.Contracts.Cart
+namespace PharmacyApp.Infrastructure.MessageQueue.Producer.Cart
 {
     public record CartCheckedOutMessage(
         Guid CartId,
         Guid CustomerId,
-        DateTime CheckedOutAt
+        DateTime CheckedOutAt,
+        decimal TotalAmount,
+        string Currency
+
     );
     
       
