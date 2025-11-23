@@ -1,6 +1,6 @@
 using MediatR;
 using PharmacyApp.Application.CheckOut.DTO;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Repositories;
+using PharmacyApp.Domain.CheckoutFunctionality.Repositories;
 
 namespace PharmacyApp.Application.CheckOut.Queries.GetCheckoutsByCustomerId
 {

@@ -1,7 +1,7 @@
 using MediatR;
 using PharmacyApp.Application.CheckOut.DTO;
 using PharmacyApp.Application.CheckOut.Queries.GetCheckout;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Repositories;
+using PharmacyApp.Domain.CheckoutFunctionality.Repositories;
 
 
 

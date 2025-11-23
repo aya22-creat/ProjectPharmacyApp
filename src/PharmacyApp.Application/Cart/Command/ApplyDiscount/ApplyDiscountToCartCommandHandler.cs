@@ -6,12 +6,12 @@ using MediatR;
 using PharmacyApp.Application.Cart.Command;
 using PharmacyApp.Application.Cart.DTO;
 using PharmacyApp.Application.Common;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Services;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Enums;
-using CartEntity = PharmacyApp.Domain.CatalogManagement.CartManagement.Entities.Cart;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.ValueObjects;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Entities;
+using PharmacyApp.Domain.CartManagement.Services;
+using PharmacyApp.Domain.CartManagement.Enums;
+using CartEntity = PharmacyApp.Domain.CartManagement.Entities.Cart;
+using PharmacyApp.Domain.CartManagement.Repositories;
+using PharmacyApp.Domain.CartManagement.ValueObjects;
+using PharmacyApp.Domain.CartManagement.Entities;
 
 namespace PharmacyApp.Application.Cart.Command.ApplyDiscount
 {

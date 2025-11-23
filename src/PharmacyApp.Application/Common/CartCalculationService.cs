@@ -1,8 +1,8 @@
 using PharmacyApp.Application.Common;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Entities;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Enums;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Services;
-using CartEntity = PharmacyApp.Domain.CatalogManagement.CartManagement.Entities.Cart;
+using PharmacyApp.Domain.CartManagement.Entities;
+using PharmacyApp.Domain.CartManagement.Enums;
+using PharmacyApp.Domain.CartManagement.Services;
+using CartEntity = PharmacyApp.Domain.CartManagement.Entities.Cart;
 
 namespace PharmacyApp.Application.Common
 {

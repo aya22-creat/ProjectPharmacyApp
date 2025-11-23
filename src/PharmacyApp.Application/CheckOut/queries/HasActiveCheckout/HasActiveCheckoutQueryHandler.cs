@@ -1,5 +1,5 @@
 using MediatR;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Repositories;
+using PharmacyApp.Domain.CheckoutFunctionality.Repositories;
 
 namespace PharmacyApp.Application.CheckOut.queries.HasActiveCheckout
 {

@@ -2,10 +2,8 @@ using System;
 using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using PharmacyApp.Infrastructure.MessageQueue.Producer.CheckOut;
 using PharmacyApp.Infrastructure.MessageQueue.Producer.Messages;
 using PharmacyApp.Infrastructure.MessageQueue.Producer;
-
 
 namespace PharmacyApp.Infrastructure.MessageQueue.Consumers.CheckOut
 {

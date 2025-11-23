@@ -4,9 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Common;
-using CartEntity = PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Entities.CheckoutAggregate;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.ValueObjects;
+using CartEntity = PharmacyApp.Domain.CheckoutFunctionality.Entities.CheckoutAggregate;
+using PharmacyApp.Domain.CheckoutFunctionality.Repositories;
+using PharmacyApp.Domain.CheckoutFunctionality.ValueObjects;
 
 namespace PharmacyApp.Application.CheckOut.Command.CancelCheckout
 {

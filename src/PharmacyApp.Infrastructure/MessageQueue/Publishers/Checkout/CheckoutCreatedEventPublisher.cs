@@ -2,7 +2,7 @@ using System;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Events;
+using PharmacyApp.Domain.CheckoutFunctionality.Events;
 using PharmacyApp.Infrastructure.MessageQueue.Producer.CheckOut;
 
 

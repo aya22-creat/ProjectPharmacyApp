@@ -7,8 +7,8 @@ using PharmacyApp.Application.Cart.Command;
 using PharmacyApp.Application.Cart.DTO;
 using PharmacyApp.Application.Order.Command.CreateOrder;
 using PharmacyApp.Application.Order.DTO;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
-using CartEntity = PharmacyApp.Domain.CatalogManagement.CartManagement.Entities.Cart;
+using PharmacyApp.Domain.CartManagement.Repositories;
+using CartEntity = PharmacyApp.Domain.CartManagement.Entities.Cart;
 
 namespace PharmacyApp.Application.Cart.Command.UpdateCart
 {

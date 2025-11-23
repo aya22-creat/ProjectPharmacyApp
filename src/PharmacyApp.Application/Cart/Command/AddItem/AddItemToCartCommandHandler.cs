@@ -6,9 +6,9 @@ using MediatR;
 using PharmacyApp.Application.Cart.Command;
 using PharmacyApp.Application.Cart.DTO;
 using PharmacyApp.Application.Common;
-using CartEntity = PharmacyApp.Domain.CatalogManagement.CartManagement.Entities.Cart;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.ValueObjects;
+using CartEntity = PharmacyApp.Domain.CartManagement.Entities.Cart;
+using PharmacyApp.Domain.CartManagement.Repositories;
+using PharmacyApp.Domain.CartManagement.ValueObjects;
 
 namespace PharmacyApp.Application.Cart.Command.AddItem
 {

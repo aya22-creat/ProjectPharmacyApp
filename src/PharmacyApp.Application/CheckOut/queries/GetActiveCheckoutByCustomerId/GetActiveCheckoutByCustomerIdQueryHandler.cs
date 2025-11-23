@@ -1,8 +1,8 @@
 using MediatR;
 using PharmacyApp.Application.CheckOut.DTO;
 using PharmacyApp.Application.Common;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Services;
+using PharmacyApp.Domain.CheckoutFunctionality.Repositories;
+using PharmacyApp.Domain.CheckoutFunctionality.Services;
 
 
 namespace PharmacyApp.Application.CheckOut.Queries.GetActiveCheckoutByCustomerId

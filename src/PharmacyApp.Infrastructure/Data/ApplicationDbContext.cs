@@ -10,8 +10,9 @@ using PharmacyApp.Common.Common;
 using PharmacyApp.Domain.CatalogManagement.Common;
 using PharmacyApp.Domain.CatalogManagement.ProductManagement.Entities;
 using PharmacyApp.Domain.CatalogManagement.CategoryManagement.CategoryAggregate;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Entities;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Entities;
+using PharmacyApp.Domain.CheckoutFunctionality.Entities;
+using PharmacyApp.Domain.CartManagement.Entities;
+using PharmacyApp.Domain.CartManagement.Events;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities;
 
 

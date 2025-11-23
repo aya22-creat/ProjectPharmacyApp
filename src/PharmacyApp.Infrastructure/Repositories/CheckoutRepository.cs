@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Entities;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Repositories;
+using PharmacyApp.Domain.CheckoutFunctionality.Entities;
+using PharmacyApp.Domain.CheckoutFunctionality.Repositories;
 using PharmacyApp.Infrastructure.Data;
 using PharmacyApp.Common.Common.Repositories;
 

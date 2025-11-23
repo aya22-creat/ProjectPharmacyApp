@@ -1,7 +1,8 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Entities;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
+using PharmacyApp.Domain.CartManagement.Entities;
+using PharmacyApp.Domain.CartManagement.Enums;
+using PharmacyApp.Domain.CartManagement.Repositories;
 using PharmacyApp.Infrastructure.Data;
 
 namespace PharmacyApp.Infrastructure.Repositories

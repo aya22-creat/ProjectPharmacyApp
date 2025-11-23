@@ -1,5 +1,5 @@
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.ValueObjects;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Entities;
+using PharmacyApp.Domain.CheckoutFunctionality.ValueObjects;
+using PharmacyApp.Domain.CheckoutFunctionality.Entities;
 
 namespace PharmacyApp.Application.CheckOut.DTO
 {

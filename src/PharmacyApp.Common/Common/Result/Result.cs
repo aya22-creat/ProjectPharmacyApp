@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PharmacyApp.Common.Common.Errors.Base.Interfaces;
+using PharmacyApp.Common.Errors;
 
 
 

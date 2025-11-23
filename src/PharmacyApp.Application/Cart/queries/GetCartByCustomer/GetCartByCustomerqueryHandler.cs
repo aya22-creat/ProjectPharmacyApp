@@ -1,8 +1,8 @@
 using MediatR;
 using PharmacyApp.Application.Cart.DTO;
 using PharmacyApp.Application.Common;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Services;
+using PharmacyApp.Domain.CartManagement.Repositories;
+using PharmacyApp.Domain.CartManagement.Services;
 
 namespace PharmacyApp.Application.Cart.Queries.GetCartByCustomer
 {

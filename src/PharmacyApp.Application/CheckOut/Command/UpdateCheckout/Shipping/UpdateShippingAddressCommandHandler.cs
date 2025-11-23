@@ -2,8 +2,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.CheckOut.DTO;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.ValueObjects;
+using PharmacyApp.Domain.CheckoutFunctionality.Repositories;
+using PharmacyApp.Domain.CheckoutFunctionality.ValueObjects;
 using PharmacyApp.Common.Common.Exception; // إذا عرفتي NotFoundException
 
 namespace PharmacyApp.Application.CheckOut.Command.UpdateCheckout.Shipping

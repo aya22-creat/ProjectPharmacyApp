@@ -1,5 +1,5 @@
-using CartEntity = PharmacyApp.Domain.CatalogManagement.CartManagement.Entities.Cart;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Entities;
+using CartEntity = PharmacyApp.Domain.CartManagement.Entities.Cart;
+using PharmacyApp.Domain.CartManagement.Entities;
 
 namespace PharmacyApp.Application.Cart.DTO
 {

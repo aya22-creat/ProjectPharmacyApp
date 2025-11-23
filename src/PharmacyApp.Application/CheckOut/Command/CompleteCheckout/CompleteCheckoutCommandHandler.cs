@@ -8,10 +8,10 @@ using PharmacyApp.Common.Common;
 using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Application.CheckOut.DTO;
 using PharmacyApp.Application.Order.Command.CreateOrder;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
-using CartEntity = PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Entities.CheckoutAggregate;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.ValueObjects;
+using PharmacyApp.Domain.CartManagement.Repositories;
+using CartEntity = PharmacyApp.Domain.CheckoutFunctionality.Entities.CheckoutAggregate;
+using PharmacyApp.Domain.CheckoutFunctionality.Repositories;
+using PharmacyApp.Domain.CheckoutFunctionality.ValueObjects;
 
 namespace PharmacyApp.Application.CheckOut.Command.CompleteCheckout
 {

@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Cart.DTO;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Entities;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
+using PharmacyApp.Domain.CartManagement.Entities;
+using PharmacyApp.Domain.CartManagement.Repositories;
 
 namespace PharmacyApp.Application.Cart.Queries.GetCartItemsCount
 {

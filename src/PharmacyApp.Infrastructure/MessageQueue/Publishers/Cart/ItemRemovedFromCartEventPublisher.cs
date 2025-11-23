@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Events.Cartitem;
+using PharmacyApp.Domain.CartManagement.Events.Cartitem;
 using PharmacyApp.Infrastructure.MessageQueue.Producer.Cart;
 
 //logging only for demo purposes, no actual message is published

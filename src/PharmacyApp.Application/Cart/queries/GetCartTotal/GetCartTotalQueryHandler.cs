@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Cart.DTO;
 using PharmacyApp.Application.Common;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Services;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Entities;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
+using PharmacyApp.Domain.CartManagement.Services;
+using PharmacyApp.Domain.CartManagement.Entities;
+using PharmacyApp.Domain.CartManagement.Repositories;
 
 namespace PharmacyApp.Application.Cart.Queries.GetCartTotal
 {

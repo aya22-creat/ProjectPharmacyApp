@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Entities;
+using PharmacyApp.Domain.CheckoutFunctionality.Entities;
 
 
 

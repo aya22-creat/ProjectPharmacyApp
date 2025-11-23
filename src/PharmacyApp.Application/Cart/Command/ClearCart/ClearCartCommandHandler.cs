@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Cart.Command;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
+using PharmacyApp.Domain.CartManagement.Repositories;
 
 namespace PharmacyApp.Application.Cart.Command.ClearCart
 {

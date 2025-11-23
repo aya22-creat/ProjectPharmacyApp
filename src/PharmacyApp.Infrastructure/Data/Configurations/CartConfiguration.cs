@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Entities;
+using PharmacyApp.Domain.CartManagement.Entities;
 
 
 namespace PharmacyApp.Infrastructure.Data.Configurations

@@ -9,15 +9,15 @@ using Microsoft.Extensions.DependencyInjection;
 using PharmacyApp.Application.Common;
 using PharmacyApp.Domain.CatalogManagement.CategoryManagement;
 using PharmacyApp.Domain.CatalogManagement.ProductManagement;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement;
-using PharmacyApp.Domain.CatalogManagement.CartManagement;
+using PharmacyApp.Domain.CheckoutFunctionality;
+using PharmacyApp.Domain.CartManagement;
 using PharmacyApp.Domain.CatalogManagement.CategoryManagement.Repositories;
 using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
 using PharmacyApp.Infrastructure.Common;
 using PharmacyApp.Infrastructure.Data;
 using PharmacyApp.Infrastructure.Repositories;
-using PharmacyApp.Domain.CatalogManagement.CheckoutManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.CartManagement.Repositories;
+using PharmacyApp.Domain.CheckoutFunctionality.Repositories;
+using PharmacyApp.Domain.CartManagement.Repositories;
 using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
 
 namespace PharmacyApp.Infrastructure
