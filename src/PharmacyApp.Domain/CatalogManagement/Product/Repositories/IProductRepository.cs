@@ -8,7 +8,6 @@ namespace PharmacyApp.Domain.CatalogManagement.Product.Repositories
 {
     public interface IProductRepository : IRepository<ProductAggregate>
     {
-        // Synchronous retrieval (اختياري، لكن يفضل async دائمًا)
         ProductAggregate? GetById(Guid productId);
 
         // Async retrieval

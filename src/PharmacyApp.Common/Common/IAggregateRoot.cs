@@ -1,18 +1,15 @@
-using PharmacyApp.Common.Common;
+namespace PharmacyApp.Common.Common;
 
-namespace PharmacyApp.Common.Common
+public interface IAggregateRoot { }
+
+public abstract class AggregateRoot<TId> : BaseEntity<TId>, IAggregateRoot
+    where TId : notnull
 {
-    public interface IAggregateRoot { }
+    protected AggregateRoot() : base() { }
+    protected AggregateRoot(TId id) : base(id) { }
 
-    public abstract class AggregateRoot<TId> : BaseEntity<TId>, IAggregateRoot
-        where TId : notnull
+    protected void RaiseDomainEvent(DomainEvent domainEvent)
     {
-        protected AggregateRoot() : base() { }
-        protected AggregateRoot(TId id) : base(id) { }
-
-        protected void RaiseDomainEvent(DomainEvent domainEvent)
-        {
-            AddDomainEvent(domainEvent);
-        }
+        AddDomainEvent(domainEvent);
     }
 }
