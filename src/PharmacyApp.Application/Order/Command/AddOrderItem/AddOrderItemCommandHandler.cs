@@ -1,8 +1,8 @@
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
 using PharmacyApp.Application.Common;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
+using PharmacyApp.Domain.OrderManagement.ValueObjects;
+using PharmacyApp.Domain.OrderManagement.Repositories;
 
 namespace PharmacyApp.Application.Order.Command.AddOrderItem
 {

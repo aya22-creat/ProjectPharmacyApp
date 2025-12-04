@@ -1,17 +1,11 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
-using PharmacyApp.Application.Cart.Command;
-using PharmacyApp.Application.Cart.DTO;
 using PharmacyApp.Application.Order.Command.CreateOrder;
-using PharmacyApp.Application.Order.DTO;
 using PharmacyApp.Domain.CartManagement.Repositories;
-using CartEntity = PharmacyApp.Domain.CartManagement.Entities.Cart;
+using CartEntity = PharmacyApp.Domain.CartManagement.Cart;
+using PharmacyApp.Domain.CartManagement;
 
-namespace PharmacyApp.Application.Cart.Command.CheckoutCart
-{
+namespace PharmacyApp.Application.Cart.Command.CheckoutCart;
+
     public class CheckoutCartCommandHandler : IRequestHandler<CheckoutCartCommand, Guid>
     {
         private readonly ICartRepository _cartRepository;
@@ -35,7 +29,7 @@ namespace PharmacyApp.Application.Cart.Command.CheckoutCart
 
             await ValidateProductsAvailability(cart, cancellationToken);
 
-            var orderItems = cart.Items.Select(item => new CreateOrderItemDto(
+            var orderItems = cart.Items.Select(static item => new CreateOrderItemDto(
                 item.ProductId,
                 item.ProductName,
                 item.Quantity,
@@ -53,7 +47,8 @@ namespace PharmacyApp.Application.Cart.Command.CheckoutCart
 
             var orderDto = await _mediator.Send(createOrderCommand, cancellationToken);
 
-            cart.MarkAsCheckedOut();
+            cart.Checkout();
+            cart.ClearCart();
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return orderDto.Id;
@@ -71,4 +66,4 @@ namespace PharmacyApp.Application.Cart.Command.CheckoutCart
             await Task.CompletedTask;
         }
     }
-}
+

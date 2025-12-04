@@ -1,4 +1,4 @@
-using PharmacyApp.Common.Common.DomainEvent;
+using PharmacyApp.Common.Common;
 
 namespace PharmacyApp.Common.Common
 {
@@ -10,7 +10,7 @@ namespace PharmacyApp.Common.Common
         protected AggregateRoot() : base() { }
         protected AggregateRoot(TId id) : base(id) { }
 
-        protected void RaiseDomainEvent(DomainEvent.DomainEvent domainEvent)
+        protected void RaiseDomainEvent(DomainEvent domainEvent)
         {
             AddDomainEvent(domainEvent);
         }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
+using PharmacyApp.Domain.OrderManagement.Repositories;
 using PharmacyApp.Application.Order.Queries.GetCustomerOrders;
 
 namespace PharmacyApp.Application.Order.Queries.GetCustomerOrders
@@ -24,7 +24,7 @@ namespace PharmacyApp.Application.Order.Queries.GetCustomerOrders
 
             if (orders == null || !orders.Any())
                 return new List<OrderDto>();
-            var result = orders.Select(order => new OrderDto(order)).ToList();
+            var result = orders.Select(static order => new OrderDto(order)).ToList();
 
             return result;
           

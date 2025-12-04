@@ -1,9 +1,7 @@
 using System;
 using PharmacyApp.Common.Common;
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.Events;
+namespace PharmacyApp.Domain.CatalogManagement.Category.CategoryAggregate;
 
-namespace PharmacyApp.Domain.CatalogManagement.CategoryManagement.CategoryAggregate
-{
     public class CategoryAggregate : AggregateRoot<Guid>
     {
         public string Name { get; private set; }
@@ -35,7 +33,6 @@ namespace PharmacyApp.Domain.CatalogManagement.CategoryManagement.CategoryAggreg
         public static CategoryAggregate Create(string name, string description, Guid? parentCategoryId = null, int displayOrder = 0)
         {
             var category = new CategoryAggregate(Guid.NewGuid(), name, description, parentCategoryId, displayOrder, DateTime.UtcNow);
-            category.RaiseDomainEvent(new CategoryCreatedEvent(category.Id, category.Name, category.ParentCategoryId, category.Description, category.DisplayOrder, category.CreatedAt));
             return category;
         }
 
@@ -56,4 +53,4 @@ namespace PharmacyApp.Domain.CatalogManagement.CategoryManagement.CategoryAggreg
                 ProductCount--;
         }
     }
-}
+

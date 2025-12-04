@@ -3,8 +3,8 @@ using PharmacyApp.Application.Category.DTO;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement;
+using PharmacyApp.Domain.CatalogManagement.Category.Repositories;
+using PharmacyApp.Domain.CatalogManagement.Category;
 using System;
 
 

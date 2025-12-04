@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 
 
-namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects
+namespace PharmacyApp.Domain.CatalogManagement.Product.ValueObjects
 {
     public class ProductDescription : ValueObject
     {

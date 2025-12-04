@@ -2,9 +2,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Product.DTO;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects;
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.ValueObjects;
+using PharmacyApp.Domain.CatalogManagement.Product.Repositories;
+using PharmacyApp.Domain.CatalogManagement.Product.ValueObjects;
+using PharmacyApp.Domain.CatalogManagement.Category.ValueObjects;
 
 namespace PharmacyApp.Application.Product.Command.UpdateProduct
 {
@@ -29,11 +29,11 @@ namespace PharmacyApp.Application.Product.Command.UpdateProduct
             var categoryId = CategoryId.Create(request.CategoryId);
             var description = new ProductDescription(request.Description);
 
-            product.UpdateName(request.Name);
+            product.UpdateName(request.ProductName);
             product.UpdateDescription(description);
             product.UpdatePrice(price);
             product.UpdateCategory(categoryId);
-            product.UpdateStock(request.StockQuantity - product.Stock);
+            product.UpdateStock(request.StockQuantity - product.StockQuantity);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -42,7 +42,13 @@ namespace PharmacyApp.Application.Product.Command.UpdateProduct
                 product.Name,
                 product.Description.Value,
                 product.Price.Value,
-                product.Stock
+                product.StockQuantity,
+                product.CategoryId,
+                product.CreatedAt,
+                product.UpdatedAt,
+                product.IsCosmetic,
+                product.IsAvailable
+                
             );
         }
     }

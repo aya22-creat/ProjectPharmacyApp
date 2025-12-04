@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
+using PharmacyApp.Domain.OrderManagement.Repositories;
 
 namespace PharmacyApp.Application.Order.Commands.CompleteOrder
 {

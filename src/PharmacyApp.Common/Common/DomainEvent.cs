@@ -1,7 +1,7 @@
 using System;
 
-namespace PharmacyApp.Common.Common.DomainEvent
-{
+namespace PharmacyApp.Common.Common;
+
     public abstract class DomainEvent
     {
         public Guid EventId { get; }
@@ -13,4 +13,4 @@ namespace PharmacyApp.Common.Common.DomainEvent
             OccurredOn = DateTime.UtcNow;
         }
     }
-}
+

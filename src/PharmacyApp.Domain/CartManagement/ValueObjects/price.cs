@@ -7,7 +7,7 @@ namespace PharmacyApp.Domain.CartManagement.ValueObjects
     public class Money : ValueObject
     {
         public decimal Amount { get; private set; }
-        public string? Currency { get; private set; }
+        public string Currency { get; private set; }
 
         private Money() { } // For EF Core
 
@@ -29,13 +29,13 @@ namespace PharmacyApp.Domain.CartManagement.ValueObjects
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return Amount;
-            yield return Currency!;
+            yield return Currency;
         }
 
         public Money Add(Money other)
         {
             ValidateCurrency(other);
-            return new Money(Amount + other.Amount, Currency!);
+            return new Money(Amount + other.Amount, Currency);
         }
 
         public Money Subtract(Money other)
@@ -45,7 +45,7 @@ namespace PharmacyApp.Domain.CartManagement.ValueObjects
             if (Amount < other.Amount)
                 throw new InvalidOperationException("Result cannot be negative");
 
-            return new Money(Amount - other.Amount, Currency!);
+            return new Money(Amount - other.Amount, Currency);
         }
 
         public Money Multiply(decimal factor)

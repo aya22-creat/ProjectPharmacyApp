@@ -1,7 +1,7 @@
 using System;
 using MediatR;
 using PharmacyApp.Application.Product.DTO;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
+using PharmacyApp.Domain.CatalogManagement.Product.Repositories;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,7 +25,12 @@ namespace PharmacyApp.Application.Product.Queries.GetProductById
                 product.Name,
                 product.Description.Value,
                 product.Price.Value,
-                product.Stock
+                product.StockQuantity,
+                product.CategoryId,
+                product.CreatedAt,
+                product.UpdatedAt,
+                product.IsCosmetic,
+                product.IsAvailable
             );
         }
     }

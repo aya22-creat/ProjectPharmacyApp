@@ -1,6 +1,6 @@
 using PharmacyApp.Common.Common;
 
-namespace PharmacyApp.Domain.CatalogManagement.CategoryManagement.ValueObjects
+namespace PharmacyApp.Domain.CatalogManagement.Category.ValueObjects
 {
     public class CategoryId : ValueObject
     {

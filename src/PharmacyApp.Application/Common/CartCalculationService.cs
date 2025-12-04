@@ -1,8 +1,9 @@
 using PharmacyApp.Application.Common;
 using PharmacyApp.Domain.CartManagement.Entities;
-using PharmacyApp.Domain.CartManagement.Enums;
+using PharmacyApp.Domain.CartManagement.Enum;
 using PharmacyApp.Domain.CartManagement.Services;
-using CartEntity = PharmacyApp.Domain.CartManagement.Entities.Cart;
+using CartEntity = PharmacyApp.Domain.CartManagement.Cart;
+
 
 namespace PharmacyApp.Application.Common
 {
@@ -25,8 +26,8 @@ namespace PharmacyApp.Application.Common
 
         public decimal CalculateTotal(CartEntity cart)
         {
-            var subtotal = cart.Items.Sum(i => i.GetSubtotal().Amount);
-            var discount = cart.Items.Sum(i => i.Discount?.Amount ?? 0);
+            var subtotal = cart.Items.Sum(static i => i.GetSubtotal().Amount);
+            var discount = cart.Discount?.Amount ?? 0;
             var tax = CalculateTax(subtotal);
 
             return subtotal - discount + tax;

@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
+using PharmacyApp.Domain.CatalogManagement.Product.Repositories;
 using PharmacyApp.Application.Product.DTO;
 
 namespace PharmacyApp.Application.Product.Command.DeleteProduct

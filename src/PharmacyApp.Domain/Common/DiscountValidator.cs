@@ -1,8 +1,8 @@
 using PharmacyApp.Common.Common.Exception;
 using CartMoney = PharmacyApp.Domain.CartManagement.ValueObjects.Money;
-using OrderMoney = PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects.Money;
+using OrderMoney = PharmacyApp.Domain.OrderManagement.ValueObjects.Money;
 
-namespace PharmacyApp.Domain.CatalogManagement.Common
+namespace PharmacyApp.Domain.Common
 {
     public static class DiscountValidator
     {

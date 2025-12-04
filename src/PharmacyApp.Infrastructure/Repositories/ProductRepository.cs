@@ -1,6 +1,11 @@
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.AggregateRoots;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
-using PharmacyApp.Infrastructure.Data;
+using PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots;
+using PharmacyApp.Domain.CatalogManagement.Product.Repositories;
+using PharmacyApp.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PharmacyApp.Infrastructure.Repositories
 {
@@ -10,25 +15,37 @@ namespace PharmacyApp.Infrastructure.Repositories
         {
         }
 
-        public new Task<ProductAggregate?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        public ProductAggregate? GetById(Guid productId)
         {
-            return base.GetByIdAsync(id, cancellationToken);
+            return _context.Set<ProductAggregate>().FirstOrDefault(p => p.Id == productId);
         }
 
-        public Task<bool> ExistsByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        public async new Task<ProductAggregate?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(_context.Set<ProductAggregate>().Any(p => p.Id == id));
+            return await _context.Set<ProductAggregate>()
+                                 .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
         }
 
-        public Task<bool> ExistsByNameAsync(string name, CancellationToken cancellationToken = default)
+        public async Task UpdateAsync(ProductAggregate product, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(_context.Set<ProductAggregate>().Any(p => p.Name == name));
+            _context.Set<ProductAggregate>().Update(product);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task RemoveAsync(ProductAggregate product, CancellationToken cancellationToken = default)
+        public async Task<bool> ExistsByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<ProductAggregate>().AnyAsync(p => p.Id == id, cancellationToken);
+        }
+
+        public async Task<bool> ExistsByNameAsync(string name, CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<ProductAggregate>().AnyAsync(p => p.Name == name, cancellationToken);
+        }
+
+        public async Task RemoveAsync(ProductAggregate product, CancellationToken cancellationToken = default)
         {
             _context.Set<ProductAggregate>().Remove(product);
-            return Task.CompletedTask;
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

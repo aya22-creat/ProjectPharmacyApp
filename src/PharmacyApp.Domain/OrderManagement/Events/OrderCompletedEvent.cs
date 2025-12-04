@@ -1,10 +1,10 @@
 using System;
-using PharmacyApp.Common.Common.DomainEvent;
+using PharmacyApp.Common.Common;
 using MediatR;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities;
+using PharmacyApp.Domain.OrderManagement.Entities;
 
 
-namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Events
+namespace PharmacyApp.Domain.OrderManagement.Events
 {
     public class OrderCompletedEvent : DomainEvent , INotification
     {

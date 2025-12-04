@@ -1,6 +1,6 @@
 using MediatR;
 using PharmacyApp.Application.Cart.DTO;
-using PharmacyApp.Domain.CartManagement.Enums;
+using PharmacyApp.Domain.CartManagement.Enum;
 
 namespace PharmacyApp.Application.Cart.Command.ApplyDiscount{
     public record ApplyDiscountToCartCommand(

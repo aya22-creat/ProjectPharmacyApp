@@ -1,6 +1,4 @@
-using PharmacyApp.Domain.CartManagement.Entities;
-using PharmacyApp.Domain.CartManagement.Enums;
-using CartEntity = PharmacyApp.Domain.CartManagement.Entities.Cart;
+using PharmacyApp.Domain.CartManagement.Enum;
 
 namespace PharmacyApp.Domain.CartManagement.Services
 {
@@ -8,6 +6,6 @@ namespace PharmacyApp.Domain.CartManagement.Services
     {
         decimal CalculateTax(decimal subtotal);
         decimal CalculateDiscount(decimal subtotal, DiscountType type, decimal value);
-        decimal CalculateTotal(CartEntity cart);
+        decimal CalculateTotal(Cart cart);
     }
 }

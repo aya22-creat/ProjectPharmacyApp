@@ -8,7 +8,13 @@ namespace PharmacyApp.Application.Product.DTO
         string Name,
         string Description,
         decimal Price,
-        int StockQuantity
+        int StockQuantity,
+        Guid CategoryId,
+        DateTime CreatedAt,
+        DateTime? UpdatedAt,
+        bool IsCosmetic,
+        bool IsAvailable
+
     );
 
 }

@@ -1,5 +1,7 @@
-using OrderAgg = PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate;
+using OrderAgg = PharmacyApp.Domain.OrderManagement.OrderAggregate;
+using PharmacyApp.Domain.OrderManagement.Entities;
 namespace PharmacyApp.Application.Order.DTO
+
 {
     public record OrderDto(
         Guid Id,
@@ -29,15 +31,14 @@ namespace PharmacyApp.Application.Order.DTO
             Id: order.Id,
             CustomerId: order.CustomerId,
             OrderNumber: order.OrderNumber,
-            Status: order.Status.ToString(),
-            Items: order.Items.Select(i => new OrderItemDto(
+            Status: order.State.ToString(),
+            Items: order.Items.Select(static i => new OrderItemDto(
                 Id: i.Id,
                 Name: i.ProductName,
                 Quantity: i.Quantity,
                 Price: i.UnitPrice.Amount,
-                Discount: i.Discount?.Amount ?? 0,
                 Tax: 0,
-                Total: i.TotalPrice.Amount,
+                Total: i.GetTotal().Amount,
                 Note: string.Empty
             )).ToList(),
             SubTotal: order.SubTotal.Amount,

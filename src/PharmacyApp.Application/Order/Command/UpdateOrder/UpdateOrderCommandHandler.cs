@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
+using PharmacyApp.Domain.OrderManagement.Repositories;
 
 namespace PharmacyApp.Application.Order.Commands.UpdateOrder
 {
@@ -24,7 +24,7 @@ namespace PharmacyApp.Application.Order.Commands.UpdateOrder
             if (order == null)
                 throw new Exception("Order not found.");
 
-            order.Update(request.Reason);
+            order.Cancel(request.Reason);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

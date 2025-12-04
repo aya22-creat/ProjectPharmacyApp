@@ -1,6 +1,6 @@
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.CategoryAggregate;
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.Repositories;
-using PharmacyApp.Infrastructure.Data;
+using PharmacyApp.Domain.CatalogManagement.Category.CategoryAggregate;
+using PharmacyApp.Domain.CatalogManagement.Category.Repositories;
+using PharmacyApp.Infrastructure.Persistence;
 
 namespace PharmacyApp.Infrastructure.Repositories
 {

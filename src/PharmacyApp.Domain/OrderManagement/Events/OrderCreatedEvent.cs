@@ -1,7 +1,7 @@
-using PharmacyApp.Common.Common.DomainEvent;
+using PharmacyApp.Common.Common;
 using MediatR;
 
-namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Events
+namespace PharmacyApp.Domain.OrderManagement.Events
 {
     public class OrderCreatedEvent : DomainEvent, INotification
     {

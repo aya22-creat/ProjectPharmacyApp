@@ -1,7 +1,7 @@
 using System;
 
-namespace PharmacyApp.Common.Common
-{
+namespace PharmacyApp.Common.Common;
+
     public abstract class ValueObject
     {
         protected abstract IEnumerable<object> GetEqualityComponents();
@@ -19,7 +19,7 @@ namespace PharmacyApp.Common.Common
         public override int GetHashCode()
         {
             return GetEqualityComponents()
-                .Aggregate(1, (current, obj) =>
+                .Aggregate(1, static (current, obj) =>
                 {
                     unchecked
                   //unchecked means that we are ignoring overflow (which is safe in this context)                  
@@ -45,4 +45,3 @@ namespace PharmacyApp.Common.Common
             return !(left == right);
         }
     }
-}

@@ -1,5 +1,5 @@
 using MediatR;
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.Repositories;
+using PharmacyApp.Domain.CatalogManagement.Category.Repositories;
 
 namespace PharmacyApp.Application.Category.Command.DeleteCategory
 {

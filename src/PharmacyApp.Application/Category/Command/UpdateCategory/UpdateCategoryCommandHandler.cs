@@ -2,7 +2,7 @@
 using MediatR;
 using PharmacyApp.Application.Category.DTO;
 
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.Repositories;
+using PharmacyApp.Domain.CatalogManagement.Category.Repositories;
 
 namespace PharmacyApp.Application.Category.Command.UpdateCategory
 {

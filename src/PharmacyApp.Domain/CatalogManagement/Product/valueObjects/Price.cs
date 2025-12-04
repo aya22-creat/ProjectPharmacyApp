@@ -1,8 +1,8 @@
 using PharmacyApp.Common.Common;
 using PharmacyApp.Common.Common.Exception;
 
-namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects
-{
+namespace PharmacyApp.Domain.CatalogManagement.Product.ValueObjects;
+
 
     public class Price : ValueObject
     {
@@ -113,4 +113,4 @@ namespace PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects
         public override string ToString() => $"{Value:N2} {Currency}";
 
     }
-}
+

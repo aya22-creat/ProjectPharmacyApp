@@ -27,14 +27,12 @@ namespace PharmacyApp.Application.Cart.Queries.GetCartByCustomer
                 return null;
 
             var items = cart.Items
-               .Select(i => new CartItemDto(
+               .Select(static i => new CartItemDto(
                    Id: i.Id,
                    ProductId: i.ProductId,
                    ProductName: i.ProductName,
-                   ProductImage: null,
                    UnitPrice: i.Price!.Amount,
                    Quantity: i.Quantity,
-                   Discount: 0,
                    Tax: 0,
                    Total: i.GetSubtotal().Amount,
                    IsAvailable: Constants.DefaultAvailability,
@@ -42,8 +40,8 @@ namespace PharmacyApp.Application.Cart.Queries.GetCartByCustomer
                ))
                .ToList();
 
-            var subTotal = items.Sum(x => x.Total);
-            var totalQuantity = items.Sum(x => x.Quantity);
+            var subTotal = items.Sum(static x => x.Total);
+            var totalQuantity = items.Sum(static x => x.Quantity);
             var discount = 0m;
             var tax = _cartCalculationService.CalculateTax(subTotal);
             var grandTotal = subTotal - discount + tax;

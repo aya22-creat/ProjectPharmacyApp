@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Category.DTO;
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.Repositories;
+using PharmacyApp.Domain.CatalogManagement.Category.Repositories;
 
 
 namespace PharmacyApp.Application.Category.queries.GetCategories
@@ -23,7 +23,7 @@ namespace PharmacyApp.Application.Category.queries.GetCategories
         {
             var categories = await _categoryRepository.GetAllAsync(cancellationToken);
 
-            return categories.Select(c => new CategoryDto(c.Id, c.Name, c.ProductCount, c.Description));
+            return categories.Select(static c => new CategoryDto(c.Id, c.Name, c.ProductCount, c.Description));
         }
     }
 }

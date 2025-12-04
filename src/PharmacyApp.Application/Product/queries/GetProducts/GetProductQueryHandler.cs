@@ -1,6 +1,6 @@
 using MediatR;
 using PharmacyApp.Application.Product.DTO;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
+using PharmacyApp.Domain.CatalogManagement.Product.Repositories;
 
 namespace PharmacyApp.Application.Product.Queries.GetProducts
 {
@@ -17,12 +17,18 @@ namespace PharmacyApp.Application.Product.Queries.GetProducts
         {
             var products = await _productRepository.GetAllAsync(cancellationToken);
 
-            return products.Select(p => new ProductDto(
+            return products.Select(static p => new ProductDto(
                 p.Id,
                 p.Name,
                 p.Description.Value,
                 p.Price.Value,
-                p.Stock
+                p.StockQuantity,
+                p.CategoryId,
+                p.CreatedAt,
+                p.UpdatedAt,
+                p.IsCosmetic,
+                p.IsAvailable
+               
             ));
         }
     }

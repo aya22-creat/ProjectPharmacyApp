@@ -1,9 +1,8 @@
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using PharmacyApp.Domain.CartManagement.Entities;
-using PharmacyApp.Domain.CartManagement.Enums;
+using PharmacyApp.Domain.CartManagement.Enum;
+using PharmacyApp.Domain.CartManagement;
 using PharmacyApp.Domain.CartManagement.Repositories;
-using PharmacyApp.Infrastructure.Data;
+using PharmacyApp.Infrastructure.Persistence;
 
 namespace PharmacyApp.Infrastructure.Repositories
 {
@@ -15,7 +14,7 @@ namespace PharmacyApp.Infrastructure.Repositories
 
         public async Task<Cart?> GetActiveCartByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
         {
-            return await _dbSet.FirstOrDefaultAsync(c => c.CustomerId == customerId && c.State == CartState.Active, cancellationToken);
+            return await _dbSet.FirstOrDefaultAsync(c => c.CustomerId == customerId && c.State == CartStateEnum.Active, cancellationToken);
         }
 
         public async Task<bool> ExistsForCustomerAsync(Guid customerId, CancellationToken cancellationToken = default)

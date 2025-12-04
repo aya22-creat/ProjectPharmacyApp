@@ -1,12 +1,12 @@
 
-using PharmacyApp.Domain.CartManagement.Entities;
+using PharmacyApp.Domain.CartManagement;
 using PharmacyApp.Common.Common.Repositories;
 
 namespace PharmacyApp.Domain.CartManagement.Repositories
 {
-    public interface ICartRepository : IRepository<Entities.Cart>
+    public interface ICartRepository : IRepository<Cart>
     {
-        Task<Entities.Cart?> GetActiveCartByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
+        Task<Cart?> GetActiveCartByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
 
         Task<bool> ExistsForCustomerAsync(Guid customerId, CancellationToken cancellationToken = default);
 

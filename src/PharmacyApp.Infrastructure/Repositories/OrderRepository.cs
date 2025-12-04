@@ -1,35 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
-using PharmacyApp.Infrastructure.Data;
-using PharmacyApp.Common.Common.Repositories;
-using PharmacyApp.Common.Common;
+using PharmacyApp.Domain.OrderManagement.OrderAggregate;
+using PharmacyApp.Domain.OrderManagement.Enums;
+using PharmacyApp.Domain.OrderManagement.Repositories;
+using PharmacyApp.Infrastructure.Persistence;
+using PharmacyApp.Domain.CartManagement.Entities;
 
-namespace PharmacyApp.Infrastructure.Repositories
-{
+
+namespace PharmacyApp.Infrastructure.Repositories;
+
     public class OrderRepository : GenericRepository<Order>, IOrderRepository
     {
         public OrderRepository(ApplicationDbContext context) : base(context) { }
 
         public override async Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _dbSet
-                .Include(o => o.Items)
-                .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
+            return await _dbSet.Include(o => o.Items)
+                               .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
         }
 
         public async Task<Order?> GetByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken = default)
         {
-            return await _dbSet
-                .Include(o => o.Items)
-                .FirstOrDefaultAsync(o => o.OrderNumber == orderNumber, cancellationToken);
+            return await _dbSet.Include(o => o.Items)
+                               .FirstOrDefaultAsync(o => o.OrderNumber == orderNumber, cancellationToken);
         }
 
         public async Task<bool> ExistsByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken = default)
@@ -45,61 +37,23 @@ namespace PharmacyApp.Infrastructure.Repositories
 
         public async Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
         {
-            return await _dbSet
-                .Include(o => o.Items)
-                .Where(o => o.CustomerId == customerId)
-                .OrderByDescending(o => o.CreatedAt)
-                .ToListAsync(cancellationToken);
+            return await _dbSet.Include(o => o.Items)
+                               .Where(o => o.CustomerId == customerId)
+                               .OrderByDescending(o => o.CreatedAt)
+                               .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Order>> GetPendingOrdersAsync(
-            CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Order>> GetOrdersByStateAsync(OrderStateEnum state, CancellationToken cancellationToken = default)
         {
-            return await _dbSet
-                .Include(o => o.Items)
-                .Where(o => o.Status == OrderStatus.Pending)
-                .OrderBy(o => o.CreatedAt)
-                .ToListAsync(cancellationToken);
+            return await _dbSet.Include(o => o.Items)
+                               .Where(o => o.State.Value == state.Value)
+                               .OrderByDescending(o => o.CreatedAt)
+                               .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Order>> GetCompletedOrdersAsync(
-            CancellationToken cancellationToken = default)
+        public async Task<decimal> GetTotalRevenueAsync(DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default)
         {
-            return await _dbSet
-                .Include(o => o.Items)
-                .Where(o => o.Status == OrderStatus.Completed)
-                .OrderByDescending(o => o.CompletedAt)
-                .ToListAsync(cancellationToken);
-        }
-
-        public async Task<IEnumerable<Order>> GetCancelledOrdersAsync(
-            CancellationToken cancellationToken = default)
-        {
-            return await _dbSet
-                .Include(o => o.Items)
-                .Where(o => o.Status == OrderStatus.Cancelled)
-                .OrderByDescending(o => o.CancelledAt)
-                .ToListAsync(cancellationToken);
-        }
-
-        public async Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(
-            DateTime startDate,
-            DateTime endDate,
-            CancellationToken cancellationToken = default)
-        {
-            return await _dbSet
-                .Include(o => o.Items)
-                .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate)
-                .OrderByDescending(o => o.CreatedAt)
-                .ToListAsync(cancellationToken);
-        }
-
-        public async Task<decimal> GetTotalRevenueAsync(
-            DateTime? startDate = null,
-            DateTime? endDate = null,
-            CancellationToken cancellationToken = default)
-        {
-            var query = _dbSet.Where(o => o.Status == OrderStatus.Completed);
+            var query = _dbSet.Where(o => o.State.Value == OrderStateEnum.Completed.Value);
 
             if (startDate.HasValue)
                 query = query.Where(o => o.CreatedAt >= startDate.Value);
@@ -107,14 +61,25 @@ namespace PharmacyApp.Infrastructure.Repositories
             if (endDate.HasValue)
                 query = query.Where(o => o.CreatedAt <= endDate.Value);
 
-            return await query.SumAsync(o => o.TotalAmount.Amount, cancellationToken);
+            return await query.Select(o => o.TotalAmount.Amount)
+                              .SumAsync(cancellationToken);
         }
 
-        public async Task<int> GetOrdersCountByStatusAsync(
-            OrderStatus status,
-            CancellationToken cancellationToken = default)
+        public async Task<int> GetOrdersCountByStateAsync(OrderStateEnum state, CancellationToken cancellationToken = default)
         {
-            return await _dbSet.CountAsync(o => o.Status == status, cancellationToken);
+            return await _dbSet.CountAsync(o => o.State.Value == state.Value, cancellationToken);
         }
+
+        public async Task<Order> CreateOrderFromCartAsync(Guid cartId, IEnumerable<CartItem> items, Guid customerId, CancellationToken cancellationToken)
+        {
+            var order = new Order(customerId,
+    shippingAddress: "123 Main St",
+    billingAddress: "123 Main St",
+    paymentMethod: "CreditCard");
+
+            await _dbSet.AddAsync(order, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return order;
     }
 }

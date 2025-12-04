@@ -1,14 +1,8 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
-using PharmacyApp.Application.Cart.Command;
 using PharmacyApp.Application.Cart.DTO;
-using PharmacyApp.Application.Order.Command.CreateOrder;
-using PharmacyApp.Application.Order.DTO;
+using PharmacyApp.Application.Common;
 using PharmacyApp.Domain.CartManagement.Repositories;
-using CartEntity = PharmacyApp.Domain.CartManagement.Entities.Cart;
+using PharmacyApp.Domain.CartManagement.Services;
 
 namespace PharmacyApp.Application.Cart.Command.RemoveItem
 {
@@ -16,11 +10,13 @@ namespace PharmacyApp.Application.Cart.Command.RemoveItem
     {
         private readonly ICartRepository _cartRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICartCalculationService _cartCalculationService;
 
-        public RemoveItemFromCartCommandHandler(ICartRepository cartRepository, IUnitOfWork unitOfWork)
+        public RemoveItemFromCartCommandHandler(ICartRepository cartRepository, IUnitOfWork unitOfWork, ICartCalculationService cartCalculationService)
         {
             _cartRepository = cartRepository;
             _unitOfWork = unitOfWork;
+            _cartCalculationService = cartCalculationService;
         }
 
         public async Task<CartDto> Handle(RemoveItemFromCartCommand request, CancellationToken cancellationToken)
@@ -31,7 +27,24 @@ namespace PharmacyApp.Application.Cart.Command.RemoveItem
             cart.RemoveItem(request.CartItemId);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new CartDto(cart);
+            var subtotal = cart.Items.Sum(static i => i.GetSubtotal().Amount);
+            var discount = cart.Discount?.Amount ?? 0;
+            var tax = _cartCalculationService.CalculateTax(subtotal);
+            var totalAmount = subtotal - discount + tax;
+
+            return new CartDto(
+                Id: cart.Id,
+                CustomerId: cart.CustomerId,
+                Items: cart.Items.Select(static item => new CartItemDto(item)),
+                TotalItems: cart.GetTotalItemsCount(),
+                SubTotal: subtotal,
+                Discount: discount,
+                Tax: tax,
+                TotalAmount: totalAmount,
+                Currency: cart.GetTotal().Currency ?? Constants.DefaultCurrency,
+                CreatedAt: cart.CreatedAt,
+                UpdatedAt: cart.UpdatedAt
+            );
         }
     }
 }

@@ -1,9 +1,10 @@
 using MediatR;
 using PharmacyApp.Application.Product.DTO;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.ValueObjects;
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.ValueObjects;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.AggregateRoots;
+using PharmacyApp.Domain.CatalogManagement.Product.Repositories;
+using PharmacyApp.Domain.CatalogManagement.Product.ValueObjects;
+using PharmacyApp.Domain.CatalogManagement.Category.ValueObjects;
+using PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots;
+
 
 namespace PharmacyApp.Application.Product.Command.CreateProduct
 {
@@ -24,7 +25,7 @@ namespace PharmacyApp.Application.Product.Command.CreateProduct
             var categoryId = CategoryId.Create(request.CategoryId);
             var description = new ProductDescription(request.Description);
 
-            var product = ProductAggregate.Create(request.Name, description, price, request.StockQuantity, categoryId);
+            var product = ProductAggregate.Create(request.ProductName, description, price, request.StockQuantity, request.IsCosmetic, categoryId);
 
             await _productRepository.AddAsync(product, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -34,7 +35,12 @@ namespace PharmacyApp.Application.Product.Command.CreateProduct
                 product.Name,
                 product.Description.Value,
                 product.Price.Value,
-                product.Stock
+                product.StockQuantity,
+                product.CategoryId,
+                product.CreatedAt,
+                product.UpdatedAt,
+                product.IsCosmetic,
+                product.IsAvailable
             );
         }
     }

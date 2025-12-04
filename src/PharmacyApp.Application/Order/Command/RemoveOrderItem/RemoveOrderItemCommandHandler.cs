@@ -2,8 +2,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
-using OrderAgg = PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
+using OrderAgg = PharmacyApp.Domain.OrderManagement.OrderAggregate;
+using PharmacyApp.Domain.OrderManagement.Repositories;
 
 namespace PharmacyApp.Application.Order.Command.RemoveOrderItem
 {

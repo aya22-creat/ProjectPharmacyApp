@@ -1,10 +1,11 @@
-using PharmacyApp.Common.Common.DomainEvent;
+using MediatR;
+using PharmacyApp.Common.Common;
 
 
 
-namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Events
+namespace PharmacyApp.Domain.CatalogManagement.Events
 {
-    public class OrderProcessingStartedEvent : DomainEvent
+    public class OrderProcessingStartedEvent : DomainEvent , INotification
     {
         public Guid OrderId { get; }
 

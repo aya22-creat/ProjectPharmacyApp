@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.Events;
+using PharmacyApp.Domain.OrderManagement.Events;
 using PharmacyApp.Infrastructure.MessageQueue.Producer.Order;
 using PharmacyApp.Infrastructure.MessageQueue.Producer;
 
-namespace PharmacyApp.Infrastructure.MessageQueue.Publishers.Order
-{
+namespace PharmacyApp.Infrastructure.MessageQueue.Publishers.Order;
+
     public class OrderCancelledEventPublisher : INotificationHandler<OrderCancelledEvent>
     {
         private readonly IPublishEndpoint _publishEndpoint;
@@ -39,4 +39,4 @@ namespace PharmacyApp.Infrastructure.MessageQueue.Publishers.Order
             _logger.LogInformation("OrderCancelledMessage published successfully");
         }
     }
-}
+

@@ -9,11 +9,12 @@ using PharmacyApp.Application.Product.DTO;
 namespace PharmacyApp.Application.Product.Command.CreateProduct
 {
     public record CreateProductCommand(
-        string Name,
+        string ProductName,
         string Description,
         decimal Price,
         string Currency,
         Guid CategoryId,
-        int StockQuantity
+        int StockQuantity,
+        bool IsCosmetic
     ) : IRequest<ProductDto>;
 }

@@ -6,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Category.DTO;
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.Repositories;
-using CategoryAgg = PharmacyApp.Domain.CatalogManagement.CategoryManagement.CategoryAggregate.CategoryAggregate;
+using PharmacyApp.Domain.CatalogManagement.Category.Repositories;
+using CategoryAgg = PharmacyApp.Domain.CatalogManagement.Category.CategoryAggregate.CategoryAggregate;
 
 
 namespace PharmacyApp.Application.Category.Command.CreateCategory

@@ -1,9 +1,10 @@
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
 using PharmacyApp.Application.Common;
-using OrderAgg = PharmacyApp.Domain.CatalogManagement.OrderManagement.OrderAggregate;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
+using OrderAgg = PharmacyApp.Domain.OrderManagement.OrderAggregate;
+using PharmacyApp.Domain.OrderManagement.Repositories;
+using PharmacyApp.Domain.OrderManagement.ValueObjects;
+using PharmacyApp.Domain.CatalogManagement.Product.Repositories;
 
 
 namespace PharmacyApp.Application.Order.Command.CreateOrder
@@ -11,11 +12,13 @@ namespace PharmacyApp.Application.Order.Command.CreateOrder
     public class CreateOrderCommandHandler : BaseCommandHandler<CreateOrderCommand, OrderDto>
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IProductRepository _productRepository;
 
-        public CreateOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
+        public CreateOrderCommandHandler(IOrderRepository orderRepository, IProductRepository productRepository, IUnitOfWork unitOfWork)
             : base(unitOfWork)
         {
             _orderRepository = orderRepository;
+            _productRepository = productRepository;
         }
 
         public override async Task<OrderDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -40,6 +43,18 @@ namespace PharmacyApp.Application.Order.Command.CreateOrder
             }
 
             await _orderRepository.AddAsync(order, cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+
+            // Update stock for each product in the order
+            foreach (var item in request.Items)
+            {
+                var product = await _productRepository.GetByIdAsync(item.ProductId, cancellationToken);
+                if (product != null)
+                {
+                    product.UpdateStock(-item.Quantity); // Decrease stock
+                    _productRepository.Update(product);
+                }
+            }
             await SaveChangesAsync(cancellationToken);
 
             return new OrderDto(order);

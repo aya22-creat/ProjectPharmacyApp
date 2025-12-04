@@ -27,7 +27,7 @@ namespace PharmacyApp.Application.Cart.Queries.GetCartItemsCount
             if (cart == null)
                 return 0;
 
-            return cart.Items.Sum(i => i.Quantity);
+            return cart.Items.Sum(static i => i.Quantity);
         }
     }
 }

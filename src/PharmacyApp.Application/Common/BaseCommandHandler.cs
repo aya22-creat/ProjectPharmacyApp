@@ -1,5 +1,4 @@
 using MediatR;
-using PharmacyApp.Application.Common;
 
 namespace PharmacyApp.Application.Common
 {

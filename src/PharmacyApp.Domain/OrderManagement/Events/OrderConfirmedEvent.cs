@@ -1,8 +1,8 @@
-using PharmacyApp.Common.Common.DomainEvent;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects;
+using PharmacyApp.Common.Common;
+using PharmacyApp.Domain.OrderManagement.ValueObjects;
 
 
-namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.Events
+namespace PharmacyApp.Domain.OrderManagement.Events
 {
     public class OrderConfirmedEvent : DomainEvent
     {

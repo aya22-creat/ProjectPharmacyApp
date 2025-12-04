@@ -2,15 +2,8 @@ using System;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PharmacyApp.Infrastructure.MessageQueue.Producer.Product;
-using PharmacyApp.Infrastructure.MessageQueue.Producer.Cart;
-using PharmacyApp.Infrastructure.MessageQueue.Producer.Messages;
-using PharmacyApp.Infrastructure.MessageQueue.Producer.CheckOut;
 using PharmacyApp.Infrastructure.MessageQueue.Consumers.Order;
-using PharmacyApp.Infrastructure.MessageQueue.Consumers.Product;
-using PharmacyApp.Infrastructure.MessageQueue.Consumers.CheckOut;
 using PharmacyApp.Infrastructure.MessageQueue.Consumers.Cart;
-using PharmacyApp.Application.CheckOut.DTO;
 
 
 
@@ -36,12 +29,7 @@ namespace PharmacyApp.Infrastructure.MessageQueue.Configuration
                 x.AddConsumer<ItemAddedToCartConsumer>();
                 
                 
-                x.AddConsumer<CheckoutCompletedConsumer>();
-                
-               
-                x.AddConsumer<ProductOutOfStockConsumer>();
-                x.AddConsumer<ProductBackInStockConsumer>();
-                
+        
                
                 x.AddConsumer<SendEmailConsumer>();
                 x.AddConsumer<SendPushNotificationConsumer>();
@@ -77,21 +65,7 @@ namespace PharmacyApp.Infrastructure.MessageQueue.Configuration
                         e.ConfigureConsumer<ItemAddedToCartConsumer>(context);
                         e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                     });
-                    cfg.ReceiveEndpoint("checkout-completed-queue", e =>
-                    {
-                        e.ConfigureConsumer<CheckoutCompletedConsumer>(context);
-                        e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
-                    });
-                    cfg.ReceiveEndpoint("product-out-of-stock-queue", e =>
-                    {
-                        e.ConfigureConsumer<ProductOutOfStockConsumer>(context);
-                        e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
-                    });
-                    cfg.ReceiveEndpoint("product-back-in-stock-queue", e =>
-                    {
-                        e.ConfigureConsumer<ProductBackInStockConsumer>(context);
-                        e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
-                    });
+                    
                     cfg.ReceiveEndpoint("send-email-queue", e =>
                     {
                         e.ConfigureConsumer<SendEmailConsumer>(context);

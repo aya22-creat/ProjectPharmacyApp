@@ -5,25 +5,12 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using PharmacyApp.Domain.CartManagement.Events;
-using PharmacyApp.Domain.CartManagement.Repositories;
-using PharmacyApp.Domain.CheckoutFunctionality.Entities;
-using PharmacyApp.Domain.CheckoutFunctionality.Repositories;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.Entities;
-using PharmacyApp.Domain.CatalogManagement.OrderManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.Entities;
-using PharmacyApp.Domain.CatalogManagement.ProductManagement.Repositories;
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.CategoryAggregate;
-using PharmacyApp.Domain.CatalogManagement.CategoryManagement.Repositories;
-using PharmacyApp.Infrastructure.Data;
+using PharmacyApp.Infrastructure.Persistence;
 using PharmacyApp.Common.Common.Repositories;
-using PharmacyApp.Common.Common;
-
 
 namespace PharmacyApp.Infrastructure.Repositories
 {
-
-    public class GenericRepository<T> : PharmacyApp.Common.Common.Repositories.IRepository<T> where T : class, IAggregateRoot
+    public class GenericRepository<T> : IRepository<T> where T : class
     {
         protected readonly ApplicationDbContext _context;
         protected readonly DbSet<T> _dbSet;

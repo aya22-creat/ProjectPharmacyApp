@@ -1,7 +1,7 @@
 using PharmacyApp.Common.Common;
 using PharmacyApp.Common.Common.Exception;
 
-namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects
+namespace PharmacyApp.Domain.OrderManagement.ValueObjects
 {
     public class Money : ValueObject
     {
@@ -54,13 +54,6 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects
             return new Money(Amount * multiplier, Currency);
         }
 
-        public Money Multiply(int quantity)
-        {
-            if (quantity < 0)
-                throw new DomainException("Quantity cannot be negative.");
-
-            return new Money(Amount * quantity, Currency);
-        }
 
 
         public Money ApplyDiscount(decimal percentage)
@@ -133,11 +126,6 @@ namespace PharmacyApp.Domain.CatalogManagement.OrderManagement.ValueObjects
             return money.Multiply(multiplier);
         }
 
-        public static Money operator *(Money money, int quantity)
-        {
-            EnsureNotNull(money);
-            return money.Multiply(quantity);
-        }
 
 
         private static void EnsureNotNull(Money? money)

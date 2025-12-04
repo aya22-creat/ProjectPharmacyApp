@@ -1,17 +1,10 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using PharmacyApp.Application.Cart.Command;
+
 using PharmacyApp.Application.Cart.DTO;
 using PharmacyApp.Application.Common;
 using PharmacyApp.Domain.CartManagement.Services;
-using PharmacyApp.Domain.CartManagement.Enums;
-using CartEntity = PharmacyApp.Domain.CartManagement.Entities.Cart;
+using CartEntity = PharmacyApp.Domain.CartManagement.Cart;
 using PharmacyApp.Domain.CartManagement.Repositories;
 using PharmacyApp.Domain.CartManagement.ValueObjects;
-using PharmacyApp.Domain.CartManagement.Entities;
 
 namespace PharmacyApp.Application.Cart.Command.ApplyDiscount
 {
@@ -39,11 +32,11 @@ namespace PharmacyApp.Application.Cart.Command.ApplyDiscount
             var discountAmount = cart.GetTotal().Amount * Constants.DefaultDiscountRate;
             var discountMoney = Money.Create(discountAmount, cart.GetTotal().Currency ?? Constants.DefaultCurrency);
 
-            cart.ApplyCoupon(request.CouponCode, discountMoney);
+         
 
             await SaveChangesAsync(cancellationToken);
 
-            return new CartDto(cart);
+            return new CartDto(cart, _cartCalculationService);
         }
     }
 }
