@@ -4,6 +4,7 @@ using PharmacyApp.Domain.CatalogManagement.Product.Repositories;
 using PharmacyApp.Domain.CatalogManagement.Product.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.Category.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots;
+using PharmacyApp.Common.Common.ValueObjects;
 
 
 namespace PharmacyApp.Application.Product.Command.CreateProduct
@@ -21,7 +22,7 @@ namespace PharmacyApp.Application.Product.Command.CreateProduct
 
         public async Task<ProductDto> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            var price = Price.Create(request.Price);
+            var price = Money.Create(request.Price);
             var categoryId = CategoryId.Create(request.CategoryId);
             var description = new ProductDescription(request.Description);
 
@@ -34,7 +35,7 @@ namespace PharmacyApp.Application.Product.Command.CreateProduct
                 product.Id,
                 product.Name,
                 product.Description.Value,
-                product.Price.Value,
+                product.Price.Amount,
                 product.StockQuantity,
                 product.CategoryId,
                 product.CreatedAt,

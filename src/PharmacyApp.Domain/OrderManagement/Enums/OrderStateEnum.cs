@@ -11,6 +11,8 @@ public sealed class OrderStateEnum : SmartEnum<OrderStateEnum, int>
     public static readonly OrderStateEnum Completed   = new(nameof(Completed), 5);
     public static readonly OrderStateEnum Cancelled   = new(nameof(Cancelled), 6);
     public static readonly OrderStateEnum Reserved    = new(nameof(Reserved), 7);
+    public static readonly OrderStateEnum   Rejected     = new(nameof(  Rejected ), 8);
+
 
     private OrderStateEnum(string name, int value) : base(name, value) { }
 
@@ -23,6 +25,9 @@ public sealed class OrderStateEnum : SmartEnum<OrderStateEnum, int>
             var s when s == Processing => nextStatus == Delivered || nextStatus == Cancelled,
             var s when s == Delivered => nextStatus == Completed,
             var s when s == Reserved => nextStatus == Processing || nextStatus == Cancelled,
+             var s when s == Rejected   => false,       // Terminal state
+            var s when s == Completed  => false,       // Terminal state
+            var s when s == Cancelled  => false,       // Terminal state
             _ => false
         };
     }

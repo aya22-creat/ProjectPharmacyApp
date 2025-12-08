@@ -1,6 +1,6 @@
 
 using PharmacyApp.Common.Common;
-using PharmacyApp.Domain.CartManagement.ValueObjects;
+using PharmacyApp.Common.Common.ValueObjects;
 
 namespace PharmacyApp.Domain.CartManagement.Entities;
 public class CartItem : BaseEntity<Guid>
@@ -9,13 +9,13 @@ public class CartItem : BaseEntity<Guid>
     public string ProductName { get; private set; } = string.Empty;
     public int Quantity { get; private set; }
     public Money Price { get; private set; }
-    public Money Discount { get; set; }
+   
 
 
     private CartItem() : base()
     {
         Price = Money.Zero("EGP");
-        Discount = Money.Zero("EGP");
+     
     }
 
     public CartItem(Guid productId, string productName, int quantity, Money price) : base(Guid.NewGuid())
@@ -31,7 +31,7 @@ public class CartItem : BaseEntity<Guid>
         ProductName = productName;
         Quantity = quantity;
         Price = price ?? throw new ArgumentNullException(nameof(price));
-        Discount = Money.Zero("EGP");
+ ;
     }
 
     public void UpdateQuantity(int newQuantity)

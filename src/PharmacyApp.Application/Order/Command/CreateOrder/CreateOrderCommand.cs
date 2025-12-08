@@ -10,15 +10,13 @@ namespace PharmacyApp.Application.Order.Command.CreateOrder
         string? ShippingAddress,
         string? BillingAddress,
         string? PaymentMethod,
-        decimal ShippingCost = 0,
-        decimal Tax = 0,
-        decimal Discount = 0
+        decimal ShippingCost = 0
     ) : IRequest<OrderDto>;
 
     public record CreateOrderItemDto(
         Guid ProductId,
         string ProductName,
         int Quantity,
-        decimal UnitPrice
+        decimal Price
     );
 }

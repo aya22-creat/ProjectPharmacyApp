@@ -22,16 +22,11 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
            builder.HasOne<Order>().WithMany(o => o.Items).HasForeignKey(oi => oi.OrderId);
 
             // Value Objects
-            builder.OwnsOne(static oi => oi.UnitPrice, static price =>
+            builder.OwnsOne(static oi => oi.Price, static price =>
             {
                 price.Property(static p => p.Amount).HasColumnName("UnitPrice").HasColumnType("decimal(18,2)");
                 price.Property(static p => p.Currency).HasColumnName("Currency").HasMaxLength(3);
             });
-
-
-
-            builder.Ignore(static oi => oi.Total);
-          
         }
     }
 }

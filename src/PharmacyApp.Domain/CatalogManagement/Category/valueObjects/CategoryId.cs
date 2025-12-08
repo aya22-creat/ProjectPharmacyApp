@@ -1,7 +1,8 @@
 using PharmacyApp.Common.Common;
+using PharmacyApp.Common.Common.ValueObjects;
 
-namespace PharmacyApp.Domain.CatalogManagement.Category.ValueObjects
-{
+namespace PharmacyApp.Domain.CatalogManagement.Category.ValueObjects;
+
     public class CategoryId : ValueObject
     {
         public Guid Value { get; private set; }
@@ -28,4 +29,4 @@ namespace PharmacyApp.Domain.CatalogManagement.Category.ValueObjects
         public static implicit operator CategoryId(Guid value) => new(value);
 
     }
-}
+

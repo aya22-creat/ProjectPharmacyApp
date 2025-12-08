@@ -1,10 +1,9 @@
-
+using PharmacyApp.Common.Common.ValueObjects;
 using PharmacyApp.Application.Cart.DTO;
 using PharmacyApp.Application.Common;
 using CartEntity = PharmacyApp.Domain.CartManagement.Cart;
 using PharmacyApp.Domain.CartManagement.Repositories;
 using PharmacyApp.Domain.CartManagement.Services;
-using PharmacyApp.Domain.CartManagement.ValueObjects;
 
 namespace PharmacyApp.Application.Cart.Command.AddItem
 {
@@ -30,15 +29,13 @@ namespace PharmacyApp.Application.Cart.Command.AddItem
                 await _cartRepository.AddAsync(cart, cancellationToken);
             }
 
-            var unitPrice = Money.Create(request.UnitPrice, request.Currency ?? Constants.DefaultCurrency);
-            cart.AddItem(request.ProductId, request.ProductName, request.Quantity, unitPrice);
+            var price = Money.Create(request.Price, request.Currency ?? Constants.DefaultCurrency);
+            cart.AddItem(request.ProductId, request.ProductName, request.Quantity, price);
 
             await SaveChangesAsync(cancellationToken);
 
             var subtotal = cart.Items.Sum(static i => i.GetSubtotal().Amount);
-            var discount = cart.Discount?.Amount ?? 0;
-            var tax = _cartCalculationService.CalculateTax(subtotal);
-            var totalAmount = subtotal - discount + tax;
+            var totalAmount = subtotal ;
 
             return new CartDto(
                 Id: cart.Id,
@@ -46,8 +43,6 @@ namespace PharmacyApp.Application.Cart.Command.AddItem
                 Items: cart.Items.Select(static item => new CartItemDto(item)),
                 TotalItems: cart.GetTotalItemsCount(),
                 SubTotal: subtotal,
-                Discount: discount,
-                Tax: tax,
                 TotalAmount: totalAmount,
                 Currency: cart.GetTotal().Currency ?? Constants.DefaultCurrency,
                 CreatedAt: cart.CreatedAt,

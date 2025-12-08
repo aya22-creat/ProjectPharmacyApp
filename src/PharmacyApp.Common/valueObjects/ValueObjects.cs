@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace PharmacyApp.Common.Common;
+namespace PharmacyApp.Common.Common.ValueObjects;
 
     public abstract class ValueObject
     {
@@ -44,4 +46,6 @@ namespace PharmacyApp.Common.Common;
         {
             return !(left == right);
         }
+
+        
     }

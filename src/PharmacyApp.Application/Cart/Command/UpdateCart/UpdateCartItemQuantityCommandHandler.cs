@@ -31,9 +31,7 @@ namespace PharmacyApp.Application.Cart.Command.UpdateCart
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             var subtotal = cart.Items.Sum(static i => i.GetSubtotal().Amount);
-            var discount = cart.Discount?.Amount ?? 0;
-            var tax = _cartCalculationService.CalculateTax(subtotal);
-            var totalAmount = subtotal - discount + tax;
+            var totalAmount = subtotal;
 
             return new CartDto(
                 Id: cart.Id,
@@ -41,8 +39,6 @@ namespace PharmacyApp.Application.Cart.Command.UpdateCart
                 Items: cart.Items.Select(static item => new CartItemDto(item)),
                 TotalItems: cart.GetTotalItemsCount(),
                 SubTotal: subtotal,
-                Discount: discount,
-                Tax: tax,
                 TotalAmount: totalAmount,
                 Currency: cart.GetTotal().Currency ?? "EGP",
                 CreatedAt: cart.CreatedAt,

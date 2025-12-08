@@ -1,7 +1,7 @@
 using PharmacyApp.Common.Common;
 using PharmacyApp.Common.Common.Exception;
 
-namespace PharmacyApp.Domain.OrderManagement.ValueObjects
+namespace PharmacyApp.Common.Common.ValueObjects
 {
     public class Money : ValueObject
     {
@@ -52,37 +52,6 @@ namespace PharmacyApp.Domain.OrderManagement.ValueObjects
                 throw new DomainException("Multiplier cannot be negative.");
 
             return new Money(Amount * multiplier, Currency);
-        }
-
-
-
-        public Money ApplyDiscount(decimal percentage)
-        {
-            if (percentage < 0 || percentage > 100)
-                throw new DomainException("Discount percentage must be between 0 and 100.");
-
-            var discount = Amount * (percentage / 100);
-            return new Money(Amount - discount, Currency);
-        }
-
-        public Money ApplyDiscountAmount(decimal discountAmount)
-        {
-            if (discountAmount < 0)
-                throw new DomainException("Discount amount cannot be negative.");
-
-            if (discountAmount > Amount)
-                throw new DomainException("Discount amount cannot exceed the total.");
-
-            return new Money(Amount - discountAmount, Currency);
-        }
-
-        public Money CalculateTax(decimal taxRate)
-        {
-            if (taxRate < 0)
-                throw new DomainException("Tax rate cannot be negative.");
-
-            var taxAmount = Amount * (taxRate / 100);
-            return new Money(Amount + taxAmount, Currency);
         }
 
 

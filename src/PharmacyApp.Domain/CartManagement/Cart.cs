@@ -21,11 +21,6 @@ public partial class Cart : AggregateRoot<Guid>
     public CartStateEnum State { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
-    public string CouponCode { get; private set; } = string.Empty;
-    public Money Discount { get; private set; } = Money.Zero("EGP");
-    public DiscountType DiscountType { get; set; }
-    public decimal DiscountValue { get; set; }
-
     private readonly List<CartItem> _items = new();
     public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
 }

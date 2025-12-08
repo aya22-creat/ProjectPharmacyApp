@@ -1,7 +1,7 @@
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Product.DTO;
+using PharmacyApp.Common.Common.ValueObjects;
+using PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots;
 using PharmacyApp.Domain.CatalogManagement.Product.Repositories;
 using PharmacyApp.Domain.CatalogManagement.Product.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.Category.ValueObjects;
@@ -25,7 +25,7 @@ namespace PharmacyApp.Application.Product.Command.UpdateProduct
             if (product == null)
                 throw new InvalidOperationException($"Product with ID {request.Id} not found");
 
-            var price = Price.Create(request.Price);
+            var price = Money.Create(request.Price);
             var categoryId = CategoryId.Create(request.CategoryId);
             var description = new ProductDescription(request.Description);
 
@@ -41,7 +41,7 @@ namespace PharmacyApp.Application.Product.Command.UpdateProduct
                 product.Id,
                 product.Name,
                 product.Description.Value,
-                product.Price.Value,
+                product.Price.Amount,
                 product.StockQuantity,
                 product.CategoryId,
                 product.CreatedAt,

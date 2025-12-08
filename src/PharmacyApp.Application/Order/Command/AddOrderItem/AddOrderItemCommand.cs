@@ -1,5 +1,6 @@
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
+using PharmacyApp.Common.Common.ValueObjects;
 
 namespace PharmacyApp.Application.Order.Command.AddOrderItem
 {
@@ -8,6 +9,6 @@ namespace PharmacyApp.Application.Order.Command.AddOrderItem
         Guid ProductId,
         string ProductName,
         int Quantity,
-        decimal UnitPrice
+        Money Price
     ) : IRequest<OrderDto>;
 }

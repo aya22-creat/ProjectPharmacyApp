@@ -1,4 +1,4 @@
-using PharmacyApp.Common.Common;
+using PharmacyApp.Common.Common.ValueObjects;
 
 namespace PharmacyApp.Domain.CartManagement.ValueObjects
 {

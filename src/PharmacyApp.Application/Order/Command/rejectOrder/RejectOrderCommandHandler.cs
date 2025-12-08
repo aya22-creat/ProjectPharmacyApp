@@ -1,30 +1,26 @@
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
-using OrderAgg = PharmacyApp.Domain.OrderManagement.OrderAggregate;
 using PharmacyApp.Domain.OrderManagement.Repositories;
 
-namespace PharmacyApp.Application.Order.Command.RemoveOrderItem
-{
-    public class RemoveOrderItemCommandHandler : IRequestHandler<RemoveOrderItemCommand, OrderDto>
+namespace PharmacyApp.Application.Order.Command.RejectOrder{
+    public class RejectOrderCommandHandler : IRequestHandler<RejectOrderCommand, OrderDto>
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public RemoveOrderItemCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
+        public RejectOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<OrderDto> Handle(RemoveOrderItemCommand request, CancellationToken cancellationToken)
+        public async Task<OrderDto> Handle(RejectOrderCommand request, CancellationToken cancellationToken)
         {
             var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
             if (order == null)
                 throw new Exception("Order not found.");
 
-            order.RemoveItem(request.OrderItemId);
+            order.Cancel(request.Reason);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

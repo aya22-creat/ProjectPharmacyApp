@@ -2,6 +2,7 @@ using System;
 using PharmacyApp.Common.Common;
 using PharmacyApp.Domain.CatalogManagement.Product.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.Category.ValueObjects;
+using PharmacyApp.Common.Common.ValueObjects;
 
 namespace PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots
 {
@@ -9,8 +10,8 @@ namespace PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots
     {
         public string Name { get; private set; }
         public ProductDescription Description { get; private set; }
-        public Price Price { get; private set; }
-        public int StockQuantity  { get; private set; }
+        public Money Price { get; private set; }
+        public int StockQuantity { get; private set; }
         public bool IsCosmetic { get; private set; } // true = Cosmetic, false = Medicine
         public bool IsAvailable => StockQuantity > 0;
         public CategoryId CategoryId { get; private set; }
@@ -25,11 +26,10 @@ namespace PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots
             Name = null!;
             Description = null!;
             Price = null!;
-             CategoryId = null!;
-            
+            CategoryId = null!;
         }
 
-        private ProductAggregate(Guid id, string name, ProductDescription description, Price price, int stockQuantity , bool isCosmetic, CategoryId categoryId)
+        private ProductAggregate(Guid id, string name, ProductDescription description, Money price, int stockQuantity, bool isCosmetic, CategoryId categoryId)
             : base(id)
         {
             Name = name;
@@ -43,14 +43,14 @@ namespace PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots
         public static ProductAggregate Create(
             string name,
             ProductDescription description,
-            Price price,
+            Money price,
             int stockQuantity,
             bool isCosmetic,
             CategoryId categoryId)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Product name cannot be empty.");
-            if (price.Value < 0)
+            if (price.Amount < 0)
                 throw new ArgumentException("Product price cannot be negative.");
             if (stockQuantity < 0)
                 throw new ArgumentException("Product stock cannot be negative.");
@@ -66,9 +66,9 @@ namespace PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots
             StockQuantity += quantity;
         }
 
-        public void UpdatePrice(Price newPrice)
+        public void UpdatePrice(Money newPrice)
         {
-            if (newPrice.Value < 0)
+            if (newPrice.Amount < 0)
                 throw new ArgumentException("New price cannot be negative.");
 
             Price = newPrice;

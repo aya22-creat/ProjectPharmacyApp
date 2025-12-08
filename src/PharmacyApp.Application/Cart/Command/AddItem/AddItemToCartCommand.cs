@@ -7,7 +7,7 @@ namespace PharmacyApp.Application.Cart.Command.AddItem
         Guid CustomerId,
         Guid ProductId,
         string ProductName,
-        decimal UnitPrice,
+        decimal Price,
         int Quantity,
         string Currency
     ) : IRequest<CartDto>;

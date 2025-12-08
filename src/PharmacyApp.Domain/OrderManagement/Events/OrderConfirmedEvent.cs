@@ -1,5 +1,5 @@
 using PharmacyApp.Common.Common;
-using PharmacyApp.Domain.OrderManagement.ValueObjects;
+using PharmacyApp.Common.Common.ValueObjects;
 
 
 namespace PharmacyApp.Domain.OrderManagement.Events

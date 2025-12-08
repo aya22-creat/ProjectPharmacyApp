@@ -4,7 +4,7 @@ using MediatR;
 using PharmacyApp.Application.Order.DTO;
 
 
-namespace PharmacyApp.Application.Order.Commands.CompleteOrder
+namespace PharmacyApp.Application.Order.Command.CompleteOrder
 {
     public record CompleteOrderCommand(Guid OrderId) : IRequest<OrderDto>;
 }

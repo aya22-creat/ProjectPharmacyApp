@@ -24,7 +24,7 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
             // Value Object
             builder.OwnsOne(static p => p.Price, static price =>
             {
-                price.Property(static pr => pr.Value).HasColumnName("Price").HasColumnType("decimal(18,2)");
+                price.Property(static pr => pr.Amount).HasColumnName("Price").HasColumnType("decimal(18,2)");
                 price.Property(static pr => pr.Currency).HasColumnName("Currency").HasMaxLength(3);
             });
 

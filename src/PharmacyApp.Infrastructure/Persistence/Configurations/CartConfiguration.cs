@@ -22,8 +22,6 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
             builder.Property(static c => c.CreatedAt)
                 .IsRequired();
             builder.Property(static c => c.UpdatedAt);
-            builder.Property(static c => c.CouponCode)
-                .HasMaxLength(50);
 
 
             builder.Property(static x => x.State)
@@ -61,16 +59,6 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
                 });
             });
 
-            builder.OwnsOne(static c => c.Discount, static money =>
-            {
-                money.Property(static m => m.Amount)
-                    .HasColumnName("DiscountAmount")
-                    .IsRequired();
-                money.Property(static m => m.Currency)
-                    .HasColumnName("DiscountCurrency")
-                    .HasMaxLength(3)
-                    .IsRequired();
-            });
-        }
+           
     }
-}
+    }}

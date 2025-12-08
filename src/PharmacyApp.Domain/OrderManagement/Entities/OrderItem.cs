@@ -1,21 +1,20 @@
 using PharmacyApp.Common.Common;
-using PharmacyApp.Domain.OrderManagement.ValueObjects;
+using PharmacyApp.Common.Common.ValueObjects;
 
 namespace PharmacyApp.Domain.OrderManagement.Entities;
 
 public class OrderItem
 {
     public Guid Id { get; private set; }
-    public Guid OrderId { get; set; }
+    public Guid OrderId { get; internal set; }
     public Guid ProductId { get; private set; }
     public string ProductName { get; private set; } = null!;
     public int Quantity { get; private set; }
-    public Money UnitPrice { get; private set; } = null!;
-    public Money Total => UnitPrice.Multiply(Quantity);
+    public Money Price { get; private set; } = null!;
 
-    private OrderItem() { }
+    private OrderItem() { } // EF Core
 
-    public OrderItem(Guid productId, string productName, int quantity, Money unitPrice)
+    public OrderItem(Guid productId, string productName, int quantity, Money price)
     {
         if (productId == Guid.Empty) throw new ArgumentException("Product ID is required");
         if (string.IsNullOrWhiteSpace(productName)) throw new ArgumentException("Product name is required");
@@ -25,7 +24,7 @@ public class OrderItem
         ProductId = productId;
         ProductName = productName;
         Quantity = quantity;
-        UnitPrice = unitPrice;
+        Price = price;
     }
 
     public void UpdateQuantity(int newQuantity)
@@ -34,5 +33,5 @@ public class OrderItem
         Quantity = newQuantity;
     }
 
-    public Money GetTotal() => Total;
+    public Money GetTotal() => Price.Multiply(Quantity);
 }

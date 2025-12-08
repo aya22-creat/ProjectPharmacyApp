@@ -4,7 +4,7 @@ using MediatR;
 using PharmacyApp.Application.Order.DTO;
 using PharmacyApp.Domain.OrderManagement.Repositories;
 
-namespace PharmacyApp.Application.Order.Commands.CompleteOrder
+namespace PharmacyApp.Application.Order.Command.CompleteOrder
 {
     public class CompleteOrderCommandHandler : IRequestHandler<CompleteOrderCommand, OrderDto>
     {

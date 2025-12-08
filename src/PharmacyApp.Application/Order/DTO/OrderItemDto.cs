@@ -7,7 +7,6 @@ namespace PharmacyApp.Application.Order.DTO
  string Name,
  decimal Quantity,
  decimal Price,
- decimal Tax,
  decimal Total,
  string Note);
 

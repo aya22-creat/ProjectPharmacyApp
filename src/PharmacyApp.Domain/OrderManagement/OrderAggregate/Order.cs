@@ -1,14 +1,13 @@
 using PharmacyApp.Common.Common;
 using OrderStateEnum = PharmacyApp.Domain.OrderManagement.Enums.OrderStateEnum;
 using PharmacyApp.Domain.OrderManagement.Entities;
-using PharmacyApp.Domain.OrderManagement.ValueObjects;
+using PharmacyApp.Common.Common.ValueObjects;
 using PharmacyApp.Domain.OrderManagement.Events;
 
 namespace PharmacyApp.Domain.OrderManagement.OrderAggregate;
 
 public partial class Order : AggregateRoot<Guid>
 {
-   
     private readonly List<OrderItem> _items = new();
     public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
 
@@ -23,37 +22,53 @@ public partial class Order : AggregateRoot<Guid>
     public DateTime? DeliveredAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }
     public DateTime? CancelledAt { get; private set; }
+    
+ public DateTime? RejectedAt { get; private set; }
     public string? CancellationReason { get; private set; }
+    public string? RejectionReason { get; private set; }
+
+
     public string ShippingAddress { get; private set; }
     public string BillingAddress { get; private set; }
     public string PaymentMethod { get; private set; }
 
-    public Money SubTotal => CalculateSubTotal();
     public Money ShippingCost { get; private set; } = Money.Zero();
-    public Money Tax { get; private set; } = Money.Zero();
-    public Money Discount { get; private set; } = Money.Zero();
-    public Money TotalAmount => SubTotal.Add(ShippingCost).Add(Tax).Subtract(Discount);
+    public Money SubTotal => CalculateSubTotal();
+    public Money TotalAmount => SubTotal.Add(ShippingCost);
 
-    // Constructor
-    public Order(Guid customerId, string shippingAddress, string billingAddress, string paymentMethod)
+    private Order() { } // EF
+
+    public Order(
+        Guid customerId,
+        string shippingAddress,
+        string billingAddress,
+        string paymentMethod)
     {
-        if (customerId == Guid.Empty) throw new ArgumentException("Customer ID is required");
-        if (string.IsNullOrWhiteSpace(shippingAddress)) throw new ArgumentException("Shipping address is required");
-
-        Id = Guid.NewGuid();
         CustomerId = customerId;
-        OrderNumber = GenerateOrderNumber();
-        State = OrderStateEnum.Created;
         ShippingAddress = shippingAddress;
-        BillingAddress = string.IsNullOrWhiteSpace(billingAddress) ? shippingAddress : billingAddress;
+        BillingAddress = billingAddress;
         PaymentMethod = paymentMethod;
-        CreatedAt = DateTime.UtcNow;
 
-        RaiseDomainEvent(new OrderCreatedEvent(Id, CustomerId, OrderNumber, TotalAmount.Amount));
+        OrderDate = DateTime.UtcNow;
+        CreatedAt = DateTime.UtcNow;
+        OrderNumber = GenerateOrderNumber();
+        State = OrderStateEnum.Processing;
+    }
+
+    public void AddItem(OrderItem item)
+    {
+        if (item == null) throw new ArgumentNullException(nameof(item));
+        
+        item.OrderId = Id; // for EF
+        _items.Add(item);
     }
 
     private Money CalculateSubTotal() =>
-        _items.Any() ? _items.Select(static i => i.GetTotal()).Aggregate(static (sum, next) => sum.Add(next)) : Money.Zero();
+        _items.Any()
+            ? _items
+                .Select(i => i.GetTotal())
+                .Aggregate(Money.Zero(), (sum, next) => sum.Add(next))
+            : Money.Zero();
 
     private string GenerateOrderNumber()
     {

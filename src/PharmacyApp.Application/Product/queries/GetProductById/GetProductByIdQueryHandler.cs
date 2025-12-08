@@ -24,7 +24,7 @@ namespace PharmacyApp.Application.Product.Queries.GetProductById
                 product.Id,
                 product.Name,
                 product.Description.Value,
-                product.Price.Value,
+                product.Price.Amount,
                 product.StockQuantity,
                 product.CategoryId,
                 product.CreatedAt,

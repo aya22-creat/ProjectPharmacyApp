@@ -10,9 +10,6 @@ namespace PharmacyApp.Domain.CatalogManagement.Product.Repositories
     {
         ProductAggregate? GetById(Guid productId);
 
-        // Async retrieval
-        Task<ProductAggregate?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-
         Task UpdateAsync(ProductAggregate product, CancellationToken cancellationToken = default);
 
         Task<bool> ExistsByIdAsync(Guid id, CancellationToken cancellationToken = default);

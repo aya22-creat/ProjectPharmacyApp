@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using PharmacyApp.Common.Common;
 using System.Linq;
 using System.Threading.Tasks;
+using PharmacyApp.Common.Common.ValueObjects;
 
 
 
-namespace PharmacyApp.Domain.CatalogManagement.Product.ValueObjects
-{
+namespace PharmacyApp.Domain.CatalogManagement.Product.ValueObjects;
+
     public class ProductDescription : ValueObject
     {
         public string Value { get; private set; }
@@ -30,4 +31,4 @@ namespace PharmacyApp.Domain.CatalogManagement.Product.ValueObjects
 
         public override string ToString() => Value;
     }
-}
+

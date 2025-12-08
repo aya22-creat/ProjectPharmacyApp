@@ -1,10 +1,10 @@
-using MediatR;
 using PharmacyApp.Application.Order.DTO;
 using PharmacyApp.Application.Common;
 using OrderAgg = PharmacyApp.Domain.OrderManagement.OrderAggregate;
 using PharmacyApp.Domain.OrderManagement.Repositories;
-using PharmacyApp.Domain.OrderManagement.ValueObjects;
+using PharmacyApp.Common.Common.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.Product.Repositories;
+using PharmacyApp.Domain.OrderManagement.Entities;
 
 
 namespace PharmacyApp.Application.Order.Command.CreateOrder
@@ -38,8 +38,9 @@ namespace PharmacyApp.Application.Order.Command.CreateOrder
 
             foreach (var item in request.Items)
             {
-                var unitPrice = Money.Create(item.UnitPrice, Constants.DefaultCurrency);
-                order.AddItem(item.ProductId, item.ProductName, item.Quantity, unitPrice);
+                var price = Money.Create(item.Price, Constants.DefaultCurrency);
+                var orderItem = new OrderItem(item.ProductId, item.ProductName, item.Quantity, price);
+                order.AddItem(orderItem);
             }
 
             await _orderRepository.AddAsync(order, cancellationToken);

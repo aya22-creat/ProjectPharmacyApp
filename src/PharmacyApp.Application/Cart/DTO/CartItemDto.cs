@@ -8,7 +8,7 @@ namespace PharmacyApp.Application.Cart.DTO;
           Guid Id,
           Guid ProductId,
           string ProductName,
-          decimal UnitPrice,
+          decimal Price,
           int Quantity,
           decimal Tax,
           decimal Total,
@@ -36,7 +36,7 @@ namespace PharmacyApp.Application.Cart.DTO;
     public record AddToCartItemDto(
        Guid ProductId,
        string ProductName,
-       decimal UnitPrice,
+       decimal Price,
        int Quantity
    );
 

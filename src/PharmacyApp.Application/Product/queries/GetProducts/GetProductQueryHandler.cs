@@ -21,7 +21,7 @@ namespace PharmacyApp.Application.Product.Queries.GetProducts
                 p.Id,
                 p.Name,
                 p.Description.Value,
-                p.Price.Value,
+                p.Price.Amount,
                 p.StockQuantity,
                 p.CategoryId,
                 p.CreatedAt,

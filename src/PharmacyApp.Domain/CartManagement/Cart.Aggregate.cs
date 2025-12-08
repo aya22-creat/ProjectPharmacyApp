@@ -1,6 +1,4 @@
-using PharmacyApp.Common.Common.Exception;
-using PharmacyApp.Common.Common;
-using PharmacyApp.Domain.CartManagement.ValueObjects;
+using PharmacyApp.Common.Common.ValueObjects;
 using PharmacyApp.Domain.CartManagement.Enum;
 using PharmacyApp.Domain.CartManagement.Entities;
 using PharmacyApp.Domain.CartManagement.Events;
@@ -99,8 +97,6 @@ public void Activate()
             total = total.Add(item.GetSubtotal());
         }
 
-        if (Discount.Amount > 0)
-            total = total.Subtract(Discount);
 
         return total;
     }

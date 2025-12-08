@@ -1,8 +1,9 @@
 using MediatR;
 using PharmacyApp.Application.Order.DTO;
 using PharmacyApp.Application.Common;
-using PharmacyApp.Domain.OrderManagement.ValueObjects;
+using PharmacyApp.Common.Common.ValueObjects;
 using PharmacyApp.Domain.OrderManagement.Repositories;
+using PharmacyApp.Domain.OrderManagement.Entities;
 
 namespace PharmacyApp.Application.Order.Command.AddOrderItem
 {
@@ -22,8 +23,9 @@ namespace PharmacyApp.Application.Order.Command.AddOrderItem
             if (order == null)
                 throw new InvalidOperationException("Order not found.");
 
-            var unitPrice = Money.Create(request.UnitPrice, Constants.DefaultCurrency);
-            order.AddItem(request.ProductId, request.ProductName, request.Quantity, unitPrice);
+            var price = Money.Create(request.Price.Amount, Constants.DefaultCurrency);
+            var orderItem = new OrderItem(request.ProductId, request.ProductName, request.Quantity, price);
+            order.AddItem(orderItem);
 
             await SaveChangesAsync(cancellationToken);
 

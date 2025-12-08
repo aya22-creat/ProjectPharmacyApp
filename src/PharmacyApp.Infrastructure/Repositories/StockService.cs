@@ -18,6 +18,8 @@ namespace PharmacyApp.Infrastructure.Services
         public async Task ReserveStockAsync(Guid productId, int quantity, CancellationToken cancellationToken)
         {
             var product = await _productRepository.GetByIdAsync(productId);
+            if (product == null)
+                throw new InvalidOperationException($"Product with ID {productId} not found.");
             product.UpdateStock(-quantity);
             await _productRepository.UpdateAsync(product);
         }
@@ -25,6 +27,8 @@ namespace PharmacyApp.Infrastructure.Services
         public async Task ReleaseStockAsync(Guid productId, int quantity, CancellationToken cancellationToken)
         {
             var product = await _productRepository.GetByIdAsync(productId);
+            if (product == null)
+                throw new InvalidOperationException($"Product with ID {productId} not found.");
             product.UpdateStock(quantity);
             await _productRepository.UpdateAsync(product);
         }
