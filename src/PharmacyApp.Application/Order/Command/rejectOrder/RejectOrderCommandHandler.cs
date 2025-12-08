@@ -2,7 +2,8 @@ using MediatR;
 using PharmacyApp.Application.Order.DTO;
 using PharmacyApp.Domain.OrderManagement.Repositories;
 
-namespace PharmacyApp.Application.Order.Command.RejectOrder{
+namespace PharmacyApp.Application.Order.Command.RejectOrder
+{
     public class RejectOrderCommandHandler : IRequestHandler<RejectOrderCommand, OrderDto>
     {
         private readonly IOrderRepository _orderRepository;
@@ -20,7 +21,7 @@ namespace PharmacyApp.Application.Order.Command.RejectOrder{
             if (order == null)
                 throw new Exception("Order not found.");
 
-            order.Cancel(request.Reason);
+            order.Reject(request.Reason);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

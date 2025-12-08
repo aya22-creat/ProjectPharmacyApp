@@ -1,8 +1,16 @@
+using MediatR;
+using PharmacyApp.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Register infrastructure (DbContext, repositories, unit of work)
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// Register MediatR scanning all loaded assemblies so application handlers are found
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
 
 var app = builder.Build();
 
@@ -14,28 +22,43 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+var mediator = app.Services.GetRequiredService<IMediator>();
 
-app.MapGet("/weatherforecast", () =>
+// Minimal endpoints for order flow
+app.MapPost("/api/orders/checkout", async (CheckoutRequest req) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var id = await mediator.Send(new PharmacyApp.Application.Cart.Command.CheckoutCart.CheckoutCartCommand(
+        req.CustomerId,
+        req.ShippingAddress ?? string.Empty,
+        req.BillingAddress ?? string.Empty,
+        req.PaymentMethod ?? string.Empty
+    ));
+
+    return Results.Ok(new { OrderId = id });
+});
+
+app.MapPost("/api/orders/{orderId:guid}/cancel", async (Guid orderId, CancelRequest req) =>
+{
+    var dto = await mediator.Send(new PharmacyApp.Application.Order.Command.CancelOrder.CancelOrderCommand(orderId, req.CustomerId, req.Reason ?? string.Empty));
+    return Results.Ok(dto);
+});
+
+app.MapPost("/api/admin/orders/{orderId:guid}/confirm", async (Guid orderId, AdminActionRequest req) =>
+{
+    var dto = await mediator.Send(new PharmacyApp.Application.Order.Command.ConfirmOrder.ConfirmOrderCommand(orderId, req.AdminId));
+    return Results.Ok(dto);
+});
+
+app.MapPost("/api/admin/orders/{orderId:guid}/reject", async (Guid orderId, AdminRejectRequest req) =>
+{
+    var dto = await mediator.Send(new PharmacyApp.Application.Order.Command.RejectOrder.RejectOrderCommand(orderId, req.AdminId, req.Reason ?? string.Empty));
+    return Results.Ok(dto);
+});
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+// DTOs for minimal API requests
+public record CheckoutRequest(Guid CustomerId, string? ShippingAddress, string? BillingAddress, string? PaymentMethod);
+public record CancelRequest(Guid CustomerId, string? Reason);
+public record AdminActionRequest(Guid AdminId);
+public record AdminRejectRequest(Guid AdminId, string? Reason);

@@ -3,9 +3,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PharmacyApp.Domain.CatalogManagement.Category.Repositories;
 using PharmacyApp.Domain.CatalogManagement.Product.Repositories;
+using PharmacyApp.Domain.CatalogManagement.Product.Services;
 using PharmacyApp.Infrastructure.Common;
 using PharmacyApp.Infrastructure.Persistence;
 using PharmacyApp.Infrastructure.Repositories;
+using PharmacyApp.Infrastructure.Services;
 using PharmacyApp.Domain.CartManagement.Repositories;
 using PharmacyApp.Domain.OrderManagement.Repositories;
 
@@ -26,6 +28,7 @@ namespace PharmacyApp.Infrastructure
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<ICartRepository, CartRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IStockService, StockService>();
 
             return services;
         }

@@ -1,10 +1,11 @@
 using PharmacyApp.Common.Common;
 using PharmacyApp.Common.Common.ValueObjects;
+using MediatR;
 
 
 namespace PharmacyApp.Domain.OrderManagement.Events;
 
-public class OrderRejectedEvent : DomainEvent
+public class OrderRejectedEvent : DomainEvent, INotification
     {
         public Guid OrderId { get; }
         public Guid CustomerId { get; }
