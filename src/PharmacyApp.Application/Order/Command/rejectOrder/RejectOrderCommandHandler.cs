@@ -2,30 +2,25 @@ using MediatR;
 using PharmacyApp.Application.Order.DTO;
 using PharmacyApp.Domain.OrderManagement.Repositories;
 
-namespace PharmacyApp.Application.Order.Command.RejectOrder
+namespace PharmacyApp.Application.Order.Command.RejectOrder;
+
+public sealed class RejectOrderCommandHandler(
+    IOrderRepository orderRepository,
+    IUnitOfWork unitOfWork) : IRequestHandler<RejectOrderCommand, OrderDto>
 {
-    public class RejectOrderCommandHandler : IRequestHandler<RejectOrderCommand, OrderDto>
+    private readonly IOrderRepository _orderRepository = orderRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+
+    public async Task<OrderDto> Handle(RejectOrderCommand request, CancellationToken cancellationToken)
     {
-        private readonly IOrderRepository _orderRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
+        if (order == null)
+            throw new Exception("Order not found.");
 
-        public RejectOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
-        {
-            _orderRepository = orderRepository;
-            _unitOfWork = unitOfWork;
-        }
+        order.Reject(request.Reason);
 
-        public async Task<OrderDto> Handle(RejectOrderCommand request, CancellationToken cancellationToken)
-        {
-            var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
-            if (order == null)
-                throw new Exception("Order not found.");
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            order.Reject(request.Reason);
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return new OrderDto(order);
-        }
+        return new OrderDto(order);
     }
 }

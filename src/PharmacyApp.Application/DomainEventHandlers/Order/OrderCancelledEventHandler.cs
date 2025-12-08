@@ -6,21 +6,14 @@ using PharmacyApp.Domain.OrderManagement.Repositories;
 
 namespace PharmacyApp.Application.DomainEventHandlers.Order;
 
-public sealed class OrderCancelledEventHandler : INotificationHandler<OrderCancelledEvent>
+public sealed class OrderCancelledEventHandler(
+    IOrderRepository orderRepository,
+    IStockService stockService,
+    ILogger<OrderCancelledEventHandler> logger) : INotificationHandler<OrderCancelledEvent>
 {
-    private readonly IOrderRepository _orderRepository;
-    private readonly IStockService _stockService;
-    private readonly ILogger<OrderCancelledEventHandler> _logger;
-
-    public OrderCancelledEventHandler(
-        IOrderRepository orderRepository,
-        IStockService stockService,
-        ILogger<OrderCancelledEventHandler> logger)
-    {
-        _orderRepository = orderRepository;
-        _stockService = stockService;
-        _logger = logger;
-    }
+    private readonly IOrderRepository _orderRepository = orderRepository;
+    private readonly IStockService _stockService = stockService;
+    private readonly ILogger<OrderCancelledEventHandler> _logger = logger;
 
     public async Task Handle(OrderCancelledEvent notification, CancellationToken cancellationToken)
     {

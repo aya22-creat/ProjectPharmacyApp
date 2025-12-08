@@ -4,16 +4,12 @@ using PharmacyApp.Domain.OrderManagement.Repositories;
 
 namespace PharmacyApp.Application.Order.Command.ConfirmOrder;
 
-public class ConfirmOrderCommandHandler : IRequestHandler<ConfirmOrderCommand, OrderDto>
+public sealed class ConfirmOrderCommandHandler(
+    IOrderRepository orderRepository,
+    IUnitOfWork unitOfWork) : IRequestHandler<ConfirmOrderCommand, OrderDto>
 {
-    private readonly IOrderRepository _orderRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public ConfirmOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
-    {
-        _orderRepository = orderRepository;
-        _unitOfWork = unitOfWork;
-    }
+    private readonly IOrderRepository _orderRepository = orderRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<OrderDto> Handle(ConfirmOrderCommand request, CancellationToken cancellationToken)
     {

@@ -4,16 +4,12 @@ using PharmacyApp.Domain.OrderManagement.Repositories;
 
 namespace PharmacyApp.Application.Order.Command.CancelOrder;
 
-public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, OrderDto>
+public sealed class CancelOrderCommandHandler(
+    IOrderRepository orderRepository,
+    IUnitOfWork unitOfWork) : IRequestHandler<CancelOrderCommand, OrderDto>
 {
-    private readonly IOrderRepository _orderRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public CancelOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
-    {
-        _orderRepository = orderRepository;
-        _unitOfWork = unitOfWork;
-    }
+    private readonly IOrderRepository _orderRepository = orderRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<OrderDto> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
     {
