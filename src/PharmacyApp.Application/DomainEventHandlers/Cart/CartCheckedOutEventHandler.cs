@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using PharmacyApp.Domain.OrderManagement.Repositories;
 
-namespace PharmacyApp.Application.Carts.EventHandlers;
+namespace PharmacyApp.Application.CartManagements.EventHandlers;
 
 public sealed class CartCheckedOutEventHandler(
     IOrderRepository orderRepository,

@@ -37,9 +37,9 @@ namespace PharmacyApp.Infrastructure.Repositories
             return await _context.Set<ProductAggregate>().AnyAsync(p => p.Id == id, cancellationToken);
         }
 
-        public async Task<bool> ExistsByNameAsync(string name, CancellationToken cancellationToken = default)
+        public async Task<bool> ExistsByNameAsync(string ProductName, CancellationToken cancellationToken = default)
         {
-            return await _context.Set<ProductAggregate>().AnyAsync(p => p.Name == name, cancellationToken);
+            return await _context.Set<ProductAggregate>().AnyAsync(p => p.ProductName == ProductName, cancellationToken);
         }
 
         public async Task RemoveAsync(ProductAggregate product, CancellationToken cancellationToken = default)

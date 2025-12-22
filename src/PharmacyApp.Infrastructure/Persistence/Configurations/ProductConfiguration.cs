@@ -17,7 +17,7 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
             builder.ToTable("Products");
             builder.HasKey(static p => p.Id);
 
-            builder.Property(static p => p.Name).IsRequired().HasMaxLength(200);
+            builder.Property(static p => p.ProductName).IsRequired().HasMaxLength(200);
             builder.OwnsOne(static p => p.Description, static desc => desc.Property(static d => d.Value).HasMaxLength(1000));
             builder.Property(static p => p.StockQuantity).IsRequired();
 

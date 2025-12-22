@@ -1,5 +1,6 @@
 using MediatR;
 using PharmacyApp.Infrastructure;
+using PharmacyApp.API.Requests.Order;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,7 @@ var mediator = app.Services.GetRequiredService<IMediator>();
 // Minimal endpoints for order flow
 app.MapPost("/api/orders/checkout", async (CheckoutRequest req) =>
 {
-    var id = await mediator.Send(new PharmacyApp.Application.Cart.Command.CheckoutCart.CheckoutCartCommand(
+    var id = await mediator.Send(new PharmacyApp.Application.CartManagement.Command.CheckoutCart.CheckoutCartCommand(
         req.CustomerId,
         req.ShippingAddress ?? string.Empty,
         req.BillingAddress ?? string.Empty,
@@ -39,19 +40,19 @@ app.MapPost("/api/orders/checkout", async (CheckoutRequest req) =>
 
 app.MapPost("/api/orders/{orderId:guid}/cancel", async (Guid orderId, CancelRequest req) =>
 {
-    var dto = await mediator.Send(new PharmacyApp.Application.Order.Command.CancelOrder.CancelOrderCommand(orderId, req.CustomerId, req.Reason ?? string.Empty));
+    var dto = await mediator.Send(new PharmacyApp.Application.OrderManagement.Command.CancelOrder.CancelOrderCommand(orderId, req.CustomerId, req.Reason ?? string.Empty));
     return Results.Ok(dto);
 });
 
 app.MapPost("/api/admin/orders/{orderId:guid}/confirm", async (Guid orderId, AdminActionRequest req) =>
 {
-    var dto = await mediator.Send(new PharmacyApp.Application.Order.Command.ConfirmOrder.ConfirmOrderCommand(orderId, req.AdminId));
+    var dto = await mediator.Send(new PharmacyApp.Application.OrderManagement.Command.ConfirmOrder.ConfirmOrderCommand(orderId, req.AdminId));
     return Results.Ok(dto);
 });
 
-app.MapPost("/api/admin/orders/{orderId:guid}/reject", async (Guid orderId, AdminRejectRequest req) =>
+app.MapPost("/api/admin/orders/{orderId:guid}/reject", async (Guid orderId,RejectOrderRequest req) =>
 {
-    var dto = await mediator.Send(new PharmacyApp.Application.Order.Command.RejectOrder.RejectOrderCommand(orderId, req.AdminId, req.Reason ?? string.Empty));
+    var dto = await mediator.Send(new PharmacyApp.Application.OrderManagement.Command.RejectOrder.RejectOrderCommand(orderId, req.AdminId, req.Reason ?? string.Empty));
     return Results.Ok(dto);
 });
 
@@ -60,5 +61,4 @@ app.Run();
 // DTOs for minimal API requests
 public record CheckoutRequest(Guid CustomerId, string? ShippingAddress, string? BillingAddress, string? PaymentMethod);
 public record CancelRequest(Guid CustomerId, string? Reason);
-public record AdminActionRequest(Guid AdminId);
-public record AdminRejectRequest(Guid AdminId, string? Reason);
+

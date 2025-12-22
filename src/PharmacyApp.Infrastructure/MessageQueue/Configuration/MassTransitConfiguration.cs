@@ -2,7 +2,7 @@ using System;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PharmacyApp.Infrastructure.MessageQueue.Consumers.Order;
+using PharmacyApp.Infrastructure.MessageQueue.OrderManagement.Consumers;
 using PharmacyApp.Infrastructure.MessageQueue.Consumers.Cart;
 
 

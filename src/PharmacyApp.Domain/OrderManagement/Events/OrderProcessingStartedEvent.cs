@@ -2,8 +2,7 @@ using MediatR;
 using PharmacyApp.Common.Common;
 
 
-
-namespace PharmacyApp.Domain.CatalogManagement.Events
+namespace PharmacyApp.Domain.OrderManagement.Events
 {
     public class OrderProcessingStartedEvent : DomainEvent , INotification
     {

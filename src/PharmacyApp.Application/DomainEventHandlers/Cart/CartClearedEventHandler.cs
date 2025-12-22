@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 
 
-namespace PharmacyApp.Application.Carts.EventHandlers;
+namespace PharmacyApp.Application.CartManagements.EventHandlers;
 
 
 public sealed class CartClearedEventHandler(

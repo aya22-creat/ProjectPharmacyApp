@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PharmacyApp.Application.Carts.EventHandlers;
+namespace PharmacyApp.Application.CartManagements.EventHandlers;
 
 public sealed class CartItemRemovedEventHandler(
     IStockService stockService,
