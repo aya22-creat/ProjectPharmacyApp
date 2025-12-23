@@ -2,6 +2,10 @@ using MediatR;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
 using PharmacyApp.Common.Common;
+using PharmacyApp.Domain.CatalogManagement.Category.CategoryAggregate;
+using PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots;
+using PharmacyApp.Domain.CartManagement;
+using PharmacyApp.Domain.OrderManagement.OrderAggregate;
 
 
 namespace PharmacyApp.Infrastructure.Persistence;
@@ -9,6 +13,11 @@ namespace PharmacyApp.Infrastructure.Persistence;
 public class ApplicationDbContext : DbContext
 {
     private readonly IMediator _mediator;
+
+    public DbSet<CategoryAggregate> Categories { get; set; }
+    public DbSet<ProductAggregate> Products { get; set; }
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<Order> Orders { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IMediator mediator)
         : base(options)

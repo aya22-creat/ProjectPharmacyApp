@@ -1,64 +1,171 @@
 using MediatR;
+using PharmacyApp.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 using PharmacyApp.Infrastructure;
-using PharmacyApp.API.Requests.Order;
+using PharmacyApp.Application;
+using PharmacyApp.Domain.CatalogManagement.Category.CategoryAggregate;
+using PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots;
+using PharmacyApp.Domain.CatalogManagement.Product.ValueObjects;
+using PharmacyApp.Domain.CatalogManagement.Category.ValueObjects;
+using PharmacyApp.Common.Common.ValueObjects;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddOpenApi();
+// ======= Controllers + JSON Options =======
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler =
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition =
+            System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
 
-// Register infrastructure (DbContext, repositories, unit of work)
-builder.Services.AddInfrastructure(builder.Configuration);
+// ======= Swagger / OpenAPI =======
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Pharmacy Sample API",
+        Version = "v1",
+        Description = "Sample API for Pharmacy Management System (Cosmetics & Medicine)",
+        Contact = new OpenApiContact
+        {
+            Name = "Pharmacy Team",
+            Email = "support@pharmacy.com"
+        }
+    });
 
-// Register MediatR scanning all loaded assemblies so application handlers are found
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+        c.IncludeXmlComments(xmlPath);
+});
+
+// ======= Layers / DI =======
+builder.Services.AddApplication(); // Application Layer
+builder.Services.AddInfrastructure(builder.Configuration); // Infrastructure Layer
+
+// MediatR (CQRS)
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+});
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
+    options.AddPolicy("Production", policy =>
+        policy.WithOrigins() 
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
+// Health Checks
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ======= Database Migration + Seed Data =======
+await EnsureDatabaseAsync(app);
+
+// ======= Middleware =======
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pharmacy Sample API V1");
+        c.RoutePrefix = string.Empty;
+    });
+}
+else
+{
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
 
-var mediator = app.Services.GetRequiredService<IMediator>();
+// CORS
+app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "Production");
 
-// Minimal endpoints for order flow
-app.MapPost("/api/orders/checkout", async (CheckoutRequest req) =>
-{
-    var id = await mediator.Send(new PharmacyApp.Application.CartManagement.Command.CheckoutCart.CheckoutCartCommand(
-        req.CustomerId,
-        req.ShippingAddress ?? string.Empty,
-        req.BillingAddress ?? string.Empty,
-        req.PaymentMethod ?? string.Empty
-    ));
+// Authorization (Optional)
+app.UseAuthorization();
 
-    return Results.Ok(new { OrderId = id });
-});
+// Health Check Endpoint
+app.MapHealthChecks("/health");
 
-app.MapPost("/api/orders/{orderId:guid}/cancel", async (Guid orderId, CancelRequest req) =>
-{
-    var dto = await mediator.Send(new PharmacyApp.Application.OrderManagement.Command.CancelOrder.CancelOrderCommand(orderId, req.CustomerId, req.Reason ?? string.Empty));
-    return Results.Ok(dto);
-});
-
-app.MapPost("/api/admin/orders/{orderId:guid}/confirm", async (Guid orderId, AdminActionRequest req) =>
-{
-    var dto = await mediator.Send(new PharmacyApp.Application.OrderManagement.Command.ConfirmOrder.ConfirmOrderCommand(orderId, req.AdminId));
-    return Results.Ok(dto);
-});
-
-app.MapPost("/api/admin/orders/{orderId:guid}/reject", async (Guid orderId,RejectOrderRequest req) =>
-{
-    var dto = await mediator.Send(new PharmacyApp.Application.OrderManagement.Command.RejectOrder.RejectOrderCommand(orderId, req.AdminId, req.Reason ?? string.Empty));
-    return Results.Ok(dto);
-});
+// Map Controllers
+app.MapControllers();
 
 app.Run();
 
-// DTOs for minimal API requests
-public record CheckoutRequest(Guid CustomerId, string? ShippingAddress, string? BillingAddress, string? PaymentMethod);
-public record CancelRequest(Guid CustomerId, string? Reason);
+// ======= Helper Methods =======
+static async Task EnsureDatabaseAsync(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+    await context.Database.MigrateAsync();
+    await SeedDataAsync(context);
+}
+
+static async Task SeedDataAsync(ApplicationDbContext context)
+{
+    if (!context.Categories.Any())
+    {
+        // Categories
+        var cosmetics = CategoryAggregate.Create("Cosmetics", "Beauty and cosmetic products");
+        var medicine = CategoryAggregate.Create("Medicine", "Pharmaceutical products");
+
+        context.Categories.AddRange(cosmetics, medicine);
+        await context.SaveChangesAsync();
+
+        // Products
+        var lipstick = ProductAggregate.Create(
+            "Red Lipstick",
+            new ProductDescription("A vibrant red lipstick for everyday use."),
+            Money.Create(150m, "EGP"),
+            100,
+            true,
+            CategoryId.Create(cosmetics.Id)
+        );
+
+        var cream = ProductAggregate.Create(
+            "Moisturizing Cream",
+            new ProductDescription("Hydrating cream for dry skin."),
+            Money.Create(200m, "EGP"),
+            50,
+            true,
+            CategoryId.Create(cosmetics.Id)
+        );
+
+        var painkiller = ProductAggregate.Create(
+            "Paracetamol 500mg",
+            new ProductDescription("Pain relief medication."),
+            Money.Create(25m, "EGP"),
+            200,
+            false,
+            CategoryId.Create(medicine.Id)
+        );
+
+        var vitaminC = ProductAggregate.Create(
+            "Vitamin C 500mg",
+            new ProductDescription("Vitamin C supplement for immunity."),
+            Money.Create(40m, "EGP"),
+            150,
+            false,
+            CategoryId.Create(medicine.Id)
+        );
+
+        context.Products.AddRange(lipstick, cream, painkiller, vitaminC);
+        await context.SaveChangesAsync();
+    }
+}
