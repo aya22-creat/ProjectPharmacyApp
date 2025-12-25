@@ -29,7 +29,7 @@ namespace PharmacyApp.Application.CatalogManagement.Category.Command.UpdateCateg
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new CategoryDto(category.Id, category.Name, category.ProductCount, category.Description);
+            return new CategoryDto(category.Id, category.Name, category.ProductCount, category.Description, category.DisplayOrder);
         }
     }
 }

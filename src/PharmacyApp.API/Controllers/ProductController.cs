@@ -53,7 +53,8 @@ public class ProductsController : ControllerBase
         request.Currency ?? "EGP",
         request.CategoryId,
         request.StockQuantity,
-        request.IsCosmetic
+        request.IsCosmetic,
+        request.IsAvailable
     );
 
     var product = await _mediator.Send(command, cancellationToken);

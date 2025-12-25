@@ -1,29 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PharmacyApp.Domain.CatalogManagement.Category.CategoryAggregate;
 
+namespace PharmacyApp.Infrastructure.Persistence.Configurations;
 
-namespace PharmacyApp.Infrastructure.Persistence.Configurations
+public class CategoryConfiguration : IEntityTypeConfiguration<CategoryAggregate>
 {
-    public class CategoryConfiguration : IEntityTypeConfiguration<CategoryAggregate>
+    public void Configure(EntityTypeBuilder<CategoryAggregate> builder)
     {
-        public void Configure(EntityTypeBuilder<CategoryAggregate> builder)
-        {
-            builder.ToTable("Categories");
-            builder.HasKey(static c => c.Id);
+        builder.ToTable("Categories");
+        builder.HasKey(c => c.Id);
 
-            builder.Property(static c => c.Name).IsRequired().HasMaxLength(100);
-            builder.Property(static c => c.Description).HasMaxLength(500);
-            builder.Property(static c => c.ProductCount).IsRequired();
+        builder.Property(c => c.Name)
+               .IsRequired()
+               .HasMaxLength(200);
 
-            builder.HasIndex(static c => c.Name);
+        builder.Property(c => c.Description)
+               .HasMaxLength(1000);
 
-            builder.Ignore(static c => c.DomainEvents);
-        }
+        builder.Property(c => c.DisplayOrder);
+        builder.Property(c => c.CreatedAt);
+        builder.Property(c => c.ProductCount);
+
+        builder.Ignore(c => c.DomainEvents);
     }
 }

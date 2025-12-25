@@ -11,22 +11,31 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
             builder.ToTable("OrderItems");
-            builder.HasKey(static oi => oi.Id);
+builder.HasKey(oi => oi.Id);
 
-            builder.Property(static oi => oi.OrderId).IsRequired();
-            builder.Property(static oi => oi.ProductId).IsRequired();
-            builder.Property(static oi => oi.ProductName).IsRequired().HasMaxLength(200);
-            builder.Property(static oi => oi.Quantity).IsRequired();
+builder.Property(oi => oi.OrderId).IsRequired();
+builder.Property(oi => oi.ProductId).IsRequired();
+builder.Property(oi => oi.ProductName).IsRequired().HasMaxLength(200);
+builder.Property(oi => oi.Quantity).IsRequired();
 
+builder.HasOne<Order>()
+       .WithMany(o => o.Items)
+       .HasForeignKey(oi => oi.OrderId)
+       .OnDelete(DeleteBehavior.Cascade);
 
-           builder.HasOne<Order>().WithMany(o => o.Items).HasForeignKey(oi => oi.OrderId);
+builder.OwnsOne(oi => oi.Price, price =>
+{
+    price.Property(p => p.Amount)
+         .HasColumnName("UnitPrice")
+         .HasColumnType("decimal(18,2)")
+         .IsRequired();
 
-            // Value Objects
-            builder.OwnsOne(static oi => oi.Price, static price =>
-            {
-                price.Property(static p => p.Amount).HasColumnName("UnitPrice").HasColumnType("decimal(18,2)");
-                price.Property(static p => p.Currency).HasColumnName("Currency").HasMaxLength(3);
-            });
-        }
+    price.Property(p => p.Currency)
+         .HasColumnName("Currency")
+         .HasMaxLength(3)
+         .IsRequired();
+});
+         
+        }       
     }
 }

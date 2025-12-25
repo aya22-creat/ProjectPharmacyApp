@@ -1,39 +1,51 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots;
+using PharmacyApp.Domain.CatalogManagement.Category.ValueObjects;
 
+namespace PharmacyApp.Infrastructure.Persistence.Configurations;
 
-namespace PharmacyApp.Infrastructure.Persistence.Configurations
+public class ProductConfiguration : IEntityTypeConfiguration<ProductAggregate>
 {
-    public class ProductConfiguration : IEntityTypeConfiguration<ProductAggregate>
+    public void Configure(EntityTypeBuilder<ProductAggregate> builder)
     {
-        public void Configure(EntityTypeBuilder<ProductAggregate> builder)
+        builder.ToTable("Products");
+        builder.HasKey(p => p.Id);
+
+        builder.Property(p => p.ProductName)
+               .IsRequired()
+               .HasMaxLength(200);
+
+        builder.OwnsOne(p => p.Description, desc =>
         {
-            builder.ToTable("Products");
-            builder.HasKey(static p => p.Id);
+            desc.Property(d => d.Value)
+                .HasColumnName("Description")
+                .HasMaxLength(1000);
+        });
 
-            builder.Property(static p => p.ProductName).IsRequired().HasMaxLength(200);
-            builder.OwnsOne(static p => p.Description, static desc => desc.Property(static d => d.Value).HasMaxLength(1000));
-            builder.Property(static p => p.StockQuantity).IsRequired();
+        builder.OwnsOne(p => p.Price, price =>
+        {
+            price.Property(pr => pr.Amount)
+                 .HasColumnName("Price")
+                 .HasColumnType("decimal(18,2)");
 
-            // Value Object
-            builder.OwnsOne(static p => p.Price, static price =>
-            {
-                price.Property(static pr => pr.Amount).HasColumnName("Price").HasColumnType("decimal(18,2)");
-                price.Property(static pr => pr.Currency).HasColumnName("Currency").HasMaxLength(3);
-            });
+            price.Property(pr => pr.Currency)
+                 .HasColumnName("Currency")
+                 .HasMaxLength(3);
+        });
 
-            builder.Property(static p => p.CategoryId.Value).HasColumnName("CategoryId");
+        builder.Property(p => p.StockQuantity).IsRequired();
 
-            // Index
-            builder.HasIndex(static p => p.CategoryId);
+        builder.Property(p => p.CategoryId)
+               .HasConversion(
+                   v => v.Value,
+                   v => CategoryId.Create(v)
+               )
+               .HasColumnName("CategoryId")
+               .IsRequired();
 
-            builder.Ignore(static p => p.DomainEvents);
-        }
+        builder.HasIndex(p => p.CategoryId);
+
+        builder.Ignore(p => p.DomainEvents);
     }
 }

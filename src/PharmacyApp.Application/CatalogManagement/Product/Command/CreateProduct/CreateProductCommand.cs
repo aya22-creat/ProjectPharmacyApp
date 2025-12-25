@@ -15,6 +15,7 @@ namespace PharmacyApp.Application.CatalogManagement.Product.Command.CreateProduc
         string Currency,
         Guid CategoryId,
         int StockQuantity,
-        bool IsCosmetic
+        bool IsCosmetic,
+        bool IsAvailable
     ) : IRequest<ProductDto>;
 }

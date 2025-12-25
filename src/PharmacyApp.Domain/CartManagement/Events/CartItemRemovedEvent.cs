@@ -14,7 +14,7 @@ namespace PharmacyApp.Domain.CartManagement.Events;
             CartId = cartId;
             CartItemId = cartItemId;
             ProductId = productId;
-            Quantity = Quantity;
+           Quantity = quantity;
         }
     }
 

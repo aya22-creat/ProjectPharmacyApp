@@ -13,23 +13,23 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
         {
             builder.ToTable("Carts");
 
-            builder.HasKey(static c => c.Id);
+            builder.HasKey( c => c.Id);
 
-            builder.HasIndex(static c => c.CustomerId)
+            builder.HasIndex( c => c.CustomerId)
                 .IsUnique();
-            builder.Property(static c => c.State)
+            builder.Property( c => c.State)
                 .IsRequired();
-            builder.Property(static c => c.CreatedAt)
+            builder.Property( c => c.CreatedAt)
                 .IsRequired();
-            builder.Property(static c => c.UpdatedAt);
+            builder.Property( c => c.UpdatedAt);
 
 
-            builder.Property(static x => x.State)
+            builder.Property( x => x.State)
                 .HasConversion(
-                    static x => x.Name,
-                    static x => CartStateEnum.FromName(x, true));
+                     x => x.Name,
+                     x => CartStateEnum.FromName(x, true));
 
-            builder.OwnsMany(static x => x.Items, static a =>
+            builder.OwnsMany( x => x.Items,  a =>
             {
                 a.ToTable("CartItems");
 
@@ -37,28 +37,28 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
 
                 a.HasKey("Id");
 
-                a.Property(static ci => ci.ProductId)
+                a.Property( ci => ci.ProductId)
                     .IsRequired();
 
-                a.Property(static ci => ci.ProductName)
+                a.Property( ci => ci.ProductName)
                     .HasMaxLength(200)
                     .IsRequired();
 
-                a.Property(static ci => ci.Quantity)
+                a.Property( ci => ci.Quantity)
                     .IsRequired();
 
-                a.OwnsOne(static ci => ci.Price, static money =>
+                a.OwnsOne( ci => ci.Price, money =>
                 {
-                    money.Property(static m => m.Amount)
+                    money.Property( m => m.Amount)
                         .HasColumnName("PriceAmount")
                         .IsRequired();
-                    money.Property(static m => m.Currency)
+                    money.Property( m => m.Currency)
                         .HasColumnName("PriceCurrency")
                         .HasMaxLength(3)
                         .IsRequired();
                 });
             });
 
-           
+
     }
-    }}
+}}

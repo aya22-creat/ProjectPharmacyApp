@@ -1,0 +1,36 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "database": "PharmacyDB",
+            "username": "root",
+            "name": "PharmacyLocal"
+        },
+        {
+            "connectionTimeout": 15,
+            "mssqlOptions": {
+                "appName": "SQLTools",
+                "useUTC": true,
+                "encrypt": true,
+                "trustServerCertificate": false
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost\\SQLEXPRESS",
+            "port": 1433,
+            "driver": "MSSQL",
+            "name": "sqlserver",
+            "database": "PharmacyDB",
+            "username": "root",
+            "password": "123456"
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using PharmacyApp.API.Requests.Order;
+using PharmacyApp.Application.OrderManagement.Command.CreateOrder;
 using PharmacyApp.Application.CartManagement.Command.CheckoutCart;
 using PharmacyApp.Application.OrderManagement.Command.CancelOrder;
 using PharmacyApp.Application.OrderManagement.Command.ConfirmOrder;
@@ -22,6 +23,9 @@ public class OrdersController : ControllerBase
     {
         _mediator = mediator;
     }
+
+
+
    [HttpGet("{id:guid}")]
 [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK)]
 [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -50,6 +54,28 @@ public async Task<ActionResult<IEnumerable<OrderDto>>> GetCustomerOrders(
 
     return Ok(orders ?? Enumerable.Empty<OrderDto>());
 }
+
+[HttpPost]
+[ProducesResponseType(typeof(OrderDto), StatusCodes.Status201Created)]
+public async Task<ActionResult<OrderDto>> Create([FromBody] CreateOrderRequest request)
+{
+    var command = new CreateOrderCommand(
+        request.CustomerId,
+        request.Items.Select(i => new CreateOrderItemDto(
+            i.ProductId,
+            i.ProductName,
+            i.Quantity,
+            i.Price)).ToList(),
+        request.Currency,
+        request.ShippingAddress,
+        request.BillingAddress,
+        request.PaymentMethod,
+        request.ShippingCost
+    );
+    var order = await _mediator.Send(command);
+    return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, order);
+}
+
 
   [HttpPost("{orderId:guid}/cancel")]
 [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK)]

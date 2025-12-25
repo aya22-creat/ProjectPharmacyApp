@@ -15,6 +15,20 @@ public partial class Cart
         return new Cart(customerId);
     }
 
+
+
+    public Guid? OrderId { get; private set; }
+
+    public void LinkOrder(Guid orderId)
+    {
+        if (OrderId != null)
+            throw new InvalidOperationException("Cart is already linked to an order.");
+
+        OrderId = orderId;
+    }
+
+
+
     // Add item to cart 
     public void AddItem(Guid productId, string productName, int quantity, Money price)
     {

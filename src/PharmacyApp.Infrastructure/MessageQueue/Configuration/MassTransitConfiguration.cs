@@ -36,11 +36,12 @@ namespace PharmacyApp.Infrastructure.MessageQueue.Configuration
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(new Uri($"{rabbitMqSettings.Host}/{rabbitMqSettings.VirtualHost}"), h =>
-                    {
-                        h.Username(rabbitMqSettings.Username);
-                        h.Password(rabbitMqSettings.Password);
-                    });
+                    cfg.Host($"rabbitmq://{rabbitMqSettings.Host}:{rabbitMqSettings.Port}{rabbitMqSettings.VirtualHost}", h =>
+{
+    h.Username(rabbitMqSettings.Username);
+    h.Password(rabbitMqSettings.Password);
+});
+
 
                 // Configure endpoints for each consumer
                   cfg.ReceiveEndpoint("order-created-queue", e =>

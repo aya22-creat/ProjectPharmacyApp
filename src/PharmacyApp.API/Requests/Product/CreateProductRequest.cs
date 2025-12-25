@@ -8,5 +8,7 @@ public record CreateProductRequest(
     string? Currency,
     Guid CategoryId,
     int StockQuantity,
-    bool IsCosmetic
+    bool IsCosmetic,
+    bool IsAvailable
+
 );

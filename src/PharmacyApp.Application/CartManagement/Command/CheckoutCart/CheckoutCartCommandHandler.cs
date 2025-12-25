@@ -4,8 +4,8 @@ using PharmacyApp.Domain.CartManagement.Repositories;
 using CartEntity = PharmacyApp.Domain.CartManagement.Cart;
 using PharmacyApp.Domain.CartManagement;
 
-namespace PharmacyApp.Application.CartManagement.Command.CheckoutCart;
-
+namespace PharmacyApp.Application.CartManagement.Command.CheckoutCart
+{
     public class CheckoutCartCommandHandler : IRequestHandler<CheckoutCartCommand, Guid>
     {
         private readonly ICartRepository _cartRepository;
@@ -29,7 +29,7 @@ namespace PharmacyApp.Application.CartManagement.Command.CheckoutCart;
 
             await ValidateProductsAvailability(cart, cancellationToken);
 
-            var orderItems = cart.Items.Select(static item => new CreateOrderItemDto(
+            var orderItems = cart.Items.Select(item => new CreateOrderItemDto(
                 item.ProductId,
                 item.ProductName,
                 item.Quantity,
@@ -46,9 +46,9 @@ namespace PharmacyApp.Application.CartManagement.Command.CheckoutCart;
             );
 
             var orderDto = await _mediator.Send(createOrderCommand, cancellationToken);
-
+            cart.LinkOrder(orderDto.Id);
             cart.Checkout();
-            cart.ClearCart();
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return orderDto.Id;
@@ -57,13 +57,8 @@ namespace PharmacyApp.Application.CartManagement.Command.CheckoutCart;
         private async Task ValidateProductsAvailability(CartEntity cart, CancellationToken cancellationToken)
         {
         
-            // foreach (var item in cart.Items)
-            // {
-            //     var product = await _productRepository.GetByIdAsync(item.ProductId, cancellationToken);
-            //     if (!product.IsAvailable) throw new InvalidOperationException($"{product.Name} is not available");
-            // }
 
             await Task.CompletedTask;
         }
     }
-
+}

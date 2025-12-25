@@ -30,7 +30,7 @@ namespace PharmacyApp.Application.CatalogManagement.Category.Command.CreateCateg
             await _categoryRepository.AddAsync(category, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new CategoryDto(category.Id, category.Name, category.ProductCount, category.Description);
+            return new CategoryDto(category.Id, category.Name, category.ProductCount, category.Description, category.DisplayOrder);
         }
     }
 }

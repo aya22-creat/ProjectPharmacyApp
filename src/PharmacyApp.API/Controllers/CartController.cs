@@ -7,6 +7,7 @@ using PharmacyApp.Application.CartManagement.Command.UpdateCart;
 using PharmacyApp.Application.CartManagement.Command.ClearCart;
 using PharmacyApp.Application.CartManagement.Queries.GetCartByCustomer;
 using PharmacyApp.Application.CartManagement.Queries.GetCartItemsCount;
+using PharmacyApp.Application.CartManagement.Command.CheckoutCart;
 using PharmacyApp.Application.CartManagement.Queries.GetCartTotal;
 using PharmacyApp.Application.CartManagement.DTO;
 
@@ -75,6 +76,30 @@ public async Task<ActionResult<CartItemDto>> AddItem(
         result
     );
 }
+
+
+
+[HttpPost("{customerId:guid}/checkout")]
+[ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+[ProducesResponseType(StatusCodes.Status404NotFound)]
+public async Task<ActionResult<Guid>> Checkout(
+    Guid customerId,
+    [FromBody] CheckoutCartRequest request,
+    CancellationToken cancellationToken)
+{
+    var command = new CheckoutCartCommand(
+        customerId,
+        request.ShippingAddress,
+        request.BillingAddress,
+        request.PaymentMethod
+    );
+
+    var orderId = await _mediator.Send(command, cancellationToken);
+
+    return Ok(new { OrderId = orderId });
+}
+
 
 
     [HttpPut("{customerId:guid}/items/{cartItemId:guid}")]

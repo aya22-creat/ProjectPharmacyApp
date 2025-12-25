@@ -13,15 +13,15 @@ namespace PharmacyApp.Domain.CatalogManagement.Product.ValueObjects;
     {
         public string Value { get; private set; }
 
-        public ProductDescription(string text)
+        public ProductDescription(string value)
         {
-            if (string.IsNullOrWhiteSpace(text))
-                throw new ArgumentException("Product description cannot be empty.", nameof(text));
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Product description cannot be empty.", nameof(value));
 
-            if (text.Length > 1000)
-                throw new ArgumentException("Product description cannot exceed 1000 characters.", nameof(text));
+            if (value.Length > 1000)
+                throw new ArgumentException("Product description cannot exceed 1000 characters.", nameof(value));
 
-            Value = text;
+            Value = value;
         }
 
         protected override IEnumerable<object> GetEqualityComponents()

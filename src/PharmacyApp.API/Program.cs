@@ -3,6 +3,8 @@ using PharmacyApp.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using PharmacyApp.Domain.CartManagement.Services;
+using PharmacyApp.Application.Common;
 using PharmacyApp.Infrastructure;
 using PharmacyApp.Application;
 using PharmacyApp.Domain.CatalogManagement.Category.CategoryAggregate;
@@ -13,6 +15,13 @@ using PharmacyApp.Common.Common.ValueObjects;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        b => b.MigrationsAssembly("PharmacyApp.Infrastructure") 
+    )
+);
+
 // ======= Controllers + JSON Options =======
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -22,6 +31,11 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.DefaultIgnoreCondition =
             System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
     });
+
+    builder.Services.AddScoped<ICartCalculationService, CartCalculationService>();
+
+
+
 
 // ======= Swagger / OpenAPI =======
 builder.Services.AddEndpointsApiExplorer();
@@ -72,7 +86,6 @@ builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-// ======= Database Migration + Seed Data =======
 await EnsureDatabaseAsync(app);
 
 // ======= Middleware =======

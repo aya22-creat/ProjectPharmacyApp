@@ -23,7 +23,7 @@ namespace PharmacyApp.Application.CatalogManagement.Category.queries.GetCategory
         {
             var category = await _categoryRepository.GetByIdAsync(request.Id, cancellationToken);
 
-            return category == null ? null : new CategoryDto(category.Id, category.Name, category.ProductCount, category.Description);
+            return category == null ? null : new CategoryDto(category.Id, category.Name, category.ProductCount, category.Description, category.DisplayOrder);
         }
     }
 }
