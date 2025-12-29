@@ -53,7 +53,8 @@ namespace PharmacyApp.Application.CartManagement.Queries.GetCartByCustomer
                 TotalAmount: subTotal,
                 Currency: Constants.DefaultCurrency,
                 CreatedAt: cart.CreatedAt,
-                UpdatedAt: cart.UpdatedAt
+                UpdatedAt: cart.UpdatedAt,
+                AddedItems: Enumerable.Empty<AddedCartItemDto>()
             );
 
             return cartDto;

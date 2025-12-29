@@ -42,7 +42,8 @@ namespace PharmacyApp.Application.CartManagement.Command.UpdateCart
                 TotalAmount: totalAmount,
                 Currency: cart.GetTotal().Currency ?? "EGP",
                 CreatedAt: cart.CreatedAt,
-                UpdatedAt: cart.UpdatedAt
+                UpdatedAt: cart.UpdatedAt,
+                AddedItems: Enumerable.Empty<AddedCartItemDto>()
             );
         }
     }

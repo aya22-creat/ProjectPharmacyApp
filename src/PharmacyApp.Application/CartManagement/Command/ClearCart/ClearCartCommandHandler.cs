@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using PharmacyApp.Application.CartManagement.Command;
+using PharmacyApp.Domain.CartManagement;
 using PharmacyApp.Domain.CartManagement.Repositories;
 
 namespace PharmacyApp.Application.CartManagement.Command.ClearCart
@@ -22,10 +22,20 @@ namespace PharmacyApp.Application.CartManagement.Command.ClearCart
         {
             var cart = await _cartRepository.GetByCustomerIdAsync(request.CustomerId, cancellationToken);
 
-            if (cart != null)
+            if (cart == null)
             {
-                cart.ClearCart();
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                cart = Cart.Create(request.CustomerId);
+                await _cartRepository.AddAsync(cart, cancellationToken);
+            }
+            else if (!cart.IsEmpty())
+            {
+                foreach (var item in cart.Items.ToList())
+                {
+                    cart.RemoveItem(item.Id);
+
+                    _cartRepository.Update(cart);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                }
             }
 
             return Unit.Value;

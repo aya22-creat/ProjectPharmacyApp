@@ -36,28 +36,23 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Ignore<DomainEvent>();
     }
 
-    public override async Task<int> SaveChangesAsync(
-        CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var result = await base.SaveChangesAsync(cancellationToken);
-        await DispatchDomainEventsAsync(cancellationToken);
-        return result;
-    }
-
-    private async Task DispatchDomainEventsAsync(CancellationToken cancellationToken)
-    {
-        var domainEntities = ChangeTracker
+        var domainEvents = ChangeTracker
             .Entries<AggregateRoot<Guid>>()
-            .Where(x => x.Entity.DomainEvents.Any())
+            .SelectMany(e => e.Entity.DomainEvents)
             .ToList();
 
-        var events = domainEntities
-            .SelectMany(x => x.Entity.DomainEvents)
-            .ToList();
-
-        foreach (var domainEvent in events)
+        foreach (var domainEvent in domainEvents)
+        {
             await _mediator.Publish(domainEvent, cancellationToken);
+        }
 
-        domainEntities.ForEach(e => e.Entity.ClearDomainEvents());
+        foreach (var entity in ChangeTracker.Entries<AggregateRoot<Guid>>())
+        {
+            entity.Entity.ClearDomainEvents();
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
     }
 }

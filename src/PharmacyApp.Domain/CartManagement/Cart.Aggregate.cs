@@ -2,6 +2,7 @@ using PharmacyApp.Common.Common.ValueObjects;
 using PharmacyApp.Domain.CartManagement.Enum;
 using PharmacyApp.Domain.CartManagement.Entities;
 using PharmacyApp.Domain.CartManagement.Events;
+using PharmacyApp.Domain.CartManagement.ValueObjects;
 
 namespace PharmacyApp.Domain.CartManagement;
 
@@ -15,8 +16,6 @@ public partial class Cart
         return new Cart(customerId);
     }
 
-
-
     public Guid? OrderId { get; private set; }
 
     public void LinkOrder(Guid orderId)
@@ -25,129 +24,147 @@ public partial class Cart
             throw new InvalidOperationException("Cart is already linked to an order.");
 
         OrderId = orderId;
+        UpdatedAt = DateTime.UtcNow;
     }
 
+    
 
-
-    // Add item to cart 
     public void AddItem(Guid productId, string productName, int quantity, Money price)
     {
         if (State != CartStateEnum.Active)
             throw new InvalidOperationException("Cannot add items to inactive cart");
 
-        var existingItem = _items.FirstOrDefault(i => i.ProductId == productId);
+        if (quantity <= 0)
+            throw new ArgumentException("Quantity must be greater than zero", nameof(quantity));
 
-        if (existingItem != null)
+        var item = _items.FirstOrDefault(i => i.ProductId == productId);
+
+        if (item is null)
         {
-            existingItem.IncreaseQuantity(quantity);
+            item = new CartItem(productId, productName, quantity, price);
+            _items.Add(item);
         }
         else
         {
-            var newItem = new CartItem(productId, productName, quantity, price);
-            _items.Add(newItem);
+            item.IncreaseQuantity(quantity);
         }
+
+        UpdatedAt = DateTime.UtcNow;
+
+        AddDomainEvent(new CartItemAddedEvent(Id, productId, quantity));
     }
 
-    // Remove item from cart
-    public void RemoveItem(Guid cartItemId)
+    public bool RemoveItem(Guid cartItemId)
     {
-        if (State != CartStateEnum.Active)
-            throw new InvalidOperationException("Cannot remove items from inactive cart");
-
         var item = _items.FirstOrDefault(i => i.Id == cartItemId);
-
-        if (item == null)
-            throw new InvalidOperationException($"CartItem with ID {cartItemId} not found");
+        if (item is null)
+            return false;
 
         _items.Remove(item);
+        UpdatedAt = DateTime.UtcNow;
 
-        AddDomainEvent(new CartItemRemovedEvent(Id, cartItemId, item.ProductId, item.Quantity));
+        AddDomainEvent(new CartItemRemovedEvent(Id, item.ProductId, item.Quantity));
+        return true;
     }
 
-    // Update item quantity
     public void UpdateItemQuantity(Guid cartItemId, int newQuantity)
     {
         if (State != CartStateEnum.Active)
             throw new InvalidOperationException("Cannot update items in inactive cart");
 
+        if (newQuantity <= 0)
+            throw new ArgumentException("Quantity must be greater than zero", nameof(newQuantity));
+
         var item = _items.FirstOrDefault(i => i.Id == cartItemId);
+        if (item is null)
+            return;
 
-        if (item == null)
-            throw new InvalidOperationException($"CartItem with ID {cartItemId} not found");
-
+        var oldQuantity = item.Quantity;
         item.UpdateQuantity(newQuantity);
+        UpdatedAt = DateTime.UtcNow;
+
+        AddDomainEvent(
+            new CartItemQuantityUpdatedEvent(Id, item.ProductId, cartItemId, newQuantity, oldQuantity)
+        );
     }
 
-    // Clear all items from cart
     public void ClearCart()
     {
         if (State != CartStateEnum.Active)
             throw new InvalidOperationException("Cannot clear inactive cart");
 
+         foreach (var item in _items)
+            AddDomainEvent(new CartItemRemovedEvent(Id, item.ProductId, item.Quantity));
+
         _items.Clear();
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+ 
+    public void Activate()
+    {
+        if (State == CartStateEnum.Active)
+            return;
+
+        State = CartStateEnum.Active;
+        UpdatedAt = DateTime.UtcNow;
     }
 
     public void Deactivate()
-{
-    State = CartStateEnum.Inactive;
-}
+    {
+        if (State == CartStateEnum.Inactive)
+            return;
 
-public void Activate()
-{
-    State = CartStateEnum.Active;
-}
+        State = CartStateEnum.Inactive;
+        UpdatedAt = DateTime.UtcNow;
+    }
 
-
-    // Get cart total
+   
     public Money GetTotal()
     {
-        if (_items.Count == 0)
-            return Money.Zero("EGP");
-
-        var total = Money.Zero("EGP");
-
-        foreach (var item in _items)
-        {
-            total = total.Add(item.GetSubtotal());
-        }
-
-
-        return total;
+        return _items.Count == 0
+            ? Money.Zero("EGP")
+            : _items.Aggregate(
+                Money.Zero("EGP"),
+                (sum, item) => sum.Add(item.GetSubtotal()));
     }
 
-    // Get total items count
-    public int GetTotalItemsCount()
-    {
-        return _items.Sum(static i => i.Quantity);
-    }
-
-    // Check if cart is empty
-    public bool IsEmpty()
-    {
-        return _items.Count == 0;
-    }
-
-    // Check if cart contains product
-    public bool ContainsProduct(Guid productId)
-    {
-        return _items.Any(i => i.ProductId == productId);
-    }
-
-    // Get item by product ID
+    public int GetTotalItemsCount() => _items.Sum(i => i.Quantity);
+    public bool IsEmpty() => _items.Count == 0;
+    public bool ContainsProduct(Guid productId) => _items.Any(i => i.ProductId == productId);
     public CartItem? GetItemByProductId(Guid productId)
-    {
-        return _items.FirstOrDefault(i => i.ProductId == productId);
-    }
+        => _items.FirstOrDefault(i => i.ProductId == productId);
+
 
     public void Checkout()
     {
         if (State != CartStateEnum.Active)
-            throw new InvalidOperationException("Cannot perform operation on inactive cart");
+            throw new InvalidOperationException("Cannot checkout inactive cart");
+
         if (_items.Count == 0)
             throw new InvalidOperationException("Cannot checkout empty cart");
+
         State = CartStateEnum.Inactive;
+        UpdatedAt = DateTime.UtcNow;
+
         var total = GetTotal();
-        AddDomainEvent(new CartCheckedOutEvent(Id, CustomerId, total.Amount, total.Currency!, _items));
+
+        var itemsSnapshot = _items
+            .Select(i => new CartItemSnapshot(
+                i.ProductId,
+                i.ProductName,
+                i.Quantity,
+                i.Price))
+            .ToList();
+
+        AddDomainEvent(
+            new CartCheckedOutEvent(
+                Id,
+                CustomerId,
+                total.Amount,
+                total.Currency!,
+                itemsSnapshot
+            )
+        );
     }
-    
 }

@@ -120,7 +120,6 @@ app.MapControllers();
 
 app.Run();
 
-// ======= Helper Methods =======
 static async Task EnsureDatabaseAsync(WebApplication app)
 {
     using var scope = app.Services.CreateScope();

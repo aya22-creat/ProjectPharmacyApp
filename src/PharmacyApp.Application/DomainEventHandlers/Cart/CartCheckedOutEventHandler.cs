@@ -2,16 +2,23 @@ using PharmacyApp.Domain.CartManagement.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using PharmacyApp.Domain.OrderManagement.Repositories;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PharmacyApp.Application.CartManagements.EventHandlers;
 
-public sealed class CartCheckedOutEventHandler(
-    IOrderRepository orderRepository,
-    ILogger<CartCheckedOutEventHandler> logger
-) : INotificationHandler<CartCheckedOutEvent>
+public sealed class CartCheckedOutEventHandler : INotificationHandler<CartCheckedOutEvent>
 {
-    private readonly IOrderRepository _orderRepository = orderRepository;
-    private readonly ILogger<CartCheckedOutEventHandler> _logger = logger;
+    private readonly IOrderRepository _orderRepository;
+    private readonly ILogger<CartCheckedOutEventHandler> _logger;
+
+    public CartCheckedOutEventHandler(
+        IOrderRepository orderRepository,
+        ILogger<CartCheckedOutEventHandler> logger)
+    {
+        _orderRepository = orderRepository;
+        _logger = logger;
+    }
 
     public async Task Handle(CartCheckedOutEvent notification, CancellationToken cancellationToken)
     {
@@ -19,7 +26,7 @@ public sealed class CartCheckedOutEventHandler(
 
         await _orderRepository.CreateOrderFromCartAsync(
             notification.CartId,
-            notification._items,
+            notification.Items,
             notification.CustomerId,
             cancellationToken
         );

@@ -5,7 +5,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using PharmacyApp.Domain.OrderManagement.Events;
 using PharmacyApp.Infrastructure.MessageQueue.OrderManagement.Producer;
-using PharmacyApp.Infrastructure.MessageQueue.Producer;
 
 namespace PharmacyApp.Infrastructure.MessageQueue.OrderManagement.Publishers;
 

@@ -2,7 +2,10 @@ using PharmacyApp.Common.Common;
 using PharmacyApp.Domain.CartManagement.ValueObjects;
 using PharmacyApp.Domain.CartManagement.Enum;
 using PharmacyApp.Domain.CartManagement.Entities;
-using System.Reflection;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace PharmacyApp.Domain.CartManagement;
 
@@ -17,10 +20,24 @@ public partial class Cart : AggregateRoot<Guid>
         State = CartStateEnum.Active;
         CreatedAt = DateTime.UtcNow;
     }
+
     public Guid CustomerId { get; private set; }
     public CartStateEnum State { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
+
+    [Timestamp]
+    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+
+    // Items
     private readonly List<CartItem> _items = new();
     public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
+
+    public IEnumerable<CartItemSnapshot> GetItemsSnapshot()
+        => _items.Select(i => new CartItemSnapshot(
+            i.ProductId,
+            i.ProductName,
+            i.Quantity,
+            i.Price
+        ));
 }

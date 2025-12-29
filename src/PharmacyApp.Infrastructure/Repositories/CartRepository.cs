@@ -12,10 +12,13 @@ namespace PharmacyApp.Infrastructure.Repositories
         {
         }
 
-        public async Task<Cart?> GetActiveCartByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
-        {
-            return await _dbSet.FirstOrDefaultAsync(c => c.CustomerId == customerId && c.State == CartStateEnum.Active, cancellationToken);
-        }
+       public async Task<Cart?> GetActiveCartByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken)
+{
+    return await _context.Carts
+        .Include(c => c.Items) 
+        .FirstOrDefaultAsync(c => c.CustomerId == customerId && c.State == CartStateEnum.Active, cancellationToken);
+}
+
 
         public async Task<bool> ExistsForCustomerAsync(Guid customerId, CancellationToken cancellationToken = default)
         {

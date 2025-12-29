@@ -2,8 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using PharmacyApp.Domain.OrderManagement.OrderAggregate;
 using PharmacyApp.Domain.OrderManagement.Enums;
 using PharmacyApp.Domain.OrderManagement.Repositories;
+using PharmacyApp.Domain.OrderManagement.Entities;
 using PharmacyApp.Infrastructure.Persistence;
-using PharmacyApp.Domain.CartManagement.Entities;
+using PharmacyApp.Domain.CartManagement.ValueObjects;
 
 
 namespace PharmacyApp.Infrastructure.Repositories;
@@ -70,16 +71,22 @@ namespace PharmacyApp.Infrastructure.Repositories;
             return await _dbSet.CountAsync(o => o.State.Value == state.Value, cancellationToken);
         }
 
-        public async Task<Order> CreateOrderFromCartAsync(Guid cartId, IEnumerable<CartItem> items, Guid customerId, CancellationToken cancellationToken)
+        public async Task<Order> CreateOrderFromCartAsync(Guid cartId, IEnumerable<CartItemSnapshot> items, Guid customerId, CancellationToken cancellationToken)
         {
             var order = new Order(customerId,
-    shippingAddress: "123 Main St",
-    billingAddress: "123 Main St",
-    paymentMethod: "CreditCard");
+                shippingAddress: "123 Main St",
+                billingAddress: "123 Main St",
+                paymentMethod: "CreditCard");
+
+            foreach (var item in items)
+            {
+                var orderItem = new OrderItem(item.ProductId, item.ProductName, item.Quantity, item.Price);
+                order.AddItem(orderItem);
+            }
 
             await _dbSet.AddAsync(order, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
             return order;
-    }
+        }
 }

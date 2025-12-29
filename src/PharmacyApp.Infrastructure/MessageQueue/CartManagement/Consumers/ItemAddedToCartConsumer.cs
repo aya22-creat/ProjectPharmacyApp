@@ -11,10 +11,13 @@ namespace PharmacyApp.Infrastructure.MessageQueue.Consumers.Cart
     public class ItemAddedToCartConsumer : IConsumer<ItemAddedToCartMessage>
     {
         private readonly ILogger<ItemAddedToCartConsumer> _logger;
-
-        public ItemAddedToCartConsumer(ILogger<ItemAddedToCartConsumer> logger)
+        private readonly IPublishEndpoint _publishEndpoint;
+        public ItemAddedToCartConsumer(
+            ILogger<ItemAddedToCartConsumer> logger,
+            IPublishEndpoint publishEndpoint) 
         {
             _logger = logger;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task Consume(ConsumeContext<ItemAddedToCartMessage> context)
@@ -28,13 +31,13 @@ namespace PharmacyApp.Infrastructure.MessageQueue.Consumers.Cart
                 message.Quantity
             );
 
-            await context.Publish(new SendPushNotificationMessage(
+           await _publishEndpoint.Publish(new SendPushNotificationMessage(
                 UserId: message.CustomerId,
                 Title: "Item Added to Cart",
                 Message: $"You have added {message.Quantity} of product {message.ProductName} to your cart."
-            ));
 
-            await Task.CompletedTask;
+              ));
+              
         }
     }
 }
