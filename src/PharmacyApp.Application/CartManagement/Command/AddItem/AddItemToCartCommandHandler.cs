@@ -1,63 +1,64 @@
-using MediatR;
+using PharmacyApp.Application.Common;
 using PharmacyApp.Application.CartManagement.DTO;
+using PharmacyApp.Common.Common.ValueObjects;
 using PharmacyApp.Application.CartManagement.Command.AddItem;
 using PharmacyApp.Domain.CartManagement;
 using PharmacyApp.Domain.CartManagement.Repositories;
-using PharmacyApp.Domain.CartManagement.Enum;
-using PharmacyApp.Common.Common.ValueObjects;
 using PharmacyApp.Domain.CartManagement.Services;
+using PharmacyApp.Domain.CartManagement.Enum;
 
-public class AddItemsToCartCommandHandler : IRequestHandler<AddItemsToCartCommand, CartDto>
+public class AddItemsToCartCommandHandler : BaseCommandHandler<AddItemsToCartCommand, CartDto>
 {
     private readonly ICartRepository _cartRepository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly ICartCalculationService _cartCalculationService;
 
     public AddItemsToCartCommandHandler(
         ICartRepository cartRepository,
         IUnitOfWork unitOfWork,
         ICartCalculationService cartCalculationService)
+        : base(unitOfWork)
     {
         _cartRepository = cartRepository;
-        _unitOfWork = unitOfWork;
         _cartCalculationService = cartCalculationService;
     }
 
-    public async Task<CartDto> Handle(AddItemsToCartCommand request, CancellationToken cancellationToken)
+   public override async Task<CartDto> Handle(AddItemsToCartCommand request, CancellationToken cancellationToken)
+{
+    var cart = await _cartRepository.GetByCustomerIdAsync(request.CustomerId, cancellationToken);
+
+    if (cart == null || cart.State != CartStateEnum.Active)
     {
-        var cart = await _cartRepository.GetByCustomerIdAsync(request.CustomerId, cancellationToken);
-
-        if (cart == null)
+        if (cart != null)
         {
-            cart = Cart.Create(request.CustomerId);
-            await _cartRepository.AddAsync(cart, cancellationToken);
-        }
-        else if (cart.State != CartStateEnum.Active)
-        {
-            cart.Activate();
+            await _cartRepository.DeleteCartAsync(cart, cancellationToken);
+            await SaveChangesAsync(cancellationToken); 
         }
 
-        cart.ClearCart();
-        _cartRepository.Update(cart);
-        await _unitOfWork.SaveChangesAsync(cancellationToken); // commit الحذف أولًا
-
-        var addedItems = new List<AddedCartItemDto>();
-
-        foreach (var item in request.Items.DistinctBy(x => x.ProductId))
-        {
-            var price = Money.Create(item.Price, "EGP");
-            cart.AddItem(item.ProductId, item.ProductName, item.Quantity, price);
-
-            addedItems.Add(new AddedCartItemDto(
-                item.ProductId,
-                item.ProductName,
-                item.Quantity,
-                price.Multiply(item.Quantity).Amount
-            ));
-        }
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return new CartDto(cart, _cartCalculationService, addedItems);
+        cart = Cart.Create(request.CustomerId);
+        await _cartRepository.AddAsync(cart, cancellationToken);
+        await SaveChangesAsync(cancellationToken); 
     }
+
+    var addedItems = new List<AddedCartItemDto>();
+
+    foreach (var item in request.Items.DistinctBy(x => x.ProductId))
+    {
+        var price = Money.Create(item.Price, "EGP");
+        cart.AddItem(item.ProductId, item.ProductName, item.Quantity, price);
+
+        addedItems.Add(new AddedCartItemDto(
+            item.ProductId,
+            item.ProductName,
+            item.Quantity,
+            price.Multiply(item.Quantity).Amount
+        ));
+    }
+
+    await SaveChangesAsync(cancellationToken);
+
+    return new CartDto(cart, _cartCalculationService, addedItems);
 }
+
+
+    }
+

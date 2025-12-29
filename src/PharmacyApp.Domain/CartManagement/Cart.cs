@@ -26,8 +26,7 @@ public partial class Cart : AggregateRoot<Guid>
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
 
-    [Timestamp]
-    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+   
 
     // Items
     private readonly List<CartItem> _items = new();

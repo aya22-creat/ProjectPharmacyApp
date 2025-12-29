@@ -29,5 +29,10 @@ namespace PharmacyApp.Infrastructure.Repositories
         {
             return await _dbSet.FirstOrDefaultAsync(c => c.CustomerId == customerId, cancellationToken);
         }
+        public async Task DeleteCartAsync(Cart cart, CancellationToken cancellationToken = default)
+        {
+            _dbSet.Remove(cart);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

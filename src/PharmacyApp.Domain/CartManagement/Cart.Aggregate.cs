@@ -27,8 +27,6 @@ public partial class Cart
         UpdatedAt = DateTime.UtcNow;
     }
 
-    
-
     public void AddItem(Guid productId, string productName, int quantity, Money price)
     {
         if (State != CartStateEnum.Active)
@@ -50,7 +48,6 @@ public partial class Cart
         }
 
         UpdatedAt = DateTime.UtcNow;
-
         AddDomainEvent(new CartItemAddedEvent(Id, productId, quantity));
     }
 
@@ -62,7 +59,6 @@ public partial class Cart
 
         _items.Remove(item);
         UpdatedAt = DateTime.UtcNow;
-
         AddDomainEvent(new CartItemRemovedEvent(Id, item.ProductId, item.Quantity));
         return true;
     }
@@ -88,19 +84,11 @@ public partial class Cart
         );
     }
 
-    public void ClearCart()
+    public void DeleteCart()
     {
-        if (State != CartStateEnum.Active)
-            throw new InvalidOperationException("Cannot clear inactive cart");
-
-         foreach (var item in _items)
-            AddDomainEvent(new CartItemRemovedEvent(Id, item.ProductId, item.Quantity));
-
-        _items.Clear();
-        UpdatedAt = DateTime.UtcNow;
+        AddDomainEvent(new CartDeletedEvent(Id, CustomerId, DateTime.UtcNow));
     }
 
- 
     public void Activate()
     {
         if (State == CartStateEnum.Active)
@@ -119,7 +107,6 @@ public partial class Cart
         UpdatedAt = DateTime.UtcNow;
     }
 
-   
     public Money GetTotal()
     {
         return _items.Count == 0
@@ -135,7 +122,6 @@ public partial class Cart
     public CartItem? GetItemByProductId(Guid productId)
         => _items.FirstOrDefault(i => i.ProductId == productId);
 
-
     public void Checkout()
     {
         if (State != CartStateEnum.Active)
@@ -148,7 +134,6 @@ public partial class Cart
         UpdatedAt = DateTime.UtcNow;
 
         var total = GetTotal();
-
         var itemsSnapshot = _items
             .Select(i => new CartItemSnapshot(
                 i.ProductId,

@@ -8,13 +8,13 @@ namespace PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots;
 
 public class ProductAggregate : AggregateRoot<Guid>
 {
-    public string ProductName { get; private set; }
-    public ProductDescription Description { get; private set; }
-    public Money Price { get; private set; }
+    public string? ProductName { get; private set; }
+    public ProductDescription? Description { get; private set; }
+    public Money? Price { get; private set; }
     public int StockQuantity { get; private set; }
     public bool IsCosmetic { get; private set; }
     public bool IsAvailable => StockQuantity > 0;
-    public CategoryId CategoryId { get; private set; }
+    public CategoryId? CategoryId { get; private set; }
 
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; private set; }

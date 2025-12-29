@@ -23,10 +23,7 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
                 .IsRequired();
             builder.Property( c => c.UpdatedAt);
 
-            builder.Property(x => x.RowVersion)
-                .IsRowVersion()
-                .IsConcurrencyToken();
-
+            
             builder.Property( x => x.State)
                 .HasConversion(
                      x => x.Name,

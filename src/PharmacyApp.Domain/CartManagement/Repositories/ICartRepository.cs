@@ -13,5 +13,7 @@ namespace PharmacyApp.Domain.CartManagement.Repositories
             CancellationToken cancellationToken = default);
         Task<Cart?> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
 
+        Task DeleteCartAsync(Cart cart, CancellationToken cancellationToken = default);
+
     }
 }

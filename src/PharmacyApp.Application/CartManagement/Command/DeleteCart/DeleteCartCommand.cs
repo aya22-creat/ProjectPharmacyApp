@@ -1,8 +1,8 @@
 using MediatR;
 
-namespace PharmacyApp.Application.CartManagement.Command.ClearCart
+namespace PharmacyApp.Application.CartManagement.Command.DeleteCart
 {
-    public record ClearCartCommand(
+    public record DeleteCartCommand(
          Guid CustomerId
     ) : IRequest<Unit>; // Unit indicates no return value; just signals completion
 }

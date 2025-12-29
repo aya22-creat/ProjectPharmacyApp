@@ -1,10 +1,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PharmacyApp.API.Requests.Cart;
 using PharmacyApp.Application.CartManagement.Command.AddItem;
 using PharmacyApp.Application.CartManagement.Command.RemoveItem;
 using PharmacyApp.Application.CartManagement.Command.UpdateCart;
-using PharmacyApp.Application.CartManagement.Command.ClearCart;
+using PharmacyApp.Application.CartManagement.Command.DeleteCart;
 using PharmacyApp.Application.CartManagement.Command.CheckoutCart;
 using PharmacyApp.Application.CartManagement.Queries.GetCartByCustomer;
 using PharmacyApp.Application.CartManagement.Queries.GetCartTotal;
@@ -51,14 +52,18 @@ public class CartController : ControllerBase
 
         return Ok(new { Total = total });
     }
+[HttpPost("{customerId:guid}/items")]
+[ProducesResponseType(StatusCodes.Status201Created)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+public async Task<ActionResult<CartDto>> AddItems(
+    Guid customerId,
+    [FromBody] List<AddToCartItemDto> items,
+    CancellationToken cancellationToken)
+{
+    if (items == null || !items.Any())
+        return BadRequest("Items list cannot be empty.");
 
-    [HttpPost("{customerId:guid}/items")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<CartDto>> AddItems(
-        Guid customerId,
-        [FromBody] List<AddToCartItemDto> items,
-        CancellationToken cancellationToken)
+    try
     {
         var command = new AddItemsToCartCommand(customerId, items);
         var result = await _mediator.Send(command, cancellationToken);
@@ -69,6 +74,16 @@ public class CartController : ControllerBase
             result
         );
     }
+    catch (DbUpdateConcurrencyException)
+    {
+        return BadRequest("Data has been modified by another process. Please retry.");
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(ex.Message);
+    }
+}
+
 
     [HttpPut("{customerId:guid}/items/{cartItemId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -118,7 +133,7 @@ public class CartController : ControllerBase
         Guid customerId,
         CancellationToken cancellationToken)
     {
-        var command = new ClearCartCommand(customerId);
+        var command = new DeleteCartCommand(customerId);
         await _mediator.Send(command, cancellationToken);
 
         return NoContent();

@@ -11,12 +11,12 @@ public partial class Order : AggregateRoot<Guid>
     private readonly List<OrderItem> _items = new();
     public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
 
-     public OrderStateEnum State { get; private set; }  
+     public OrderStateEnum? State { get; private set; }
 
 
 
     public Guid CustomerId { get; private set; }
-    public string OrderNumber { get; private set; }
+    public string? OrderNumber { get; private set; }
     public DateTime OrderDate { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
@@ -31,9 +31,9 @@ public partial class Order : AggregateRoot<Guid>
     public string? RejectionReason { get; private set; }
 
 
-    public string ShippingAddress { get; private set; }
-    public string BillingAddress { get; private set; }
-    public string PaymentMethod { get; private set; }
+    public string? ShippingAddress { get; private set; }
+    public string? BillingAddress { get; private set; }
+    public string? PaymentMethod { get; private set; }
 
     public Money ShippingCost { get; private set; } = Money.Zero();
     public Money SubTotal => CalculateSubTotal();
