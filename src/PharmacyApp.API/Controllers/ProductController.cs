@@ -69,31 +69,38 @@ public class ProductsController : ControllerBase
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ProductDto>> UpdateProduct(Guid id, [FromBody] UpdateProductRequest request)
+        public async Task<ActionResult<ProductDto>> UpdateProduct(Guid id, [FromBody] UpdateProductRequest request, CancellationToken cancellationToken)
         {
-            var command = new UpdateProductCommand(
-                id,
-                request.ProductName,
-                request.Description,
-                request.Price,
-                request.Currency ?? "EGP",
-                request.CategoryId,
-                request.StockQuantity
-            );
+            try
+            {
+                var command = new UpdateProductCommand(
+                    id,
+                    request.ProductName,
+                    request.Description,
+                    request.Price,
+                    request.Currency ?? "EGP",
+                    request.CategoryId,
+                    request.StockQuantity
+                );
 
-            var product = await _mediator.Send(command);
+                var product = await _mediator.Send(command, cancellationToken);
 
-            return Ok(product);
+                return Ok(product);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
          [HttpDelete("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteProduct(Guid id)
+        public async Task<IActionResult> DeleteProduct(Guid id, CancellationToken cancellationToken)
         {
             try
             {
-                await _mediator.Send(new DeleteProductCommand(id));
+                await _mediator.Send(new DeleteProductCommand(id), cancellationToken);
                 return NoContent();
             }
             catch (InvalidOperationException ex)

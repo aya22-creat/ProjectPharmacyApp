@@ -2,10 +2,8 @@ using PharmacyApp.Common.Common;
 using PharmacyApp.Domain.CartManagement.ValueObjects;
 using PharmacyApp.Domain.CartManagement.Enum;
 using PharmacyApp.Domain.CartManagement.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+using PharmacyApp.Domain.CartManagement.Events;
+
 
 namespace PharmacyApp.Domain.CartManagement;
 
@@ -19,6 +17,7 @@ public partial class Cart : AggregateRoot<Guid>
         CustomerId = customerId;
         State = CartStateEnum.Active;
         CreatedAt = DateTime.UtcNow;
+        AddDomainEvent(new CartCreatedEvent(Id, CustomerId, CreatedAt));
     }
 
     public Guid CustomerId { get; private set; }

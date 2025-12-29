@@ -22,21 +22,17 @@ public class AddItemsToCartCommandHandler : BaseCommandHandler<AddItemsToCartCom
         _cartCalculationService = cartCalculationService;
     }
 
-   public override async Task<CartDto> Handle(AddItemsToCartCommand request, CancellationToken cancellationToken)
+ public override async Task<CartDto> Handle(
+    AddItemsToCartCommand request,
+    CancellationToken cancellationToken)
 {
-    var cart = await _cartRepository.GetByCustomerIdAsync(request.CustomerId, cancellationToken);
+    var cart = await _cartRepository
+        .GetActiveCartByCustomerIdAsync(request.CustomerId, cancellationToken);
 
-    if (cart == null || cart.State != CartStateEnum.Active)
+    if (cart == null)
     {
-        if (cart != null)
-        {
-            await _cartRepository.DeleteCartAsync(cart, cancellationToken);
-            await SaveChangesAsync(cancellationToken); 
-        }
-
         cart = Cart.Create(request.CustomerId);
         await _cartRepository.AddAsync(cart, cancellationToken);
-        await SaveChangesAsync(cancellationToken); 
     }
 
     var addedItems = new List<AddedCartItemDto>();
@@ -44,7 +40,13 @@ public class AddItemsToCartCommandHandler : BaseCommandHandler<AddItemsToCartCom
     foreach (var item in request.Items.DistinctBy(x => x.ProductId))
     {
         var price = Money.Create(item.Price, "EGP");
-        cart.AddItem(item.ProductId, item.ProductName, item.Quantity, price);
+
+        cart.AddItem(
+            item.ProductId,
+            item.ProductName,
+            item.Quantity,
+            price
+        );
 
         addedItems.Add(new AddedCartItemDto(
             item.ProductId,

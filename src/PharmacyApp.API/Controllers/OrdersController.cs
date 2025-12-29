@@ -57,7 +57,7 @@ public async Task<ActionResult<IEnumerable<OrderDto>>> GetCustomerOrders(
 
 [HttpPost]
 [ProducesResponseType(typeof(OrderDto), StatusCodes.Status201Created)]
-public async Task<ActionResult<OrderDto>> Create([FromBody] CreateOrderRequest request)
+public async Task<ActionResult<OrderDto>> Create([FromBody] CreateOrderRequest request, CancellationToken cancellationToken)
 {
     var command = new CreateOrderCommand(
         request.CustomerId,
@@ -72,7 +72,7 @@ public async Task<ActionResult<OrderDto>> Create([FromBody] CreateOrderRequest r
         request.PaymentMethod,
         request.ShippingCost
     );
-    var order = await _mediator.Send(command);
+    var order = await _mediator.Send(command, cancellationToken);
     return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, order);
 }
 
@@ -128,6 +128,10 @@ public async Task<ActionResult<OrderDto>> Reject(
     );
 
     var order = await _mediator.Send(command, cancellationToken);
+
+    if (order == null)
+        return NotFound(new { Message = "Order not found" });
+
     return Ok(order);
 }
 
@@ -145,7 +149,3 @@ public async Task<ActionResult<OrderDto>> Complete(
 
     //checkout order
 }
-
-
-
-

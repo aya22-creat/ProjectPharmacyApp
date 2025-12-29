@@ -43,9 +43,17 @@ public class ApplicationDbContext : DbContext
             .SelectMany(e => e.Entity.DomainEvents)
             .ToList();
 
-        foreach (var domainEvent in domainEvents)
+        try
         {
-            await _mediator.Publish(domainEvent, cancellationToken);
+            foreach (var domainEvent in domainEvents)
+            {
+                await _mediator.Publish(domainEvent, cancellationToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogWarning("Operation canceled during domain event dispatch. This usually indicates a client timeout or that the message broker (e.g., RabbitMQ) is unreachable.");
+            throw;
         }
 
         foreach (var entity in ChangeTracker.Entries<AggregateRoot<Guid>>())

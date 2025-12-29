@@ -34,7 +34,7 @@ namespace PharmacyApp.Infrastructure.MessageQueue.CartManagement.Publishers
                 notification.CustomerId,
                 notification.ItemId, 
                 notification.ProductName,
-                notification.Price,
+                notification.Price.Amount,
                 notification.Quantity
             );
 

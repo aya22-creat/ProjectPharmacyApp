@@ -48,7 +48,7 @@ public partial class Cart
         }
 
         UpdatedAt = DateTime.UtcNow;
-        AddDomainEvent(new CartItemAddedEvent(Id, productId, quantity));
+        AddDomainEvent(new CartItemAddedEvent(Id, CustomerId, item.Id, productId, productName, price, quantity));
     }
 
     public bool RemoveItem(Guid cartItemId)
@@ -80,13 +80,13 @@ public partial class Cart
         UpdatedAt = DateTime.UtcNow;
 
         AddDomainEvent(
-            new CartItemQuantityUpdatedEvent(Id, item.ProductId, cartItemId, newQuantity, oldQuantity)
+            new CartItemQuantityUpdatedEvent(Id, cartItemId, item.ProductId, newQuantity, oldQuantity)
         );
     }
 
     public void DeleteCart()
     {
-        AddDomainEvent(new CartDeletedEvent(Id, CustomerId, DateTime.UtcNow));
+        AddDomainEvent(new CartDeletedEvent(Id, CustomerId, DateTime.UtcNow, _items));
     }
 
     public void Activate()

@@ -25,11 +25,11 @@ public class CategoriesController : ControllerBase
     }
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<CategoryDto>), StatusCodes.Status200OK)]
-    public IEnumerable<CategoryDto> GetCategories()
+    public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories(CancellationToken cancellationToken)
     {
         var query = new GetCategoriesQuery();
-        var categories =  _mediator.Send(query).Result;
-        return categories;
+        var categories = await _mediator.Send(query, cancellationToken);
+        return Ok(categories);
     
     }
     [HttpGet("{id:guid}")]
