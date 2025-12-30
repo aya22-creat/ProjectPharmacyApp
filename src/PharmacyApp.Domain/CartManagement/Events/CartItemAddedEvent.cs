@@ -13,7 +13,7 @@ namespace PharmacyApp.Domain.CartManagement.Events;
         public string ProductName { get; }
         public Money Price { get; }
         public int Quantity { get; }
-        public CartItemAddedEvent(Guid cartId, Guid customerId, Guid itemId, Guid productId, string productName, Money price, int quantity)
+        public CartItemAddedEvent(Guid cartId, Guid customerId, Guid itemId, Guid productId, string productName, Money price, int quantity, string? currency)
         {
             CartId = cartId;
             CustomerId = customerId;

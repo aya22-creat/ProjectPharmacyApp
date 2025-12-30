@@ -30,7 +30,7 @@ public partial class Cart
     
 
     // Add item to cart 
-    public void AddItem(Guid productId, string productName, int quantity, Money price)
+    public void AddItem(Guid productId, string productName, int quantity, Money price, string? currency)
     {
         if (State != CartStateEnum.Active)
             throw new InvalidOperationException("Cannot add items to inactive cart");
@@ -45,7 +45,7 @@ public partial class Cart
         {
             var newItem = new CartItem(productId, productName, quantity, price);
             _items.Add(newItem);
-            AddDomainEvent(new CartItemAddedEvent(Id, CustomerId, newItem.Id, productId, productName, price, quantity));
+            AddDomainEvent(new CartItemAddedEvent(Id, CustomerId, newItem.Id, productId, productName, price, quantity, currency));
         }
 
         UpdatedAt = DateTime.UtcNow;

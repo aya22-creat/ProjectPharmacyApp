@@ -14,7 +14,11 @@ namespace PharmacyApp.Infrastructure.Repositories
 
         public async Task<Cart?> GetActiveCartByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
         {
-            return await _dbSet.FirstOrDefaultAsync(c => c.CustomerId == customerId && c.State == CartStateEnum.Active, cancellationToken);
+            return await _dbSet
+                .Include(c => c.Items)  
+                .FirstOrDefaultAsync(
+                    c => c.CustomerId == customerId && c.State == CartStateEnum.Active, 
+                    cancellationToken);
         }
 
         public async Task<bool> ExistsForCustomerAsync(Guid customerId, CancellationToken cancellationToken = default)
@@ -24,12 +28,19 @@ namespace PharmacyApp.Infrastructure.Repositories
 
         public async Task<Cart?> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
         {
-            return await _dbSet.FirstOrDefaultAsync(c => c.CustomerId == customerId, cancellationToken);
-        }
+            return await _dbSet
+                .Include(c => c.Items) 
+                .FirstOrDefaultAsync(
+                    c => c.CustomerId == customerId, 
+                    cancellationToken);        }
         public async Task DeleteCartAsync(Cart cart, CancellationToken cancellationToken = default)
         {
             _dbSet.Remove(cart);
             await _context.SaveChangesAsync(cancellationToken);
+        }
+         public override void Update(Cart cart)
+        {
+            _context.Entry(cart).State = EntityState.Modified;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace PharmacyApp.Infrastructure.Repositories;
 
         public override async Task<Order?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _dbSet.Include(o => o.Items)
+            return await _dbSet.Include(o => o.Items!)
                                .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
         }
 
@@ -37,7 +37,7 @@ namespace PharmacyApp.Infrastructure.Repositories;
 
         public async Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
         {
-            return await _dbSet.Include(o => o.Items)
+            return await _dbSet.Include(o => o.Items!)
                                .Where(o => o.CustomerId == customerId)
                                .OrderByDescending(o => o.CreatedAt)
                                .ToListAsync(cancellationToken);

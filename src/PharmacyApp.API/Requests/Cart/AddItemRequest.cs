@@ -8,5 +8,6 @@ namespace PharmacyApp.API.Requests.Cart
     decimal Price,
     int Quantity,
     string? Currency
+    
 );
 }

@@ -23,8 +23,8 @@ builder.Property(o => o.OrderDate).IsRequired();
 
 builder.Property(o => o.State)
                    .HasConversion(
-                       v => v.Name,                                   
-                        v => OrderStateEnum.List.Single(x => x.Name == v)           
+                       v => v.Name,
+                        v => OrderStateEnum.List.Single(x => x.Name == v!)
                    )
                    .IsRequired()
                    .HasMaxLength(50);

@@ -6,6 +6,8 @@ using PharmacyApp.Domain.CatalogManagement.Category.CategoryAggregate;
 using PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots;
 using PharmacyApp.Domain.CartManagement;
 using PharmacyApp.Domain.OrderManagement.OrderAggregate;
+using PharmacyApp.Domain.CartManagement.Entities;
+
 
 namespace PharmacyApp.Infrastructure.Persistence;
 
@@ -13,10 +15,9 @@ public class ApplicationDbContext : DbContext
 {
     private readonly IMediator _mediator;
     private readonly ILogger<ApplicationDbContext> _logger;
-
     public DbSet<CategoryAggregate> Categories { get; set; }
     public DbSet<ProductAggregate> Products { get; set; }
-    public DbSet<Cart> Carts { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }     
     public DbSet<Order> Orders { get; set; }
 
     public ApplicationDbContext(

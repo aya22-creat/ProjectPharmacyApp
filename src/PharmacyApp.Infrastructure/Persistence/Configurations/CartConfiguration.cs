@@ -48,6 +48,7 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
                 {
                     money.Property(m => m.Amount)
                         .HasColumnName("PriceAmount")
+                        .HasColumnType("decimal(18,2)")
                         .IsRequired();
                     money.Property(m => m.Currency)
                         .HasColumnName("PriceCurrency")
@@ -55,6 +56,7 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
                         .IsRequired();
                 });
             });
+            builder.Ignore(c => c.DomainEvents);
         }
     }
 }

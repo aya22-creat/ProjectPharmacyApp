@@ -25,11 +25,11 @@ public class ProductConfiguration : IEntityTypeConfiguration<ProductAggregate>
 
         builder.OwnsOne(p => p.Price, price =>
         {
-            price.Property(pr => pr.Amount)
+            price.Property(pr => pr!.Amount)
                  .HasColumnName("Price")
                  .HasColumnType("decimal(18,2)");
 
-            price.Property(pr => pr.Currency)
+            price.Property(pr => pr!.Currency)
                  .HasColumnName("Currency")
                  .HasMaxLength(3);
         });

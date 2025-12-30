@@ -1,6 +1,5 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PharmacyApp.API.Requests.Cart;
 using PharmacyApp.Application.CartManagement.Command.AddItem;
 using PharmacyApp.Application.CartManagement.Command.RemoveItem;
@@ -24,6 +23,9 @@ public class CartController : ControllerBase
         _mediator = mediator;
     }
 
+   
+
+    
     [HttpGet("{customerId:guid}")]
     [ProducesResponseType(typeof(CartDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -40,7 +42,7 @@ public class CartController : ControllerBase
         return Ok(cart);
     }
 
- 
+   
     [HttpGet("{customerId:guid}/total")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> GetTotal(
@@ -52,34 +54,30 @@ public class CartController : ControllerBase
 
         return Ok(new { Total = total });
     }
-[HttpPost("{customerId:guid}/items/add")]
-[ProducesResponseType(StatusCodes.Status201Created)]
-[ProducesResponseType(StatusCodes.Status400BadRequest)]
-public async Task<ActionResult<CartDto>> AddItems(
-    Guid customerId,
-    [FromBody] List<AddToCartItemDto> items,
-    CancellationToken cancellationToken)
-{
-    if (items == null || !items.Any())
-        return BadRequest("Items list cannot be empty.");
 
-    try
+    [HttpPost("{customerId:guid}/items/add")]
+    [ProducesResponseType(typeof(CartDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<CartDto>> AddItem(
+        Guid customerId,
+        [FromBody] List<AddItemRequest> requests,
+        CancellationToken cancellationToken)
     {
+        var items = requests.Select(r =>
+            new AddToCartItemDto(
+                r.ProductId,
+                r.ProductName,
+                r.Price,
+                r.Quantity,
+                r.Currency
+            )
+        ).ToList();
+
         var command = new AddItemsToCartCommand(customerId, items);
         var result = await _mediator.Send(command, cancellationToken);
 
-        return CreatedAtAction(
-            nameof(GetCart),
-            new { customerId },
-            result
-        );
+        return Ok(result);
     }
-    catch (Exception ex)
-    {
-        return BadRequest(ex.Message);
-    }
-}
-
 
     [HttpPut("{customerId:guid}/items/{cartItemId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -103,23 +101,22 @@ public async Task<ActionResult<CartDto>> AddItems(
 
         return Ok(result);
     }
+    
 
-   
+    
     [HttpDelete("{customerId:guid}/items/{cartItemId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveItem(
         Guid customerId,
         Guid cartItemId,
         CancellationToken cancellationToken)
     {
         var command = new RemoveItemFromCartCommand(customerId, cartItemId);
-        var result = await _mediator.Send(command, cancellationToken);
+        await _mediator.Send(command, cancellationToken);
 
         return NoContent();
     }
 
- 
     [HttpDelete("{customerId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> ClearCart(
@@ -132,7 +129,6 @@ public async Task<ActionResult<CartDto>> AddItems(
         return NoContent();
     }
 
- 
     [HttpPost("{customerId:guid}/checkout")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

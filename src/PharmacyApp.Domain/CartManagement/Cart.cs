@@ -16,14 +16,17 @@ public partial class Cart : AggregateRoot<Guid>
         CustomerId = customerId;
         State = CartStateEnum.Active;
         CreatedAt = DateTime.UtcNow;
+        Version = 1;
         AddDomainEvent(new CartCreatedEvent(Id, CustomerId, CreatedAt));
     }
     public Guid CustomerId { get; private set; }
     public CartStateEnum State { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
+    public int Version { get; private set; }
 
     // Items
     private readonly List<CartItem> _items = new();
     public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
 }
+

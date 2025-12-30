@@ -31,7 +31,6 @@ public class CartItem : BaseEntity<Guid>
         ProductName = productName;
         Quantity = quantity;
         Price = price ?? throw new ArgumentNullException(nameof(price));
- ;
     }
 
     public void UpdateQuantity(int newQuantity)

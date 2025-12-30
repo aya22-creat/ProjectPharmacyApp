@@ -37,7 +37,8 @@ namespace PharmacyApp.Application.CartManagement.DTO;
        Guid ProductId,
        string ProductName,
        decimal Price,
-       int Quantity
+       int Quantity,
+       string? Currency
    );
 
     public record UpdateCartItemDto(
