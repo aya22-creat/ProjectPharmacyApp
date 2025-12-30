@@ -21,7 +21,7 @@ namespace PharmacyApp.Infrastructure.Persistence
 
             return new ApplicationDbContext(
                 optionsBuilder.Options,
-                mediator: null!, 
+                mediator: null!, // 👈 Design-Time فقط
                 logger: NullLogger<ApplicationDbContext>.Instance
             );
         }

@@ -1,4 +1,3 @@
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,7 +36,6 @@ namespace PharmacyApp.Infrastructure
             services.AddScoped<ICartCalculationService, CartCalculationService>();
 
             services.AddMessageQueue(configuration);
-
 
             return services;
         }

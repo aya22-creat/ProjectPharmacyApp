@@ -22,45 +22,48 @@ public class AddItemsToCartCommandHandler : BaseCommandHandler<AddItemsToCartCom
         _cartCalculationService = cartCalculationService;
     }
 
- public override async Task<CartDto> Handle(
-    AddItemsToCartCommand request,
-    CancellationToken cancellationToken)
-{
-    var cart = await _cartRepository
-        .GetActiveCartByCustomerIdAsync(request.CustomerId, cancellationToken);
-
-    if (cart == null)
+    public override async Task<CartDto> Handle(AddItemsToCartCommand request, CancellationToken cancellationToken)
     {
-        cart = Cart.Create(request.CustomerId);
-        await _cartRepository.AddAsync(cart, cancellationToken);
-    }
+        var cart = await _cartRepository.GetByCustomerIdAsync(request.CustomerId, cancellationToken);
 
-    var addedItems = new List<AddedCartItemDto>();
+        if (cart == null || cart.State != CartStateEnum.Active)
+        {
+            if (cart != null)
+            {
+                await _cartRepository.DeleteCartAsync(cart, cancellationToken);
+                await SaveChangesAsync(cancellationToken); 
+            }
 
-    foreach (var item in request.Items.DistinctBy(x => x.ProductId))
-    {
-        var price = Money.Create(item.Price, "EGP");
+            cart = Cart.Create(request.CustomerId);
+            await _cartRepository.AddAsync(cart, cancellationToken);
+            await SaveChangesAsync(cancellationToken); 
+        }
 
-        cart.AddItem(
-            item.ProductId,
-            item.ProductName,
-            item.Quantity,
-            price
+        foreach (var item in request.Items.DistinctBy(x => x.ProductId))
+        {
+            var price = Money.Create(item.Price, "EGP");
+            cart.AddItem(item.ProductId, item.ProductName, item.Quantity, price);
+        }
+
+        await SaveChangesAsync(cancellationToken);
+
+        var cartItemsDto = cart.Items.Select(i => new CartItemDto(i)).ToList();
+
+        var totalItems = cart.GetTotalItemsCount();
+        var subTotal = cart.Items.Sum(i => i.GetSubtotal().Amount);
+        var totalAmount = _cartCalculationService.CalculateTotal(cart);
+        var currency = cart.GetTotal().Currency ?? "EGP";
+
+        return new CartDto(
+            cart.Id,
+            cart.CustomerId,
+            cartItemsDto,
+            totalItems,
+            subTotal,
+            totalAmount,
+            currency,
+            cart.CreatedAt,
+            cart.UpdatedAt
         );
-
-        addedItems.Add(new AddedCartItemDto(
-            item.ProductId,
-            item.ProductName,
-            item.Quantity,
-            price.Multiply(item.Quantity).Amount
-        ));
     }
-
-    await SaveChangesAsync(cancellationToken);
-
-    return new CartDto(cart, _cartCalculationService, addedItems);
 }
-
-
-    }
-

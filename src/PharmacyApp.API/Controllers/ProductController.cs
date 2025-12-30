@@ -41,11 +41,12 @@ public class ProductsController : ControllerBase
         return Ok(product);
     }
    
-    [HttpPost]
+    [HttpPost("bulk")]
     [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
    public async Task<ActionResult<ProductDto>> CreateProduct([FromBody] CreateProductRequest request , CancellationToken cancellationToken)
 {
+    
     var command = new CreateProductCommand(
         request.ProductName,
         request.Description,

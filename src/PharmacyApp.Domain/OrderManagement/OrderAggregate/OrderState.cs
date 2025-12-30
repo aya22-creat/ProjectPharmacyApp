@@ -40,12 +40,9 @@ public static Order CreateFromCart(Guid customerId, string shippingAddress, IEnu
 
     return order;
 }
-
-
-
     public void Confirm()
     {
-        if (!State.CanTransitionTo(OrderStateEnum.Confirmed))
+        if (State is null || !State.CanTransitionTo(OrderStateEnum.Confirmed))
             throw new InvalidOperationException($"Cannot confirm order in {State} state");
 
         if (!_items.Any()) throw new InvalidOperationException("Cannot confirm order without items");
@@ -71,7 +68,7 @@ public static Order CreateFromCart(Guid customerId, string shippingAddress, IEnu
 
     public void Reject(string reason)
 {
-      if (!State.CanTransitionTo(OrderStateEnum.Rejected))
+      if (State is null || !State.CanTransitionTo(OrderStateEnum.Rejected))
         throw new InvalidOperationException($"Cannot reject order in {State} state");
 
     if (string.IsNullOrWhiteSpace(reason))
@@ -93,7 +90,7 @@ public static Order CreateFromCart(Guid customerId, string shippingAddress, IEnu
 
     public void Complete()
     {
-        if (!State.CanTransitionTo(OrderStateEnum.Completed))
+        if (State is null || !State.CanTransitionTo(OrderStateEnum.Completed))
             throw new InvalidOperationException($"Cannot complete order in {State} state");
 
         if (State != OrderStateEnum.Delivered)

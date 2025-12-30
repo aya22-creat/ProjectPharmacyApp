@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using PharmacyApp.Domain.CartManagement;
 using PharmacyApp.Domain.CartManagement.Enum;
 
-
-
 namespace PharmacyApp.Infrastructure.Persistence.Configurations
 {
     internal class CartConfiguration : IEntityTypeConfiguration<Cart>
@@ -13,23 +11,22 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
         {
             builder.ToTable("Carts");
 
-            builder.HasKey( c => c.Id);
+            builder.HasKey(c => c.Id);
 
-            builder.HasIndex( c => c.CustomerId)
+            builder.HasIndex(c => c.CustomerId)
                 .IsUnique();
-            builder.Property( c => c.State)
+            builder.Property(c => c.State)
                 .IsRequired();
-            builder.Property( c => c.CreatedAt)
+            builder.Property(c => c.CreatedAt)
                 .IsRequired();
-            builder.Property( c => c.UpdatedAt);
+            builder.Property(c => c.UpdatedAt);
 
-            
-            builder.Property( x => x.State)
+            builder.Property(c => c.State)
                 .HasConversion(
-                     x => x.Name,
-                     x => CartStateEnum.FromName(x, true));
+                     c => c.Name,
+                     c => CartStateEnum.FromName(c, true));
 
-            builder.OwnsMany( x => x.Items,  a =>
+            builder.OwnsMany(c => c.Items, a =>
             {
                 a.ToTable("CartItems");
 
@@ -37,28 +34,27 @@ namespace PharmacyApp.Infrastructure.Persistence.Configurations
 
                 a.HasKey("Id");
 
-                a.Property( ci => ci.ProductId)
+                a.Property(ci => ci.ProductId)
                     .IsRequired();
 
-                a.Property( ci => ci.ProductName)
+                a.Property(ci => ci.ProductName)
                     .HasMaxLength(200)
                     .IsRequired();
 
-                a.Property( ci => ci.Quantity)
+                a.Property(ci => ci.Quantity)
                     .IsRequired();
 
-                a.OwnsOne( ci => ci.Price, money =>
+                a.OwnsOne(ci => ci.Price, money =>
                 {
-                    money.Property( m => m.Amount)
+                    money.Property(m => m.Amount)
                         .HasColumnName("PriceAmount")
                         .IsRequired();
-                    money.Property( m => m.Currency)
+                    money.Property(m => m.Currency)
                         .HasColumnName("PriceCurrency")
                         .HasMaxLength(3)
                         .IsRequired();
                 });
             });
-
-
+        }
     }
-}}
+}

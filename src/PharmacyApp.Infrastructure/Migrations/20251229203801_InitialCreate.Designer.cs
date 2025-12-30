@@ -12,8 +12,8 @@ using PharmacyApp.Infrastructure.Persistence;
 namespace PharmacyApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251229163739_RemoveCartRowVersion")]
-    partial class RemoveCartRowVersion
+    [Migration("20251229203801_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

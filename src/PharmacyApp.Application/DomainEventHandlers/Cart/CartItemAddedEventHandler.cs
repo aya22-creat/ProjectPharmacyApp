@@ -14,18 +14,17 @@ namespace PharmacyApp.Application.DomainEventHandlers.Cart;
     private readonly IStockService _stockService = stockService;
     private readonly ILogger<CartItemAddedEventHandler> _logger = logger;
 
-    public Task Handle(CartItemAddedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(CartItemAddedEvent notification, CancellationToken cancellationToken)
     {
         _logger.LogInformation(
             "Item added to cart. CartId: {CartId}, ProductId: {ProductId}, Quantity: {Qty}",
             notification.CartId, notification.ProductId, notification.Quantity);
 
-       /** await _stockService.ReserveStockAsync(
+        await _stockService.ReserveStockAsync(
             notification.ProductId,
             notification.Quantity,
             cancellationToken
-        );**/
-        return Task.CompletedTask;
+        );
         }
     }
 

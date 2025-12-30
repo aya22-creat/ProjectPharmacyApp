@@ -4,7 +4,6 @@ using PharmacyApp.Domain.CartManagement.Enum;
 using PharmacyApp.Domain.CartManagement.Entities;
 using PharmacyApp.Domain.CartManagement.Events;
 
-
 namespace PharmacyApp.Domain.CartManagement;
 
 public partial class Cart : AggregateRoot<Guid>
@@ -19,23 +18,12 @@ public partial class Cart : AggregateRoot<Guid>
         CreatedAt = DateTime.UtcNow;
         AddDomainEvent(new CartCreatedEvent(Id, CustomerId, CreatedAt));
     }
-
     public Guid CustomerId { get; private set; }
     public CartStateEnum State { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
 
-   
-
     // Items
     private readonly List<CartItem> _items = new();
     public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
-
-    public IEnumerable<CartItemSnapshot> GetItemsSnapshot()
-        => _items.Select(i => new CartItemSnapshot(
-            i.ProductId,
-            i.ProductName,
-            i.Quantity,
-            i.Price
-        ));
 }

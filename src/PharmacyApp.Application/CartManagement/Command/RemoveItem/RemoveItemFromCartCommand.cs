@@ -6,5 +6,5 @@ namespace PharmacyApp.Application.CartManagement.Command.RemoveItem
     public record RemoveItemFromCartCommand(
    Guid CustomerId,
      Guid CartItemId
-    ):IRequest<bool>;
+    ):IRequest<CartDto>;
 }

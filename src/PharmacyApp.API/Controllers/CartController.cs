@@ -35,16 +35,7 @@ public class CartController : ControllerBase
         var cart = await _mediator.Send(query, cancellationToken);
 
         if (cart == null)
-        {
-            // Return an empty cart structure for new customers instead of 404
-            return Ok(new 
-            { 
-                CustomerId = customerId, 
-                Items = new List<object>(),
-                TotalAmount = 0,
-                Currency = "EGP"
-            });
-        }
+            return NotFound(new { Message = "Cart not found" });
 
         return Ok(cart);
     }
@@ -61,30 +52,33 @@ public class CartController : ControllerBase
 
         return Ok(new { Total = total });
     }
+[HttpPost("{customerId:guid}/items/add")]
+[ProducesResponseType(StatusCodes.Status201Created)]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
+public async Task<ActionResult<CartDto>> AddItems(
+    Guid customerId,
+    [FromBody] List<AddToCartItemDto> items,
+    CancellationToken cancellationToken)
+{
+    if (items == null || !items.Any())
+        return BadRequest("Items list cannot be empty.");
 
-  
-
-
-
-
-    [HttpPost("{customerId:guid}/items")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<CartDto>> AddItems(
-        Guid customerId,
-        [FromBody] List<AddToCartItemDto> items,
-        CancellationToken cancellationToken)
+    try
     {
         var command = new AddItemsToCartCommand(customerId, items);
         var result = await _mediator.Send(command, cancellationToken);
+
         return CreatedAtAction(
             nameof(GetCart),
             new { customerId },
             result
         );
-
-
     }
+    catch (Exception ex)
+    {
+        return BadRequest(ex.Message);
+    }
+}
 
 
     [HttpPut("{customerId:guid}/items/{cartItemId:guid}")]
@@ -122,16 +116,13 @@ public class CartController : ControllerBase
         var command = new RemoveItemFromCartCommand(customerId, cartItemId);
         var result = await _mediator.Send(command, cancellationToken);
 
-        if (!result)
-            return NotFound(new { Message = "Cart item not found" });
-
         return NoContent();
     }
 
  
     [HttpDelete("{customerId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> DeleteCart(
+    public async Task<IActionResult> ClearCart(
         Guid customerId,
         CancellationToken cancellationToken)
     {

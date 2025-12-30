@@ -36,31 +36,28 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Ignore<DomainEvent>();
     }
 
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(
+        CancellationToken cancellationToken = default)
     {
-        var domainEvents = ChangeTracker
+        var result = await base.SaveChangesAsync(cancellationToken);
+        await DispatchDomainEventsAsync(cancellationToken);
+        return result;
+    }
+
+    private async Task DispatchDomainEventsAsync(CancellationToken cancellationToken)
+    {
+        var domainEntities = ChangeTracker
             .Entries<AggregateRoot<Guid>>()
-            .SelectMany(e => e.Entity.DomainEvents)
+            .Where(x => x.Entity.DomainEvents.Any())
             .ToList();
 
-        try
-        {
-            foreach (var domainEvent in domainEvents)
-            {
-                await _mediator.Publish(domainEvent, cancellationToken);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogWarning("Operation canceled during domain event dispatch. This usually indicates a client timeout or that the message broker (e.g., RabbitMQ) is unreachable.");
-            throw;
-        }
+        var events = domainEntities
+            .SelectMany(x => x.Entity.DomainEvents)
+            .ToList();
 
-        foreach (var entity in ChangeTracker.Entries<AggregateRoot<Guid>>())
-        {
-            entity.Entity.ClearDomainEvents();
-        }
+        foreach (var domainEvent in events)
+            await _mediator.Publish(domainEvent, cancellationToken);
 
-        return await base.SaveChangesAsync(cancellationToken);
+        domainEntities.ForEach(e => e.Entity.ClearDomainEvents());
     }
 }

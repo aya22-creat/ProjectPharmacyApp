@@ -10,7 +10,6 @@ namespace PharmacyApp.Domain.CartManagement.Events;
         public Guid ProductId { get; }
         public int NewQuantity { get; }
         public int OldQuantity { get; }
-    
 
         public CartItemQuantityUpdatedEvent(Guid cartId, Guid cartItemId, Guid productId, int newQuantity, int oldQuantity)
         {
