@@ -1,6 +1,7 @@
 using PharmacyApp.Application.Common;
 using PharmacyApp.Application.CartManagement.DTO;
 using PharmacyApp.Common.Common.ValueObjects;
+using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Domain.CartManagement;
 using PharmacyApp.Domain.CartManagement.Repositories;
 using PharmacyApp.Domain.CartManagement.Services;
@@ -56,9 +57,12 @@ public class AddItemsToCartCommandHandler
             if (item.Price <= 0)
                 throw new ArgumentException($"Price must be greater than 0 for {item.ProductName}");
 
-            var exists = await _productRepository.ExistsByIdAsync(item.ProductId, cancellationToken);
-            if (!exists)
+            var product = await _productRepository.GetByIdAsync(item.ProductId, cancellationToken);
+            if (product == null)
                 throw new KeyNotFoundException($"Product {item.ProductName} with ID {item.ProductId} does not exist.");
+
+            if (product.StockQuantity < item.Quantity)
+                throw new DomainException($"Insufficient stock for {item.ProductName}. Available: {product.StockQuantity}, Requested: {item.Quantity}");
 
             var money = Money.Create(item.Price, item.Currency ?? Constants.DefaultCurrency);
 

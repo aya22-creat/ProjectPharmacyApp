@@ -1,4 +1,5 @@
 using PharmacyApp.Common.Common;
+using PharmacyApp.Common.Common.Exception;
 using PharmacyApp.Common.Common.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.Category.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.Product.ValueObjects;
@@ -43,8 +44,9 @@ public class ProductAggregate : AggregateRoot<Guid>
 
     public void UpdateStock(int quantity)
     {
+        
         if (quantity < 0 && Math.Abs(quantity) > StockQuantity)
-            throw new ArgumentException("Insufficient stock to reduce.");
+            throw new DomainException($"Insufficient stock to reduce. Current: {StockQuantity}, Requested reduction: {Math.Abs(quantity)}");
         StockQuantity += quantity;
     }
 

@@ -56,9 +56,9 @@ public class ApplicationDbContext : DbContext
             .SelectMany(x => x.Entity.DomainEvents)
             .ToList();
 
+        domainEntities.ForEach(e => e.Entity.ClearDomainEvents());
+
         foreach (var domainEvent in events)
             await _mediator.Publish(domainEvent, cancellationToken);
-
-        domainEntities.ForEach(e => e.Entity.ClearDomainEvents());
     }
 }

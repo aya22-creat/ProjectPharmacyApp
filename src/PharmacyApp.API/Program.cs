@@ -12,6 +12,7 @@ using PharmacyApp.Domain.CatalogManagement.Product.AggregateRoots;
 using PharmacyApp.Domain.CatalogManagement.Product.ValueObjects;
 using PharmacyApp.Domain.CatalogManagement.Category.ValueObjects;
 using PharmacyApp.Common.Common.ValueObjects;
+using PharmacyApp.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,6 +91,8 @@ builder.Services.AddHealthChecks();
 var app = builder.Build();
 
 await EnsureDatabaseAsync(app);
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // ======= Middleware =======
 if (app.Environment.IsDevelopment())

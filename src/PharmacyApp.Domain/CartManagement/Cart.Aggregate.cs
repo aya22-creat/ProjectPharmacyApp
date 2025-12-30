@@ -60,7 +60,9 @@ public partial class Cart
         var item = _items.FirstOrDefault(i => i.Id == cartItemId);
 
         if (item == null)
-            throw new InvalidOperationException($"CartItem with ID {cartItemId} not found");
+        {
+            return;
+        }
 
         _items.Remove(item);
         UpdatedAt = DateTime.UtcNow;

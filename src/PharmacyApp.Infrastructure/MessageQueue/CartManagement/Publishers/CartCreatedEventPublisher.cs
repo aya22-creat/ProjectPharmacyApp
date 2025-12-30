@@ -24,15 +24,27 @@ namespace PharmacyApp.Infrastructure.MessageQueue.CartManagement.Publishers
 
         public async Task Handle(CartCreatedEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Publishing CartCreatedMessage: CartId={CartId}", notification.CartId);
+            try
+            {
+                _logger.LogInformation("Publishing CartCreatedMessage: CartId={CartId}", notification.CartId);
 
-            var message = new CartCreatedMessage(
-                notification.CartId,
-                notification.CustomerId,
-                notification.CreatedAt
-            );
+                var message = new CartCreatedMessage(
+                    notification.CartId,
+                    notification.CustomerId,
+                    notification.CreatedAt
+                );
 
-            await _publishEndpoint.Publish(message, cancellationToken);
+                await _publishEndpoint.Publish(message, cancellationToken);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                _logger.LogWarning(ex, "Failed to publish CartCreatedMessage because the message transport was disposed. CartId={CartId}", notification.CartId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while publishing CartCreatedMessage. CartId={CartId}", notification.CartId);
+                throw;
+            }
         }
     }
 }

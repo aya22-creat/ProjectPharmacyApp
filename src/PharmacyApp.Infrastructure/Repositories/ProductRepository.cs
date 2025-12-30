@@ -20,7 +20,7 @@ namespace PharmacyApp.Infrastructure.Repositories
             return _context.Set<ProductAggregate>().FirstOrDefault(p => p.Id == productId);
         }
 
-        public async new Task<ProductAggregate?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        public async override Task<ProductAggregate?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await _context.Set<ProductAggregate>()
                                  .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
@@ -29,6 +29,8 @@ namespace PharmacyApp.Infrastructure.Repositories
         public async Task UpdateAsync(ProductAggregate product, CancellationToken cancellationToken = default)
         {
             _context.Set<ProductAggregate>().Update(product);
+            // We need to save changes, but we must ensure we don't re-trigger the same events if they haven't been cleared.
+            // ApplicationDbContext.SaveChangesAsync automatically dispatches events.
             await _context.SaveChangesAsync(cancellationToken);
         }
 
